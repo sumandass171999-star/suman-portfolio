@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+
+<html class="dark scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Suman Das | Creative Designer &amp; Visual Storyteller</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@600&amp;family=Inter:wght@400&amp;family=Sora:wght@700;800;900&amp;display=swap" rel="stylesheet"/>
+
+<!-- GSAP & ScrollTrigger -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed-dim": "#c9c6c5",
+                      "on-surface": "#e0e3e5",
+                      "surface-bright": "#363a3b",
+                      "on-error": "#690005",
+                      "error": "#ffb4ab",
+                      "inverse-surface": "#e0e3e5",
+                      "primary": "#a8e8ff",
+                      "on-tertiary": "#313030",
+                      "on-secondary-fixed": "#001946",
+                      "inverse-primary": "#00677e",
+                      "on-background": "#e0e3e5",
+                      "secondary": "#b1c5ff",
+                      "on-primary": "#003642",
+                      "on-secondary-fixed-variant": "#00419e",
+                      "on-secondary-container": "#a6beff",
+                      "primary-fixed": "#b4ebff",
+                      "surface-dim": "#101415",
+                      "outline": "#859398",
+                      "on-primary-container": "#00586b",
+                      "surface-variant": "#323537",
+                      "outline-variant": "#3c494e",
+                      "primary-fixed-dim": "#3cd7ff",
+                      "surface-tint": "#3cd7ff",
+                      "background": "#101415",
+                      "on-tertiary-container": "#51504f",
+                      "surface-container-highest": "#323537",
+                      "on-tertiary-fixed-variant": "#474646",
+                      "primary-container": "#00d4ff",
+                      "on-error-container": "#ffdad6",
+                      "surface-container-lowest": "#0b0f10",
+                      "on-primary-fixed-variant": "#004e5f",
+                      "on-tertiary-fixed": "#1c1b1b",
+                      "tertiary-container": "#c5c2c2",
+                      "surface-container-low": "#191c1e",
+                      "secondary-fixed-dim": "#b1c5ff",
+                      "secondary-container": "#0148ab",
+                      "surface-container": "#1d2022",
+                      "tertiary": "#e1dedd",
+                      "on-secondary": "#002c70",
+                      "tertiary-fixed": "#e5e2e1",
+                      "inverse-on-surface": "#2d3133",
+                      "on-primary-fixed": "#001f27",
+                      "surface": "#101415",
+                      "secondary-fixed": "#dae2ff",
+                      "error-container": "#93000a",
+                      "on-surface-variant": "#bbc9cf",
+                      "surface-container-high": "#272a2c"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "2rem",
+                      "stack-md": "1rem",
+                      "section-gap": "8rem",
+                      "container-max": "1440px",
+                      "margin-edge": "5vw",
+                      "gutter": "2rem",
+                      "stack-sm": "0.5rem"
+              },
+              "fontFamily": {
+                      "headline-xl": ["Sora"],
+                      "headline-lg-mobile": ["Sora"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Geist"],
+                      "headline-lg": ["Sora"],
+                      "body-md": ["Inter"]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        /* Base Background */
+        body {
+            background-color: #030b12;
+            color: theme('colors.on-background');
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(25, 28, 30, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .icy-glow {
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .icy-glow:hover {
+            box-shadow: 0 0 45px rgba(0, 212, 255, 0.4);
+        }
+
+        .text-gradient-cyan {
+            background: linear-gradient(to right, #e0e3e5, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .btn-primary {
+            background-color: theme('colors.primary-container');
+            color: theme('colors.on-primary-container');
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.2);
+            opacity: 0;
+            z-index: -1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .btn-ghost {
+            background: rgba(16, 20, 21, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid theme('colors.primary-container');
+            color: theme('colors.primary-container');
+            transition: all 0.3s ease;
+        }
+        
+        .btn-ghost:hover {
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes popBounce {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .pop-bounce {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        
+        .pop-bounce.visible {
+            animation: popBounce 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Hero Card Clean Animation */
+        @keyframes portfolioCardAnimate {
+            0%, 100% {
+                transform: translateY(0px) scale(1);
+                box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+            }
+            50% {
+                transform: translateY(-8px) scale(1.02);
+                box-shadow: 0 0 45px rgba(0, 212, 255, 0.4);
+            }
+        }
+
+        .portfolio-hero-card {
+            animation: portfolioCardAnimate 6s ease-in-out infinite;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            will-change: transform, box-shadow;
+        }
+
+        .portfolio-hero-card:hover {
+            transform: translateY(-8px) scale(1.03) !important;
+            box-shadow: 0 0 55px rgba(0, 212, 255, 0.55) !important;
+        }
+
+        /* Arsenal Icon Float & Helper Styles */
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        .animate-icon-float {
+            animation: iconFloat 4s ease-in-out infinite;
+        }
+        .w-18 { width: 4.5rem; }
+        .h-18 { height: 4.5rem; }
+
+        /* Premium Motion Graphics Badge Animations */
+        @keyframes motionBadgeFloatGlow {
+            0%, 100% {
+                transform: translateY(0px);
+                box-shadow: 0 0 15px rgba(0, 212, 255, 0.2), inset 0 0 10px rgba(0, 212, 255, 0.08);
+                border-color: rgba(0, 212, 255, 0.3);
+            }
+            50% {
+                transform: translateY(-7px);
+                box-shadow: 0 0 30px rgba(0, 212, 255, 0.5), inset 0 0 18px rgba(0, 212, 255, 0.2);
+                border-color: rgba(0, 212, 255, 0.6);
+            }
+        }
+
+        @keyframes motionIconPulseRotate {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 0.9;
+            }
+            25% {
+                transform: scale(1.12) rotate(-8deg);
+                opacity: 1;
+            }
+            75% {
+                transform: scale(1.12) rotate(8deg);
+                opacity: 1;
+            }
+        }
+
+        @keyframes badgeShineSweep {
+            0% { transform: translateX(-150%) rotate(25deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            50%, 100% { transform: translateX(250%) rotate(25deg); opacity: 0; }
+        }
+
+        .motion-graphics-badge {
+            animation: motionBadgeFloatGlow 5s ease-in-out infinite;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, border-color 0.4s ease;
+            will-change: transform, box-shadow;
+            position: absolute;
+            overflow: hidden;
+        }
+
+        .motion-graphics-badge:hover {
+            transform: translateY(-7px) scale(1.08) !important;
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.65), inset 0 0 20px rgba(0, 212, 255, 0.3) !important;
+            border-color: rgba(0, 212, 255, 0.8) !important;
+        }
+
+        .motion-badge-shine {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                115deg,
+                transparent 40%,
+                rgba(255, 255, 255, 0.35) 50%,
+                transparent 60%
+            );
+            pointer-events: none;
+            z-index: 5;
+            animation: badgeShineSweep 6s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+
+        .motion-badge-icon {
+            animation: motionIconPulseRotate 4s ease-in-out infinite;
+            will-change: transform;
+            display: inline-block;
+        }
+
+        .project-card {
+            transition: all 0.4s ease;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 212, 255, 0.25);
+        }
+        
+        .gl-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -10;
+            pointer-events: none;
+        }
+
+        /* 100% Uniform Full Viewport Horizontal Scanlines */
+        .hero-scanline-stripes::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 212, 255, 0.05) 0px,
+                rgba(0, 212, 255, 0.05) 1px,
+                transparent 1px,
+                transparent 4px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Fullscreen Intro Overlay Styles */
+        #intro-overlay {
+            position: fixed;
+            inset: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 99999;
+            background-color: #030b12;
+            transition: opacity 1.0s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.0s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #intro-overlay.intro-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-primary/30 selection:text-primary relative bg-[#030b12]">
+
+<!-- Cinematic Fullscreen Intro Frame Animation Overlay -->
+<div id="intro-overlay" class="flex items-center justify-center">
+    <!-- Intro Frame Canvas -->
+    <canvas id="intro-frame-canvas" class="w-full h-full object-cover block"></canvas>
+
+    <!-- Preloader Overlay inside Intro -->
+    <div id="intro-loader" class="absolute inset-0 bg-[#030b12] flex flex-col items-center justify-center gap-4 z-20 transition-opacity duration-700">
+        <div class="w-10 h-10 border-2 border-[#00D4FF]/20 border-t-[#00D4FF] rounded-full animate-spin"></div>
+        <span id="intro-loader-text" class="font-label-sm text-sm text-[#00D4FF] tracking-[0.2em] uppercase font-bold">LOADING 0%</span>
+        <div class="w-48 h-1 bg-white/10 rounded-full overflow-hidden mt-2">
+            <div id="intro-loader-bar" class="w-0 h-full bg-[#00D4FF] transition-all duration-150"></div>
+        </div>
+    </div>
+
+    <!-- Optional Skip / Scroll Indicator overlay -->
+    <div id="intro-ui-hud" class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none opacity-0 transition-opacity duration-500 z-10">
+        <span class="font-label-sm text-xs text-primary/70 uppercase tracking-widest">Scroll to Scrub Intro</span>
+        <span class="material-symbols-outlined text-primary text-xl animate-bounce">expand_more</span>
+    </div>
+</div>
+
+<!-- Background WebGL Shader -->
+<canvas class="gl-canvas" id="shader-bg"></canvas>
+
+<!-- Top Navigation -->
+<nav class="sticky top-0 w-full z-50 bg-surface/40 backdrop-blur-xl border-b border-white/10 shadow-[0_0_30px_rgba(0,212,255,0.05)]">
+<div class="flex justify-between items-center px-margin-edge py-stack-sm max-w-container-max mx-auto">
+<a class="font-headline-lg text-headline-lg-mobile md:text-headline-lg font-bold tracking-tighter text-on-surface hover:text-primary transition-colors" href="#">
+            Suman Das
+        </a>
+<!-- Desktop Nav -->
+<div class="hidden md:flex items-center gap-stack-lg">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-widest" href="#about">About</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-widest" href="#skills">Skills</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-widest" href="#portfolio">Portfolio</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-widest" href="#contact">Contact</a>
+</div>
+<a class="hidden md:inline-flex btn-primary px-6 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest font-semibold" href="#contact">
+            Let's Connect
+        </a>
+<!-- Mobile Menu Toggle -->
+<button class="md:hidden text-on-surface hover:text-primary">
+<span class="material-symbols-outlined text-3xl">menu</span>
+</button>
+</div>
+</nav>
+
+<main>
+
+<!-- Hero Section Wrapper -->
+<div id="hero-scroll-wrapper" class="relative w-full">
+<section id="hero-section" class="min-h-screen flex items-center relative overflow-hidden px-margin-edge py-12 md:py-20 z-10 hero-scanline-stripes">
+<div class="max-w-container-max mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-gutter relative z-10 items-center">
+<div id="hero-text-container" class="lg:col-span-5 flex flex-col gap-stack-lg fade-in-up relative" style="transition-delay: 0.1s;">
+<div class="relative z-10">
+<h2 class="font-label-sm text-label-sm text-primary tracking-[0.3em] uppercase mb-4 pl-1 border-l-2 border-primary">Portfolio</h2>
+<h1 class="font-headline-xl text-[60px] md:text-[85px] lg:text-[105px] font-black uppercase tracking-tighter text-on-surface leading-[0.9] mb-4">
+                        SUMAN<br/>DAS
+                    </h1>
+<h2 class="font-headline-xl text-[32px] md:text-[42px] text-on-surface leading-tight mt-2">
+                        Crafting <br/>
+<span class="text-gradient-cyan">Digital Realities</span>
+</h2>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl fade-in-up leading-relaxed relative z-10" style="transition-delay: 0.3s;">
+                    I am a Creative Designer specializing in <span class="text-[#00D4FF] font-semibold">Poster Design</span>, <span class="text-[#00D4FF] font-semibold">Thumbnail Creation</span>, <span class="text-[#00D4FF] font-semibold">Motion Graphics</span>, and <span class="text-[#00D4FF] font-semibold">Visual Storytelling</span>. I help brands, creators, filmmakers, and content creators transform ideas into eye-catching visuals that capture attention and drive engagement. From cinematic movie posters and YouTube thumbnails to promotional campaigns and digital artwork, I create impactful designs that elevate brands and leave a lasting impression.
+                </p>
+<div class="flex flex-wrap gap-stack-md mt-4 fade-in-up relative z-10" style="transition-delay: 0.5s;">
+<a class="btn-primary px-8 py-4 rounded-full font-label-sm text-label-sm uppercase tracking-widest font-bold flex items-center gap-2" href="#portfolio">
+                        View Portfolio <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+<a class="btn-ghost px-8 py-4 rounded-full font-label-sm text-label-sm uppercase tracking-widest font-bold" href="#contact">
+                        Hire Me
+                    </a>
+<a class="text-on-surface hover:text-primary transition-colors px-4 py-4 font-label-sm text-label-sm uppercase tracking-widest font-bold flex items-center gap-2 border-b border-transparent hover:border-primary" href="#">
+<span class="material-symbols-outlined text-sm">download</span> Resume
+                    </a>
+</div>
+</div>
+<div id="hero-card-container" class="lg:col-span-7 relative mt-12 lg:mt-0 fade-in-up" style="transition-delay: 0.4s;">
+<!-- Landscape Widescreen Container -->
+<div class="relative w-full aspect-[16/9] rounded-2xl glass-panel icy-glow p-2 transition-all duration-500 portfolio-hero-card shadow-[0_0_40px_rgba(0,212,255,0.3)] border border-[#00D4FF]/30 z-10">
+<div class="w-full h-full rounded-xl overflow-hidden relative bg-[#101415]">
+<img alt="Hero Creative Design Artwork" class="w-full h-full object-cover rounded-xl block" src="frames/ezgif-frame-208.jpg" onerror="this.onerror=null; this.src='ezgif-frame-208.jpg';"/>
+</div>
+<!-- Floating Badges -->
+<div class="absolute -left-4 -top-4 glass-panel px-4 py-2 rounded-lg flex items-center gap-2 animate-[bounce_4s_infinite] shadow-[0_0_15px_rgba(0,212,255,0.18)] border border-[#00D4FF]/25 z-20">
+<span class="material-symbols-outlined text-primary text-xl">brush</span>
+<span class="font-label-sm text-label-sm text-on-surface">Visual Design</span>
+</div>
+<div class="absolute -right-4 -bottom-4 glass-panel px-4 py-2 rounded-lg flex items-center gap-2 z-20 motion-graphics-badge border border-[#00D4FF]/30 cursor-pointer">
+<div class="motion-badge-shine"></div>
+<span class="material-symbols-outlined text-secondary text-xl motion-badge-icon relative z-10">movie</span>
+<span class="font-label-sm text-label-sm text-on-surface relative z-10">Motion Graphics</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+
+<!-- About / Services Bento -->
+<section class="px-margin-edge py-section-gap relative" id="about">
+<div class="max-w-container-max mx-auto">
+</div>
+</section>
+<!-- Skills Grid -->
+<section class="px-margin-edge py-section-gap relative bg-surface-container-low/20 border-y border-white/5" id="skills">
+<div class="max-w-container-max mx-auto">
+<div class="text-center mb-16 fade-in-up">
+<span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary font-label-sm text-xs uppercase tracking-widest mb-3 border border-primary/20">Production Toolkit</span>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Arsenal</h2>
+<p class="font-body-md text-on-surface-variant mt-4 max-w-xl mx-auto">Industry-standard creative software and cutting-edge AI design workflows.</p>
+</div>
+
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+
+<!-- Photoshop Card -->
+<div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center gap-4 border border-white/10 hover:border-[#31A8FF]/50 transition-all duration-400 group cursor-default pop-bounce hover:-translate-y-2 hover:shadow-[0_0_35px_rgba(49,168,255,0.35)] relative overflow-hidden" style="animation-delay: 0.1s;">
+<div class="absolute inset-0 bg-gradient-to-b from-[#31A8FF]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center relative z-10">
+<img src="icons/ps-icon.jfif" alt="Adobe Photoshop" class="w-full h-full object-contain drop-shadow-[0_0_12px_rgba(49,168,255,0.4)] group-hover:drop-shadow-[0_0_22px_rgba(49,168,255,0.85)] group-hover:scale-110 transition-all duration-500 animate-icon-float rounded-xl" onerror="this.onerror=null; this.src='public/icons/ps-icon.jfif';"/>
+</div>
+<div class="text-center relative z-10">
+<h3 class="font-headline-lg text-base font-bold text-on-surface group-hover:text-primary transition-colors">Photoshop</h3>
+<span class="font-label-sm text-[11px] text-on-surface-variant/80 block mt-0.5">Raster &amp; Key Art</span>
+</div>
+</div>
+
+<!-- Illustrator Card -->
+<div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center gap-4 border border-white/10 hover:border-[#FF9A00]/50 transition-all duration-400 group cursor-default pop-bounce hover:-translate-y-2 hover:shadow-[0_0_35px_rgba(255,154,0,0.35)] relative overflow-hidden" style="animation-delay: 0.2s;">
+<div class="absolute inset-0 bg-gradient-to-b from-[#FF9A00]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center relative z-10">
+<img src="icons/ai-icon.png" alt="Adobe Illustrator" class="w-full h-full object-contain drop-shadow-[0_0_12px_rgba(255,154,0,0.4)] group-hover:drop-shadow-[0_0_22px_rgba(255,154,0,0.85)] group-hover:scale-110 transition-all duration-500 animate-icon-float rounded-xl" style="animation-delay: 0.5s;" onerror="this.onerror=null; this.src='public/icons/ai-icon.png';"/>
+</div>
+<div class="text-center relative z-10">
+<h3 class="font-headline-lg text-base font-bold text-on-surface group-hover:text-[#FF9A00] transition-colors">Illustrator</h3>
+<span class="font-label-sm text-[11px] text-on-surface-variant/80 block mt-0.5">Vector &amp; Graphics</span>
+</div>
+</div>
+
+<!-- After Effects Card -->
+<div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center gap-4 border border-white/10 hover:border-[#9999FF]/50 transition-all duration-400 group cursor-default pop-bounce hover:-translate-y-2 hover:shadow-[0_0_35px_rgba(153,153,255,0.35)] relative overflow-hidden" style="animation-delay: 0.3s;">
+<div class="absolute inset-0 bg-gradient-to-b from-[#9999FF]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center relative z-10">
+<img src="icons/ae-icon.jfif" alt="Adobe After Effects" class="w-full h-full object-contain drop-shadow-[0_0_12px_rgba(153,153,255,0.4)] group-hover:drop-shadow-[0_0_22px_rgba(153,153,255,0.85)] group-hover:scale-110 transition-all duration-500 animate-icon-float rounded-xl" style="animation-delay: 1s;" onerror="this.onerror=null; this.src='public/icons/ae-icon.jfif';"/>
+</div>
+<div class="text-center relative z-10">
+<h3 class="font-headline-lg text-base font-bold text-on-surface group-hover:text-[#9999FF] transition-colors">After Effects</h3>
+<span class="font-label-sm text-[11px] text-on-surface-variant/80 block mt-0.5">Motion &amp; VFX</span>
+</div>
+</div>
+
+<!-- Premiere Pro Card -->
+<div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center gap-4 border border-white/10 hover:border-[#EA77FF]/50 transition-all duration-400 group cursor-default pop-bounce hover:-translate-y-2 hover:shadow-[0_0_35px_rgba(234,119,255,0.35)] relative overflow-hidden" style="animation-delay: 0.4s;">
+<div class="absolute inset-0 bg-gradient-to-b from-[#EA77FF]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center relative z-10">
+<img src="icons/pr-icon.jfif" alt="Adobe Premiere Pro" class="w-full h-full object-contain drop-shadow-[0_0_12px_rgba(234,119,255,0.4)] group-hover:drop-shadow-[0_0_22px_rgba(234,119,255,0.85)] group-hover:scale-110 transition-all duration-500 animate-icon-float rounded-xl" style="animation-delay: 1.5s;" onerror="this.onerror=null; this.src='public/icons/pr-icon.jfif';"/>
+</div>
+<div class="text-center relative z-10">
+<h3 class="font-headline-lg text-base font-bold text-on-surface group-hover:text-[#EA77FF] transition-colors">Premiere Pro</h3>
+<span class="font-label-sm text-[11px] text-on-surface-variant/80 block mt-0.5">Video Editing</span>
+</div>
+</div>
+
+<!-- AI Design Card -->
+<div class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center gap-4 border border-white/10 hover:border-[#00D4FF]/50 transition-all duration-400 group cursor-default pop-bounce hover:-translate-y-2 hover:shadow-[0_0_35px_rgba(0,212,255,0.35)] relative overflow-hidden" style="animation-delay: 0.5s;">
+<div class="absolute inset-0 bg-gradient-to-b from-[#00D4FF]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="w-18 h-18 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center relative z-10">
+<img src="icons/ai-design-icon.jfif" alt="AI Design" class="w-full h-full object-contain drop-shadow-[0_0_12px_rgba(0,212,255,0.4)] group-hover:drop-shadow-[0_0_22px_rgba(0,212,255,0.85)] group-hover:scale-110 transition-all duration-500 animate-icon-float rounded-xl" style="animation-delay: 2s;" onerror="this.onerror=null; this.src='public/icons/ai-design-icon.jfif';"/>
+</div>
+<div class="text-center relative z-10">
+<h3 class="font-headline-lg text-base font-bold text-on-surface group-hover:text-primary transition-colors">AI Design</h3>
+<span class="font-label-sm text-[11px] text-on-surface-variant/80 block mt-0.5">Generative Workflow</span>
+</div>
+</div>
+
+</div>
+</div>
+</section>
+<!-- Featured Projects -->
+<section class="px-margin-edge py-section-gap relative" id="portfolio">
+<div class="max-w-container-max mx-auto">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 fade-in-up">
+<div>
+<span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary font-label-sm text-xs uppercase tracking-widest mb-3 border border-primary/20">Creative Showcase</span>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Selected Works</h2>
+<div class="w-24 h-1 bg-primary mt-4"></div>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="gallery-filter-btn active-filter px-4 py-2 rounded-full font-label-sm text-xs uppercase tracking-wider bg-primary text-on-primary-container font-semibold transition-all" data-filter="all">All Works</button>
+<button class="gallery-filter-btn px-4 py-2 rounded-full font-label-sm text-xs uppercase tracking-wider glass-panel text-on-surface-variant hover:text-primary border border-white/10 transition-all" data-filter="poster">Movie Posters</button>
+<button class="gallery-filter-btn px-4 py-2 rounded-full font-label-sm text-xs uppercase tracking-wider glass-panel text-on-surface-variant hover:text-primary border border-white/10 transition-all" data-filter="storytelling">Storytelling</button>
+<button class="gallery-filter-btn px-4 py-2 rounded-full font-label-sm text-xs uppercase tracking-wider glass-panel text-on-surface-variant hover:text-primary border border-white/10 transition-all" data-filter="advertising">3D &amp; Campaigns</button>
+</div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+
+<!-- Project 1: Krishna -->
+<div class="gallery-item group relative rounded-2xl overflow-hidden glass-panel border border-[#00D4FF]/20 fade-in-up cursor-pointer project-card transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_35px_rgba(0,212,255,0.35)]" data-category="storytelling" onclick="openLightbox('images/krishna.jpg', 'Lord Krishna Divine Artwork', 'Visual Storytelling • Digital Painting')">
+<div class="relative w-full aspect-[3/4] overflow-hidden bg-[#0d1117]">
+<img alt="Lord Krishna Divine Artwork" class="w-full h-full object-cover rounded-2xl transition-transform duration-700 ease-out group-hover:scale-110" src="images/krishna.jpg" onerror="this.onerror=null; this.src='krishna.jpg';"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#030b12] via-[#030b12]/30 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-500"></div>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+<div class="glass-panel p-5 rounded-xl backdrop-blur-xl border border-white/10">
+<span class="inline-block px-3 py-1 rounded-full bg-primary/15 text-primary font-label-sm text-[10px] uppercase tracking-widest mb-2 border border-primary/30">Visual Storytelling</span>
+<h3 class="font-headline-lg text-xl text-on-surface mb-1 group-hover:text-primary transition-colors">Lord Krishna Divine Artwork</h3>
+<p class="font-body-md text-on-surface-variant text-xs line-clamp-2">Vibrant devotional poster composition with dramatic lighting and ethereal aura.</p>
+</div>
+</div>
+</div>
+
+<!-- Project 2: Lagan Poster -->
+<div class="gallery-item group relative rounded-2xl overflow-hidden glass-panel border border-[#00D4FF]/20 fade-in-up cursor-pointer project-card transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_35px_rgba(0,212,255,0.35)]" data-category="poster" style="transition-delay: 0.1s;" onclick="openLightbox('images/lagan poster.jpg', 'Lagaan Cinematic Movie Poster', 'Movie Poster • Key Art Design')">
+<div class="relative w-full aspect-[3/4] overflow-hidden bg-[#0d1117]">
+<img alt="Lagaan Cinematic Movie Poster" class="w-full h-full object-cover rounded-2xl transition-transform duration-700 ease-out group-hover:scale-110" src="images/lagan poster.jpg" onerror="this.onerror=null; this.src='lagan poster.jpg';"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#030b12] via-[#030b12]/30 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-500"></div>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+<div class="glass-panel p-5 rounded-xl backdrop-blur-xl border border-white/10">
+<span class="inline-block px-3 py-1 rounded-full bg-secondary-container/30 text-secondary font-label-sm text-[10px] uppercase tracking-widest mb-2 border border-secondary/30">Movie Poster</span>
+<h3 class="font-headline-lg text-xl text-on-surface mb-1 group-hover:text-primary transition-colors">Lagaan Movie Poster Key Art</h3>
+<p class="font-body-md text-on-surface-variant text-xs line-clamp-2">Epic theatrical key art poster layout with high contrast character highlights.</p>
+</div>
+</div>
+</div>
+
+<!-- Project 3: Movie Poster -->
+<div class="gallery-item group relative rounded-2xl overflow-hidden glass-panel border border-[#00D4FF]/20 fade-in-up cursor-pointer project-card transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_35px_rgba(0,212,255,0.35)]" data-category="poster" style="transition-delay: 0.2s;" onclick="openLightbox('images/movie poster.jpg', 'Cinematic Action Feature Poster', 'Movie Poster • Film Key Art')">
+<div class="relative w-full aspect-[3/4] overflow-hidden bg-[#0d1117]">
+<img alt="Cinematic Action Feature Poster" class="w-full h-full object-cover rounded-2xl transition-transform duration-700 ease-out group-hover:scale-110" src="images/movie poster.jpg" onerror="this.onerror=null; this.src='movie poster.jpg';"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#030b12] via-[#030b12]/30 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-500"></div>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+<div class="glass-panel p-5 rounded-xl backdrop-blur-xl border border-white/10">
+<span class="inline-block px-3 py-1 rounded-full bg-primary/15 text-primary font-label-sm text-[10px] uppercase tracking-widest mb-2 border border-primary/30">Film Key Art</span>
+<h3 class="font-headline-lg text-xl text-on-surface mb-1 group-hover:text-primary transition-colors">Action Blockbuster Poster</h3>
+<p class="font-body-md text-on-surface-variant text-xs line-clamp-2">High-intensity action film key art featuring cinematic color grading and title treatment.</p>
+</div>
+</div>
+</div>
+
+<!-- Project 4: Poster of Father -->
+<div class="gallery-item group relative rounded-2xl overflow-hidden glass-panel border border-[#00D4FF]/20 fade-in-up cursor-pointer project-card transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_35px_rgba(0,212,255,0.35)]" data-category="storytelling" style="transition-delay: 0.3s;" onclick="openLightbox('images/poster of father.jpg', 'Tribute Emotional Storytelling Poster', 'Visual Storytelling • Portrait Composition')">
+<div class="relative w-full aspect-[3/4] overflow-hidden bg-[#0d1117]">
+<img alt="Tribute Emotional Storytelling Poster" class="w-full h-full object-cover rounded-2xl transition-transform duration-700 ease-out group-hover:scale-110" src="images/poster of father.jpg" onerror="this.onerror=null; this.src='poster of father.jpg';"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#030b12] via-[#030b12]/30 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-500"></div>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+<div class="glass-panel p-5 rounded-xl backdrop-blur-xl border border-white/10">
+<span class="inline-block px-3 py-1 rounded-full bg-secondary-container/30 text-secondary font-label-sm text-[10px] uppercase tracking-widest mb-2 border border-secondary/30">Portrait Art</span>
+<h3 class="font-headline-lg text-xl text-on-surface mb-1 group-hover:text-primary transition-colors">Father Tribute Artwork</h3>
+<p class="font-body-md text-on-surface-variant text-xs line-clamp-2">Deeply emotional portrait poster layout blending photographic realism with painted textures.</p>
+</div>
+</div>
+</div>
+
+<!-- Project 5: Ra Yattra -->
+<div class="gallery-item group relative rounded-2xl overflow-hidden glass-panel border border-[#00D4FF]/20 fade-in-up cursor-pointer project-card transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_35px_rgba(0,212,255,0.35)]" data-category="storytelling" style="transition-delay: 0.4s;" onclick="openLightbox('images/ra yatttra.jpg', 'Ratha Yatra Cultural Poster', 'Cultural Design • Event Poster')">
+<div class="relative w-full aspect-[3/4] overflow-hidden bg-[#0d1117]">
+<img alt="Ratha Yatra Cultural Poster" class="w-full h-full object-cover rounded-2xl transition-transform duration-700 ease-out group-hover:scale-110" src="images/ra yatttra.jpg" onerror="this.onerror=null; this.src='ra yatttra.jpg';"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#030b12] via-[#030b12]/30 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-500"></div>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+<div class="glass-panel p-5 rounded-xl backdrop-blur-xl border border-white/10">
+<span class="inline-block px-3 py-1 rounded-full bg-primary/15 text-primary font-label-sm text-[10px] uppercase tracking-widest mb-2 border border-primary/30">Festival Poster</span>
+<h3 class="font-headline-lg text-xl text-on-surface mb-1 group-hover:text-primary transition-colors">Ratha Yatra Cultural Key Art</h3>
+<p class="font-body-md text-on-surface-variant text-xs line-clamp-2">Rich traditional festival poster design highlighting divine chariot majesty and cultural heritage.</p>
+</div>
+</div>
+</div>
+
+<!-- Project 6: VR Advertising -->
+<div class="gallery-item group relative rounded-2xl overflow-hidden glass-panel border border-[#00D4FF]/20 fade-in-up cursor-pointer project-card transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_35px_rgba(0,212,255,0.35)]" data-category="advertising" style="transition-delay: 0.5s;" onclick="openLightbox('images/vr advertising.jpg', 'Virtual Reality Ad Campaign', '3D &amp; VR Design • Brand Campaign')">
+<div class="relative w-full aspect-[3/4] overflow-hidden bg-[#0d1117]">
+<img alt="Virtual Reality Ad Campaign" class="w-full h-full object-cover rounded-2xl transition-transform duration-700 ease-out group-hover:scale-110" src="images/vr advertising.jpg" onerror="this.onerror=null; this.src='vr advertising.jpg';"/>
+<div class="absolute inset-0 bg-gradient-to-t from-[#030b12] via-[#030b12]/30 to-transparent opacity-90 group-hover:opacity-60 transition-opacity duration-500"></div>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-6 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+<div class="glass-panel p-5 rounded-xl backdrop-blur-xl border border-white/10">
+<span class="inline-block px-3 py-1 rounded-full bg-secondary-container/30 text-secondary font-label-sm text-[10px] uppercase tracking-widest mb-2 border border-secondary/30">3D Campaign</span>
+<h3 class="font-headline-lg text-xl text-on-surface mb-1 group-hover:text-primary transition-colors">Virtual Reality Experience Ad</h3>
+<p class="font-body-md text-on-surface-variant text-xs line-clamp-2">Futuristic sci-fi advertising layout showcasing immersive VR technology and neon aesthetics.</p>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- Lightbox Modal for HD Image Viewing -->
+<div id="gallery-lightbox" class="fixed inset-0 z-[999999] bg-[#030b12]/95 backdrop-blur-2xl flex items-center justify-center p-4 md:p-8 opacity-0 pointer-events-none transition-opacity duration-400">
+<div class="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center">
+<button onclick="closeLightbox()" class="absolute -top-12 right-0 text-on-surface hover:text-primary text-3xl font-bold transition-colors z-20 flex items-center gap-1 font-label-sm text-sm uppercase tracking-widest">
+<span class="material-symbols-outlined text-2xl">close</span> Close
+</button>
+<div class="relative w-full overflow-hidden rounded-2xl glass-panel border border-[#00D4FF]/30 p-2 shadow-[0_0_60px_rgba(0,212,255,0.3)]">
+<img id="lightbox-img" class="w-full max-h-[75vh] object-contain rounded-xl block mx-auto" src="" alt=""/>
+</div>
+<div class="mt-4 text-center">
+<h3 id="lightbox-title" class="font-headline-lg text-2xl text-on-surface mb-1"></h3>
+<p id="lightbox-subtitle" class="font-label-sm text-sm text-primary uppercase tracking-widest"></p>
+</div>
+</div>
+</div>
+<!-- Contact Section -->
+<section class="px-margin-edge py-section-gap relative" id="contact">
+<div class="max-w-4xl mx-auto glass-panel rounded-3xl p-8 md:p-14 icy-glow relative overflow-hidden fade-in-up border border-[#00D4FF]/25 shadow-[0_0_50px_rgba(0,212,255,0.15)]">
+<div class="text-center mb-10 relative z-10">
+<span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary font-label-sm text-xs uppercase tracking-widest mb-3 border border-primary/20">Get In Touch</span>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-2">Connect With Me</h2>
+<p class="font-headline-lg text-xl text-primary font-bold tracking-wide">Suman Das</p>
+<p class="font-body-md text-on-surface-variant text-sm mt-1">Creative Designer &amp; Visual Storyteller</p>
+</div>
+
+<!-- Interactive Contact Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10 mb-10">
+
+<!-- Email Card -->
+<a href="mailto:sumandass171999@gmail.com" class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/10 hover:border-[#00D4FF]/60 transition-all duration-400 group hover:-translate-y-2 hover:shadow-[0_0_35px_rgba(0,212,255,0.35)] relative overflow-hidden text-center">
+<div class="absolute inset-0 bg-gradient-to-b from-[#00D4FF]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="w-14 h-14 rounded-2xl bg-[#001E36] border border-[#00D4FF]/40 flex items-center justify-center shadow-[0_0_20px_rgba(0,212,255,0.25)] group-hover:scale-110 group-hover:border-[#00D4FF] transition-all duration-500 relative z-10">
+<span class="material-symbols-outlined text-2xl text-[#00D4FF] group-hover:drop-shadow-[0_0_10px_rgba(0,212,255,0.8)]">mail</span>
+</div>
+<div class="relative z-10">
+<span class="font-label-sm text-[10px] text-primary uppercase tracking-widest block font-bold">Email</span>
+<span class="font-body-md text-sm text-on-surface font-semibold group-hover:text-primary transition-colors break-all mt-0.5">sumandass171999@gmail.com</span>
+</div>
+</a>
+
+<!-- Instagram Card -->
+<a href="https://instagram.com/sumandas_ig" target="_blank" rel="noopener noreferrer" class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/10 hover:border-[#EA77FF]/60 transition-all duration-400 group hover:-translate-y-2 hover:shadow-[0_0_35px_rgba(234,119,255,0.35)] relative overflow-hidden text-center">
+<div class="absolute inset-0 bg-gradient-to-b from-[#EA77FF]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="w-14 h-14 rounded-2xl bg-[#250033] border border-[#EA77FF]/40 flex items-center justify-center shadow-[0_0_20px_rgba(234,119,255,0.25)] group-hover:scale-110 group-hover:border-[#EA77FF] transition-all duration-500 relative z-10">
+<span class="material-symbols-outlined text-2xl text-[#EA77FF] group-hover:drop-shadow-[0_0_10px_rgba(234,119,255,0.8)]">photo_camera</span>
+</div>
+<div class="relative z-10">
+<span class="font-label-sm text-[10px] text-[#EA77FF] uppercase tracking-widest block font-bold">Instagram</span>
+<span class="font-body-md text-sm text-on-surface font-semibold group-hover:text-[#EA77FF] transition-colors mt-0.5">@sumandas_ig</span>
+</div>
+</a>
+
+<!-- Phone Card -->
+<a href="tel:+917982636750" class="glass-panel p-6 rounded-2xl flex flex-col items-center justify-center gap-3 border border-white/10 hover:border-[#00D4FF]/60 transition-all duration-400 group hover:-translate-y-2 hover:shadow-[0_0_35px_rgba(0,212,255,0.35)] relative overflow-hidden text-center">
+<div class="absolute inset-0 bg-gradient-to-b from-[#00D4FF]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+<div class="w-14 h-14 rounded-2xl bg-[#002233] border border-[#00D4FF]/40 flex items-center justify-center shadow-[0_0_20px_rgba(0,212,255,0.25)] group-hover:scale-110 group-hover:border-[#00D4FF] transition-all duration-500 relative z-10">
+<span class="material-symbols-outlined text-2xl text-[#00D4FF] group-hover:drop-shadow-[0_0_10px_rgba(0,212,255,0.8)]">call</span>
+</div>
+<div class="relative z-10">
+<span class="font-label-sm text-[10px] text-primary uppercase tracking-widest block font-bold">Phone</span>
+<span class="font-body-md text-sm text-on-surface font-semibold group-hover:text-primary transition-colors mt-0.5">+91 7982636750</span>
+</div>
+</a>
+
+</div>
+
+<!-- Contact Form -->
+<form class="space-y-6 relative z-10 pt-4 border-t border-white/10">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" for="name">Name</label>
+<input class="w-full bg-surface-bright/20 border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors font-body-md" id="name" placeholder="Enter your name" type="text"/>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" for="email">Email</label>
+<input class="w-full bg-surface-bright/20 border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors font-body-md" id="email" placeholder="Enter your email" type="email"/>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2" for="message">Message</label>
+<textarea class="w-full bg-surface-bright/20 border border-white/10 rounded-lg px-4 py-3 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors font-body-md resize-none" id="message" placeholder="Detail your vision..." rows="4"></textarea>
+</div>
+<div class="text-center pt-2">
+<button class="btn-primary px-12 py-4 rounded-full font-label-sm text-label-sm uppercase tracking-widest font-bold w-full md:w-auto" type="button">
+                        Transmit Message
+                    </button>
+</div>
+</form>
+</div>
+</section>
+</main>
+
+<!-- Footer -->
+<footer class="bg-surface-dim/80 backdrop-blur-md border-t border-outline-variant w-full py-section-gap px-margin-edge mt-auto relative z-10">
+<div class="flex flex-col md:flex-row justify-between items-center max-w-container-max mx-auto gap-stack-md">
+<a class="font-headline-lg text-headline-lg-mobile text-primary tracking-tighter opacity-80 hover:opacity-100 transition-opacity" href="#">
+            Suman Das
+        </a>
+<div class="flex gap-6">
+<a class="text-on-surface-variant hover:text-primary-fixed-dim transition-colors font-label-sm uppercase tracking-widest opacity-80 hover:opacity-100" href="#">LinkedIn</a>
+<a class="text-on-surface-variant hover:text-primary-fixed-dim transition-colors font-label-sm uppercase tracking-widest opacity-80 hover:opacity-100" href="#">Dribbble</a>
+<a class="text-on-surface-variant hover:text-primary-fixed-dim transition-colors font-label-sm uppercase tracking-widest opacity-80 hover:opacity-100" href="https://instagram.com/sumandas_ig" target="_blank" rel="noopener noreferrer">Instagram</a>
+<a class="text-on-surface-variant hover:text-primary-fixed-dim transition-colors font-label-sm uppercase tracking-widest opacity-80 hover:opacity-100" href="mailto:sumandass171999@gmail.com">Email</a>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant opacity-80">
+            © 2024 Suman Das. All rights reserved.
+        </p>
+</div>
+</footer>
+
+<!-- Intersection Observer for scroll animations -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up, .pop-bounce').forEach((element) => {
+            observer.observe(element);
+        });
+    });
+</script>
+
+<!-- Embedded Premium Intro Animation Engine (Fullscreen Canvas + 208 Preloaded Frames + Session Check + Smooth Transition + Scroll Scrubbing) -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const TOTAL_FRAMES = 208;
+
+        const introOverlay = document.getElementById('intro-overlay');
+        const introCanvas = document.getElementById('intro-frame-canvas');
+        const introLoader = document.getElementById('intro-loader');
+        const introLoaderText = document.getElementById('intro-loader-text');
+        const introLoaderBar = document.getElementById('intro-loader-bar');
+        const introHud = document.getElementById('intro-ui-hud');
+
+        if (!introCanvas || !introOverlay) return;
+
+        // Check if intro animation has already been played in this browser session
+        const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
+        if (hasSeenIntro === 'true') {
+            introOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            return;
+        }
+
+        // Lock body scrolling during active intro loading/playback
+        document.body.style.overflow = 'hidden';
+
+        const ctx = introCanvas.getContext('2d', { alpha: false });
+        const images = [];
+        let loadedCount = 0;
+        let currentFrame = 0;
+        let isIntroComplete = false;
+        let autoplayTween = null;
+
+        function getFramePath(index) {
+            const paddedNum = String(index).padStart(3, '0');
+            return `frames/ezgif-frame-${paddedNum}.jpg`;
+        }
+
+        function renderFrame(index) {
+            const targetIndex = Math.min(Math.max(Math.round(index), 0), TOTAL_FRAMES - 1);
+            const img = images[targetIndex];
+            if (!img || !img.complete || img.naturalWidth === 0) return;
+
+            const canvasWidth = introCanvas.width;
+            const canvasHeight = introCanvas.height;
+
+            const imgRatio = img.naturalWidth / img.naturalHeight;
+            const canvasRatio = canvasWidth / canvasHeight;
+
+            let drawWidth, drawHeight, offsetX, offsetY;
+
+            if (canvasRatio > imgRatio) {
+                drawWidth = canvasWidth;
+                drawHeight = canvasWidth / imgRatio;
+                offsetX = 0;
+                offsetY = (canvasHeight - drawHeight) / 2;
+            } else {
+                drawWidth = canvasHeight * imgRatio;
+                drawHeight = canvasHeight;
+                offsetX = (canvasWidth - drawWidth) / 2;
+                offsetY = 0;
+            }
+
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+            currentFrame = targetIndex;
+        }
+
+        function resizeCanvas() {
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            introCanvas.width = window.innerWidth * dpr;
+            introCanvas.height = window.innerHeight * dpr;
+            renderFrame(currentFrame);
+        }
+
+        window.addEventListener('resize', resizeCanvas, { passive: true });
+
+        // Preload all 208 image frames
+        for (let i = 1; i <= TOTAL_FRAMES; i++) {
+            const img = new Image();
+            img.src = getFramePath(i);
+            img.onload = () => handleLoad();
+            img.onerror = () => {
+                // Fallback path attempt
+                const altImg = new Image();
+                altImg.src = `ezgif-frame-${String(i).padStart(3, '0')}.jpg`;
+                altImg.onload = () => {
+                    images[i - 1] = altImg;
+                    handleLoad();
+                };
+                altImg.onerror = () => handleLoad();
+            };
+            images.push(img);
+        }
+
+        function handleLoad() {
+            loadedCount++;
+            const percent = Math.min(Math.floor((loadedCount / TOTAL_FRAMES) * 100), 100);
+            
+            if (introLoaderText) introLoaderText.textContent = `LOADING ${percent}%`;
+            if (introLoaderBar) introLoaderBar.style.width = `${percent}%`;
+
+            if (loadedCount >= TOTAL_FRAMES) {
+                // Fade out preloader inside intro
+                if (introLoader) {
+                    introLoader.style.opacity = '0';
+                    setTimeout(() => { introLoader.style.display = 'none'; }, 700);
+                }
+                if (introHud) introHud.style.opacity = '1';
+                startIntroAnimation();
+            }
+        }
+
+        function completeIntro() {
+            if (isIntroComplete) return;
+            isIntroComplete = true;
+            sessionStorage.setItem('hasSeenIntro', 'true');
+
+            if (autoplayTween) autoplayTween.kill();
+
+            // Smooth fade transition into portfolio website
+            introOverlay.classList.add('intro-hidden');
+            document.body.style.overflow = 'auto';
+
+            setTimeout(() => {
+                introOverlay.style.display = 'none';
+            }, 1000);
+        }
+
+        function startIntroAnimation() {
+            resizeCanvas();
+            renderFrame(0);
+
+            const frameObj = { frame: 0 };
+
+            // Smooth 60FPS automatic intro playback over 3.8 seconds
+            if (typeof gsap !== 'undefined') {
+                autoplayTween = gsap.to(frameObj, {
+                    frame: TOTAL_FRAMES - 1,
+                    duration: 3.8,
+                    ease: 'power1.inOut',
+                    onUpdate: () => {
+                        renderFrame(frameObj.frame);
+                    },
+                    onComplete: () => {
+                        completeIntro();
+                    }
+                });
+            } else {
+                let startTime = null;
+                const duration = 3800; // ms
+
+                function step(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    const elapsed = timestamp - startTime;
+                    const progress = Math.min(elapsed / duration, 1.0);
+                    renderFrame(progress * (TOTAL_FRAMES - 1));
+
+                    if (progress < 1.0 && !isIntroComplete) {
+                        requestAnimationFrame(step);
+                    } else {
+                        completeIntro();
+                    }
+                }
+                requestAnimationFrame(step);
+            }
+
+            // Optional Scroll Scrubbing during Intro
+            const handleScrollScrub = (e) => {
+                if (isIntroComplete) return;
+                
+                const delta = e.deltaY || e.detail || (e.touches ? -10 : 10);
+                if (delta > 0) {
+                    currentFrame = Math.min(currentFrame + 6, TOTAL_FRAMES - 1);
+                } else {
+                    currentFrame = Math.max(currentFrame - 6, 0);
+                }
+
+                renderFrame(currentFrame);
+
+                if (currentFrame >= TOTAL_FRAMES - 1) {
+                    completeIntro();
+                }
+            };
+
+            window.addEventListener('wheel', handleScrollScrub, { passive: true });
+            window.addEventListener('touchmove', handleScrollScrub, { passive: true });
+        }
+    });
+</script>
+
+<!-- WebGL Background Shader Setup -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const canvas = document.getElementById('shader-bg');
+        const gl = canvas.getContext('webgl');
+        if (!gl) return;
+
+        let mouseX = 0;
+        let mouseY = 0;
+        window.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = window.innerHeight - e.clientY;
+        });
+
+        const resizeCanvas = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            gl.viewport(0, 0, canvas.width, canvas.height);
+        };
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const vsSource = `
+            attribute vec2 position;
+            varying vec2 v_texCoord;
+            void main() {
+                gl_Position = vec4(position, 0.0, 1.0);
+                v_texCoord = position * 0.5 + 0.5;
+            }
+        `;
+
+        const fsSource = `
+            precision highp float;
+            varying vec2 v_texCoord;
+            uniform float u_time;
+            uniform vec2 u_resolution;
+            uniform vec2 u_mouse;
+
+            void main() {
+                vec2 uv = v_texCoord;
+                vec2 mouse = u_mouse / u_resolution;
+                
+                float n = sin(uv.x * 10.0 + u_time * 0.5) * cos(uv.y * 10.0 + u_time * 0.3);
+                n += 0.5 * sin(uv.x * 20.0 - u_time * 0.8) * cos(uv.y * 20.0 + u_time * 0.4);
+                
+                vec3 color1 = vec3(0.0, 0.05, 0.1);
+                vec3 color2 = vec3(0.0, 0.83, 1.0);
+                
+                float dist = distance(uv, mouse);
+                float mouseGlow = 0.05 / (dist + 0.05);
+                
+                vec3 finalColor = mix(color1, color2, n * 0.2 + 0.1);
+                finalColor += color2 * mouseGlow * 0.3;
+                
+                float scanline = sin(uv.y * 800.0) * 0.04;
+                finalColor -= scanline;
+
+                gl_FragColor = vec4(finalColor, 1.0);
+            }
+        `;
+
+        const compileShader = (type, source) => {
+            const shader = gl.createShader(type);
+            gl.shaderSource(shader, source);
+            gl.compileShader(shader);
+            return shader;
+        };
+
+        const vertexShader = compileShader(gl.VERTEX_SHADER, vsSource);
+        const fragmentShader = compileShader(gl.FRAGMENT_SHADER, fsSource);
+
+        const program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        gl.useProgram(program);
+
+        const positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        const positions = new Float32Array([-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0]);
+        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+
+        const positionLocation = gl.getAttribLocation(program, "position");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+        const timeLocation = gl.getUniformLocation(program, "u_time");
+        const resolutionLocation = gl.getUniformLocation(program, "u_resolution");
+        const mouseLocation = gl.getUniformLocation(program, "u_mouse");
+
+        const render = (time) => {
+            gl.uniform1f(timeLocation, time * 0.001);
+            gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+            gl.uniform2f(mouseLocation, mouseX, mouseY);
+
+            gl.drawArrays(gl.TRIANGLES, 0, 6);
+            requestAnimationFrame(render);
+        };
+        requestAnimationFrame(render);
+    });
+</script>
+<script>
+function openLightbox(imgSrc, title, subtitle) {
+    const lightbox = document.getElementById('gallery-lightbox');
+    const lbImg = document.getElementById('lightbox-img');
+    const lbTitle = document.getElementById('lightbox-title');
+    const lbSub = document.getElementById('lightbox-subtitle');
+
+    lbImg.src = imgSrc;
+    lbTitle.textContent = title;
+    lbSub.textContent = subtitle;
+
+    lightbox.classList.remove('opacity-0', 'pointer-events-none');
+    lightbox.classList.add('opacity-100', 'pointer-events-auto');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    const lightbox = document.getElementById('gallery-lightbox');
+    lightbox.classList.add('opacity-0', 'pointer-events-none');
+    lightbox.classList.remove('opacity-100', 'pointer-events-auto');
+    document.body.style.overflow = 'auto';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const filterBtns = document.querySelectorAll('.gallery-filter-btn');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterBtns.forEach(b => {
+                b.classList.remove('bg-primary', 'text-on-primary-container');
+                b.classList.add('glass-panel', 'text-on-surface-variant');
+            });
+            btn.classList.add('bg-primary', 'text-on-primary-container');
+            btn.classList.remove('glass-panel', 'text-on-surface-variant');
+
+            const filter = btn.getAttribute('data-filter');
+
+            galleryItems.forEach(item => {
+                if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                    item.style.display = 'block';
+                    setTimeout(() => { item.style.opacity = '1'; item.style.transform = 'scale(1)'; }, 50);
+                } else {
+                    item.style.opacity = '0';
+                    item.style.transform = 'scale(0.95)';
+                    setTimeout(() => { item.style.display = 'none'; }, 300);
+                }
+            });
+        });
+    });
+});
+</script>
+</body></html>
