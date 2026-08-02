@@ -1124,13 +1124,37 @@
     });
 </script>
 <script>
+// Memory Cache for Portfolio Gallery Images to prevent flickering and enable instant transitions
+const galleryCache = {};
+const galleryImageUrls = [
+    'images/krishna.jpg',
+    'images/lagan poster.jpg',
+    'images/movie poster.jpg',
+    'images/poster of father.jpg',
+    'images/ra yatttra.jpg',
+    'images/vr advertising.jpg'
+];
+
+function preloadGalleryImages() {
+    galleryImageUrls.forEach(url => {
+        const img = new Image();
+        img.loading = 'eager';
+        img.src = url;
+        galleryCache[url] = img;
+    });
+}
+
 function openLightbox(imgSrc, title, subtitle) {
     const lightbox = document.getElementById('gallery-lightbox');
     const lbImg = document.getElementById('lightbox-img');
     const lbTitle = document.getElementById('lightbox-title');
     const lbSub = document.getElementById('lightbox-subtitle');
 
-    lbImg.src = imgSrc;
+    if (galleryCache[imgSrc] && galleryCache[imgSrc].complete) {
+        lbImg.src = galleryCache[imgSrc].src;
+    } else {
+        lbImg.src = imgSrc;
+    }
     lbTitle.textContent = title;
     lbSub.textContent = subtitle;
 
@@ -1147,6 +1171,8 @@ function closeLightbox() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    preloadGalleryImages();
+
     const filterBtns = document.querySelectorAll('.gallery-filter-btn');
     const galleryItems = document.querySelectorAll('.gallery-item');
 
@@ -1161,15 +1187,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const filter = btn.getAttribute('data-filter');
 
-            galleryItems.forEach(item => {
-                if (filter === 'all' || item.getAttribute('data-category') === filter) {
-                    item.style.display = 'block';
-                    setTimeout(() => { item.style.opacity = '1'; item.style.transform = 'scale(1)'; }, 50);
-                } else {
-                    item.style.opacity = '0';
-                    item.style.transform = 'scale(0.95)';
-                    setTimeout(() => { item.style.display = 'none'; }, 300);
-                }
+            requestAnimationFrame(() => {
+                galleryItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                        requestAnimationFrame(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'scale(1)';
+                        });
+                    } else {
+                        item.style.opacity = '0';
+                        item.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            if (item.style.opacity === '0') {
+                                item.style.display = 'none';
+                            }
+                        }, 250);
+                    }
+                });
             });
         });
     });
