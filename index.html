@@ -412,9 +412,17 @@
             Let's Connect
         </a>
 <!-- Mobile Menu Toggle -->
-<button class="md:hidden text-on-surface hover:text-primary">
+<button id="mobile-menu-btn" class="md:hidden text-on-surface hover:text-primary focus:outline-none" aria-label="Toggle Navigation Menu">
 <span class="material-symbols-outlined text-3xl">menu</span>
 </button>
+</div>
+<!-- Mobile Navigation Dropdown -->
+<div id="mobile-menu" class="hidden md:hidden flex-col gap-4 pt-4 pb-4 border-t border-white/10 px-margin-edge bg-surface/95 backdrop-blur-xl">
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-widest py-1" href="#about">About</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-widest py-1" href="#skills">Skills</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-widest py-1" href="#portfolio">Portfolio</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm uppercase tracking-widest py-1" href="#contact">Contact</a>
+<a class="btn-primary px-6 py-3 rounded-full font-label-sm text-label-sm uppercase tracking-widest font-semibold text-center mt-2" href="#contact">Let's Connect</a>
 </div>
 </nav>
 
@@ -457,11 +465,11 @@
 <img alt="Hero Creative Design Artwork" class="w-full h-full object-cover rounded-xl block" src="frames/ezgif-frame-208.jpg" onerror="this.onerror=null; this.src='ezgif-frame-208.jpg';"/>
 </div>
 <!-- Floating Badges -->
-<div class="absolute -left-4 -top-4 glass-panel px-4 py-2 rounded-lg flex items-center gap-2 animate-[bounce_4s_infinite] shadow-[0_0_15px_rgba(0,212,255,0.18)] border border-[#00D4FF]/25 z-20">
+<div class="absolute left-0 sm:-left-4 -top-4 glass-panel px-4 py-2 rounded-lg flex items-center gap-2 animate-[bounce_4s_infinite] shadow-[0_0_15px_rgba(0,212,255,0.18)] border border-[#00D4FF]/25 z-20">
 <span class="material-symbols-outlined text-primary text-xl">brush</span>
 <span class="font-label-sm text-label-sm text-on-surface">Visual Design</span>
 </div>
-<div class="absolute -right-4 -bottom-4 glass-panel px-4 py-2 rounded-lg flex items-center gap-2 z-20 motion-graphics-badge border border-[#00D4FF]/30 cursor-pointer">
+<div class="absolute right-0 sm:-right-4 -bottom-4 glass-panel px-4 py-2 rounded-lg flex items-center gap-2 z-20 motion-graphics-badge border border-[#00D4FF]/30 cursor-pointer">
 <div class="motion-badge-shine"></div>
 <span class="material-symbols-outlined text-secondary text-xl motion-badge-icon relative z-10">movie</span>
 <span class="font-label-sm text-label-sm text-on-surface relative z-10">Motion Graphics</span>
@@ -830,11 +838,15 @@
         let isIntroComplete = false;
         let autoplayTween = null;
 
+        let pendingFrameIndex = null;
+        let isTicking = false;
+
         function getFramePath(index) {
             const paddedNum = String(index).padStart(3, '0');
             return `frames/ezgif-frame-${paddedNum}.jpg`;
         }
 
+        // Render frame on Canvas with responsive aspect-cover (desktop) and aspect-contain (mobile) scaling
         function renderFrame(index) {
             const targetIndex = Math.min(Math.max(Math.round(index), 0), TOTAL_FRAMES - 1);
             const img = images[targetIndex];
@@ -848,25 +860,64 @@
 
             let drawWidth, drawHeight, offsetX, offsetY;
 
-            if (canvasRatio > imgRatio) {
+            const isMobile = window.innerWidth <= 768 || canvasRatio < 1.0;
+
+            if (isMobile) {
+                // Mobile-specific aspect-contain scaling: keep entire frame visible without cropping
                 drawWidth = canvasWidth;
                 drawHeight = canvasWidth / imgRatio;
-                offsetX = 0;
+
+                if (drawHeight > canvasHeight) {
+                    drawHeight = canvasHeight;
+                    drawWidth = canvasHeight * imgRatio;
+                }
+
+                offsetX = (canvasWidth - drawWidth) / 2;
                 offsetY = (canvasHeight - drawHeight) / 2;
             } else {
-                drawWidth = canvasHeight * imgRatio;
-                drawHeight = canvasHeight;
-                offsetX = (canvasWidth - drawWidth) / 2;
-                offsetY = 0;
+                // Desktop aspect-cover scaling (unchanged visual behavior for desktop)
+                if (canvasRatio > imgRatio) {
+                    drawWidth = canvasWidth;
+                    drawHeight = canvasWidth / imgRatio;
+                    offsetX = 0;
+                    offsetY = (canvasHeight - drawHeight) / 2;
+                } else {
+                    drawWidth = canvasHeight * imgRatio;
+                    drawHeight = canvasHeight;
+                    offsetX = (canvasWidth - drawWidth) / 2;
+                    offsetY = 0;
+                }
             }
 
-            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            // Solid fill background to avoid alpha blending or ghosting artifacts
+            ctx.fillStyle = '#030b12';
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
             ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
             currentFrame = targetIndex;
         }
 
+        // Throttled frame renderer using requestAnimationFrame
+        function scheduleRender(index) {
+            const targetIndex = Math.min(Math.max(Math.round(index), 0), TOTAL_FRAMES - 1);
+            if (targetIndex === currentFrame && pendingFrameIndex === null) return;
+
+            pendingFrameIndex = targetIndex;
+            if (!isTicking) {
+                isTicking = true;
+                requestAnimationFrame(() => {
+                    if (pendingFrameIndex !== null) {
+                        renderFrame(pendingFrameIndex);
+                        pendingFrameIndex = null;
+                    }
+                    isTicking = false;
+                });
+            }
+        }
+
         function resizeCanvas() {
-            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const isMobile = window.innerWidth <= 768;
+            const dprCap = isMobile ? 1.5 : 2;
+            const dpr = Math.min(window.devicePixelRatio || 1, dprCap);
             introCanvas.width = window.innerWidth * dpr;
             introCanvas.height = window.innerHeight * dpr;
             renderFrame(currentFrame);
@@ -877,11 +928,13 @@
         // Preload all 208 image frames
         for (let i = 1; i <= TOTAL_FRAMES; i++) {
             const img = new Image();
+            img.loading = 'eager';
             img.src = getFramePath(i);
             img.onload = () => handleLoad();
             img.onerror = () => {
                 // Fallback path attempt
                 const altImg = new Image();
+                altImg.loading = 'eager';
                 altImg.src = `ezgif-frame-${String(i).padStart(3, '0')}.jpg`;
                 altImg.onload = () => {
                     images[i - 1] = altImg;
@@ -939,7 +992,7 @@
                     duration: 3.8,
                     ease: 'power1.inOut',
                     onUpdate: () => {
-                        renderFrame(frameObj.frame);
+                        scheduleRender(frameObj.frame);
                     },
                     onComplete: () => {
                         completeIntro();
@@ -953,7 +1006,7 @@
                     if (!startTime) startTime = timestamp;
                     const elapsed = timestamp - startTime;
                     const progress = Math.min(elapsed / duration, 1.0);
-                    renderFrame(progress * (TOTAL_FRAMES - 1));
+                    scheduleRender(progress * (TOTAL_FRAMES - 1));
 
                     if (progress < 1.0 && !isIntroComplete) {
                         requestAnimationFrame(step);
@@ -975,7 +1028,7 @@
                     currentFrame = Math.max(currentFrame - 6, 0);
                 }
 
-                renderFrame(currentFrame);
+                scheduleRender(currentFrame);
 
                 if (currentFrame >= TOTAL_FRAMES - 1) {
                     completeIntro();
@@ -984,6 +1037,24 @@
 
             window.addEventListener('wheel', handleScrollScrub, { passive: true });
             window.addEventListener('touchmove', handleScrollScrub, { passive: true });
+        }
+
+        // Mobile Menu Dropdown Toggle Handler
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                mobileMenu.classList.toggle('flex');
+            });
+
+            // Close mobile menu when clicking nav links
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    mobileMenu.classList.remove('flex');
+                });
+            });
         }
     });
 </script>

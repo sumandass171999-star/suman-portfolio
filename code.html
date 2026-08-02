@@ -829,6 +829,9 @@
             return `frames/ezgif-frame-${paddedNum}.jpg`;
         }
 
+        let pendingFrameIndex = null;
+        let isTicking = false;
+
         function renderFrame(index) {
             const targetIndex = Math.min(Math.max(Math.round(index), 0), TOTAL_FRAMES - 1);
             const img = images[targetIndex];
@@ -842,25 +845,62 @@
 
             let drawWidth, drawHeight, offsetX, offsetY;
 
-            if (canvasRatio > imgRatio) {
+            const isMobile = window.innerWidth <= 768 || canvasRatio < 1.0;
+
+            if (isMobile) {
+                // Mobile-specific aspect-contain scaling: keep entire frame visible without cropping
                 drawWidth = canvasWidth;
                 drawHeight = canvasWidth / imgRatio;
-                offsetX = 0;
+
+                if (drawHeight > canvasHeight) {
+                    drawHeight = canvasHeight;
+                    drawWidth = canvasHeight * imgRatio;
+                }
+
+                offsetX = (canvasWidth - drawWidth) / 2;
                 offsetY = (canvasHeight - drawHeight) / 2;
             } else {
-                drawWidth = canvasHeight * imgRatio;
-                drawHeight = canvasHeight;
-                offsetX = (canvasWidth - drawWidth) / 2;
-                offsetY = 0;
+                // Desktop aspect-cover scaling (unchanged visual behavior for desktop)
+                if (canvasRatio > imgRatio) {
+                    drawWidth = canvasWidth;
+                    drawHeight = canvasWidth / imgRatio;
+                    offsetX = 0;
+                    offsetY = (canvasHeight - drawHeight) / 2;
+                } else {
+                    drawWidth = canvasHeight * imgRatio;
+                    drawHeight = canvasHeight;
+                    offsetX = (canvasWidth - drawWidth) / 2;
+                    offsetY = 0;
+                }
             }
 
-            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            ctx.fillStyle = '#030b12';
+            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
             ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
             currentFrame = targetIndex;
         }
 
+        function scheduleRender(index) {
+            const targetIndex = Math.min(Math.max(Math.round(index), 0), TOTAL_FRAMES - 1);
+            if (targetIndex === currentFrame && pendingFrameIndex === null) return;
+
+            pendingFrameIndex = targetIndex;
+            if (!isTicking) {
+                isTicking = true;
+                requestAnimationFrame(() => {
+                    if (pendingFrameIndex !== null) {
+                        renderFrame(pendingFrameIndex);
+                        pendingFrameIndex = null;
+                    }
+                    isTicking = false;
+                });
+            }
+        }
+
         function resizeCanvas() {
-            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const isMobile = window.innerWidth <= 768;
+            const dprCap = isMobile ? 1.5 : 2;
+            const dpr = Math.min(window.devicePixelRatio || 1, dprCap);
             introCanvas.width = window.innerWidth * dpr;
             introCanvas.height = window.innerHeight * dpr;
             renderFrame(currentFrame);

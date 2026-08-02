@@ -8,17 +8,23 @@
   const images = [];
   let loadedCount = 0;
   let currentFrameIndex = 0;
-  let animationFrameId = null;
+  let pendingFrameIndex = null;
+  let isTicking = false;
 
   let isAutoplayActive = true;
   let autoplayTween = null;
 
-  const canvas = document.getElementById('hero-canvas');
+  const canvas = document.getElementById('hero-canvas') || document.getElementById('intro-frame-canvas');
+  if (!canvas) return;
   const ctx = canvas.getContext('2d', { alpha: false });
+  if (ctx) {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'medium';
+  }
 
-  const loaderOverlay = document.getElementById('loader');
-  const loaderText = document.getElementById('loader-text');
-  const loaderBar = document.getElementById('loader-bar');
+  const loaderOverlay = document.getElementById('loader') || document.getElementById('intro-loader');
+  const loaderText = document.getElementById('loader-text') || document.getElementById('intro-loader-text');
+  const loaderBar = document.getElementById('loader-bar') || document.getElementById('intro-loader-bar');
 
   function getFramePath(index) {
     const paddedNum = String(index).padStart(3, '0');
@@ -29,10 +35,20 @@
   function preloadImages() {
     for (let i = 1; i <= TOTAL_FRAMES; i++) {
       const img = new Image();
+      img.loading = 'eager';
       img.src = getFramePath(i);
 
       img.onload = () => handleImageLoad();
-      img.onerror = () => handleImageLoad(); // Continue even if error occurs
+      img.onerror = () => {
+        const altImg = new Image();
+        altImg.loading = 'eager';
+        altImg.src = `ezgif-frame-${String(i).padStart(3, '0')}.jpg`;
+        altImg.onload = () => {
+          images[i - 1] = altImg;
+          handleImageLoad();
+        };
+        altImg.onerror = () => handleImageLoad();
+      };
 
       images.push(img);
     }
@@ -42,7 +58,7 @@
     loadedCount++;
     const progress = Math.min(Math.floor((loadedCount / TOTAL_FRAMES) * 100), 100);
 
-    if (loaderText) loaderText.textContent = `Loading ${progress}%`;
+    if (loaderText) loaderText.textContent = `LOADING ${progress}%`;
     if (loaderBar) loaderBar.style.width = `${progress}%`;
 
     if (loadedCount >= TOTAL_FRAMES) {
@@ -53,14 +69,18 @@
   function onAllFramesLoaded() {
     // Hide loader overlay
     if (loaderOverlay) {
-      loaderOverlay.classList.add('hidden');
+      loaderOverlay.style.opacity = '0';
+      setTimeout(() => {
+        loaderOverlay.style.display = 'none';
+        loaderOverlay.classList.add('hidden');
+      }, 700);
     }
 
     // Initialize Canvas & ScrollTrigger
     initApp();
   }
 
-  // Render frame on Canvas with responsive aspect-cover scaling
+  // Render frame on Canvas with responsive aspect-cover (desktop) and aspect-contain (mobile) scaling
   function renderFrame(index) {
     const targetIndex = Math.min(Math.max(Math.round(index), 0), TOTAL_FRAMES - 1);
     const img = images[targetIndex];
@@ -75,27 +95,66 @@
 
     let drawWidth, drawHeight, offsetX, offsetY;
 
-    if (canvasRatio > imgRatio) {
+    const isMobile = window.innerWidth <= 768 || canvasRatio < 1.0;
+
+    if (isMobile) {
+      // Mobile-specific aspect-contain scaling: keep entire frame visible without cropping
       drawWidth = canvasWidth;
       drawHeight = canvasWidth / imgRatio;
-      offsetX = 0;
+
+      if (drawHeight > canvasHeight) {
+        drawHeight = canvasHeight;
+        drawWidth = canvasHeight * imgRatio;
+      }
+
+      offsetX = (canvasWidth - drawWidth) / 2;
       offsetY = (canvasHeight - drawHeight) / 2;
     } else {
-      drawWidth = canvasHeight * imgRatio;
-      drawHeight = canvasHeight;
-      offsetX = (canvasWidth - drawWidth) / 2;
-      offsetY = 0;
+      // Desktop aspect-cover scaling (unchanged visual behavior for desktop)
+      if (canvasRatio > imgRatio) {
+        drawWidth = canvasWidth;
+        drawHeight = canvasWidth / imgRatio;
+        offsetX = 0;
+        offsetY = (canvasHeight - drawHeight) / 2;
+      } else {
+        drawWidth = canvasHeight * imgRatio;
+        drawHeight = canvasHeight;
+        offsetX = (canvasWidth - drawWidth) / 2;
+        offsetY = 0;
+      }
     }
 
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    // Solid dark fill background to avoid alpha blending/ghosting artifacts
+    ctx.fillStyle = '#030b12';
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
 
     currentFrameIndex = targetIndex;
   }
 
-  // Handle High-DPI canvas resizing
+  // RequestAnimationFrame throttled frame scheduler
+  function scheduleRender(index) {
+    const targetIndex = Math.min(Math.max(Math.round(index), 0), TOTAL_FRAMES - 1);
+    if (targetIndex === currentFrameIndex && pendingFrameIndex === null) return;
+
+    pendingFrameIndex = targetIndex;
+    if (!isTicking) {
+      isTicking = true;
+      requestAnimationFrame(() => {
+        if (pendingFrameIndex !== null) {
+          renderFrame(pendingFrameIndex);
+          pendingFrameIndex = null;
+        }
+        isTicking = false;
+      });
+    }
+  }
+
+  // Handle High-DPI canvas resizing (optimized DPR for mobile performance)
   function resizeCanvas() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const isMobile = window.innerWidth <= 768;
+    const dprCap = isMobile ? 1.5 : 2;
+    const dpr = Math.min(window.devicePixelRatio || 1, dprCap);
     const width = window.innerWidth;
     const height = window.innerHeight;
 
@@ -129,58 +188,35 @@
       gsap.registerPlugin(ScrollTrigger);
 
       const frameState = { frame: 0 };
+      const scrollTriggerEl = document.querySelector('.scroll-container');
 
-      gsap.to(frameState, {
-        frame: TOTAL_FRAMES - 1,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.scroll-container',
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: true,
-          onUpdate: (self) => {
-            const targetFrameIndex = Math.round(frameState.frame);
-            if (targetFrameIndex !== currentFrameIndex) {
-              if (animationFrameId) cancelAnimationFrame(animationFrameId);
-              animationFrameId = requestAnimationFrame(() => {
-                renderFrame(targetFrameIndex);
-              });
+      if (scrollTriggerEl) {
+        gsap.to(frameState, {
+          frame: TOTAL_FRAMES - 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: '.scroll-container',
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: true,
+            onUpdate: () => {
+              scheduleRender(frameState.frame);
             }
           }
-        }
-      });
-
-      // Refresh ScrollTrigger to ensure correct scroll bounds calculation
-      ScrollTrigger.refresh();
-
-      // Listen for user input events to immediately cancel autoplay on user scroll
-      window.addEventListener('wheel', stopAutoplay, { passive: true });
-      window.addEventListener('touchmove', stopAutoplay, { passive: true });
-      window.addEventListener('pointerdown', stopAutoplay, { passive: true });
-      window.addEventListener('keydown', (e) => {
-        if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ', 'Tab'].includes(e.key)) {
-          stopAutoplay();
-        }
-      }, { passive: true });
-
-      // Start initial single autoplay pass from Frame 1 to last frame
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollObj = { y: 0 };
-
-      autoplayTween = gsap.to(scrollObj, {
-        y: maxScroll,
-        duration: 4.5,
-        ease: 'power1.inOut',
-        onUpdate: () => {
-          if (isAutoplayActive) {
-            window.scrollTo(0, scrollObj.y);
-          }
-        },
-        onComplete: () => {
-          stopAutoplay();
-        }
-      });
+        });
+        ScrollTrigger.refresh();
+      }
     }
+
+    // Passive event listeners for user input
+    window.addEventListener('wheel', stopAutoplay, { passive: true });
+    window.addEventListener('touchmove', stopAutoplay, { passive: true });
+    window.addEventListener('pointerdown', stopAutoplay, { passive: true });
+    window.addEventListener('keydown', (e) => {
+      if (['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End', ' ', 'Tab'].includes(e.key)) {
+        stopAutoplay();
+      }
+    }, { passive: true });
   }
 
   // Prevent scroll jump on reload to start at top (frame 1)
