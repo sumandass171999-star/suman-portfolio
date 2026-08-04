@@ -204,53 +204,8 @@
             }
           }
         });
+        ScrollTrigger.refresh();
       }
-
-      // Hero Section Parallax & Stagger Reveal (100% Brightness, No Fading)
-      const heroSection = document.getElementById('hero-section');
-      if (heroSection) {
-        const heroElements = document.querySelectorAll('.hero-reveal-element');
-        if (heroElements.length > 0) {
-          gsap.fromTo(heroElements,
-            { y: 35, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.9,
-              stagger: 0.15,
-              ease: 'power2.out',
-              clearProps: 'transform,opacity',
-              scrollTrigger: {
-                trigger: '#hero-section',
-                start: 'top 85%',
-                toggleActions: 'play none none none'
-              }
-            }
-          );
-        }
-
-        const textContainer = document.getElementById('hero-text-container');
-        const cardContainer = document.getElementById('hero-card-container');
-        const badge1 = document.querySelector('.hero-parallax-badge-1');
-        const badge2 = document.querySelector('.hero-parallax-badge-2');
-
-        const heroTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: '#hero-section',
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1,
-            invalidateOnRefresh: true
-          }
-        });
-
-        if (textContainer) heroTl.to(textContainer, { y: -40, ease: 'none' }, 0);
-        if (cardContainer) heroTl.to(cardContainer, { y: 30, ease: 'none' }, 0);
-        if (badge1) heroTl.to(badge1, { y: -25, ease: 'none' }, 0);
-        if (badge2) heroTl.to(badge2, { y: 20, ease: 'none' }, 0);
-      }
-
-      ScrollTrigger.refresh();
     }
 
     // Passive event listeners for user input
