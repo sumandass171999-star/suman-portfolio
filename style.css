@@ -110,58 +110,7 @@ html, body {
   display: block;
 }
 
-/* Premium Hero Visual Upgrades & Animations */
-.hero-ambient-glow {
-  animation: ambientPulse 8s ease-in-out infinite alternate;
-  will-change: transform, opacity;
-}
-
-@keyframes ambientPulse {
-  0% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.4; }
-  100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.8; }
-}
-
-.hero-status-badge {
-  background: rgba(16, 20, 21, 0.65);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  box-shadow: 0 0 20px rgba(0, 212, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.15);
-  will-change: transform, opacity;
-}
-
-.hero-btn-main {
-  position: relative;
-  overflow: hidden;
-  will-change: transform, box-shadow;
-}
-
-.hero-btn-main::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -75%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(
-    115deg,
-    transparent 40%,
-    rgba(255, 255, 255, 0.45) 50%,
-    transparent 60%
-  );
-  transform: rotate(25deg);
-  transition: all 0.75s ease;
-  opacity: 0;
-}
-
-.hero-btn-main:hover::after {
-  opacity: 1;
-  left: 100%;
-}
-
-.hero-btn-secondary {
-  will-change: transform, box-shadow, background-color;
-}
-
+/* Scroll Animation Hardware Acceleration Helpers */
 .hero-reveal-element {
   will-change: transform, opacity;
 }
@@ -170,4 +119,5 @@ html, body {
 .hero-parallax-badge-2 {
   will-change: transform;
 }
+
 

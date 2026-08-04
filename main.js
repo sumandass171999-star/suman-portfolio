@@ -206,20 +206,19 @@
         });
       }
 
-      // Hero Section Parallax & Stagger Reveal
+      // Hero Section Parallax & Stagger Reveal (100% Brightness, No Fading)
       const heroSection = document.getElementById('hero-section');
       if (heroSection) {
         const heroElements = document.querySelectorAll('.hero-reveal-element');
         if (heroElements.length > 0) {
           gsap.fromTo(heroElements,
-            { y: 40, opacity: 0, scale: 0.97 },
+            { y: 35, opacity: 0 },
             {
               y: 0,
               opacity: 1,
-              scale: 1,
-              duration: 1.0,
-              stagger: 0.12,
-              ease: 'power3.out',
+              duration: 0.9,
+              stagger: 0.15,
+              ease: 'power2.out',
               clearProps: 'transform,opacity',
               scrollTrigger: {
                 trigger: '#hero-section',
@@ -234,7 +233,6 @@
         const cardContainer = document.getElementById('hero-card-container');
         const badge1 = document.querySelector('.hero-parallax-badge-1');
         const badge2 = document.querySelector('.hero-parallax-badge-2');
-        const ambientGlow = document.querySelector('.hero-ambient-glow');
 
         const heroTl = gsap.timeline({
           scrollTrigger: {
@@ -246,11 +244,10 @@
           }
         });
 
-        if (textContainer) heroTl.to(textContainer, { y: -50, opacity: 0.85, ease: 'none' }, 0);
-        if (cardContainer) heroTl.to(cardContainer, { y: 35, scale: 0.96, opacity: 0.9, ease: 'none' }, 0);
-        if (badge1) heroTl.to(badge1, { y: -40, x: -10, ease: 'none' }, 0);
-        if (badge2) heroTl.to(badge2, { y: 30, x: 10, ease: 'none' }, 0);
-        if (ambientGlow) heroTl.to(ambientGlow, { opacity: 0, scale: 0.6, ease: 'none' }, 0);
+        if (textContainer) heroTl.to(textContainer, { y: -40, ease: 'none' }, 0);
+        if (cardContainer) heroTl.to(cardContainer, { y: 30, ease: 'none' }, 0);
+        if (badge1) heroTl.to(badge1, { y: -25, ease: 'none' }, 0);
+        if (badge2) heroTl.to(badge2, { y: 20, ease: 'none' }, 0);
       }
 
       ScrollTrigger.refresh();
