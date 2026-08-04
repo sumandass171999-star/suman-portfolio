@@ -25,6 +25,8 @@
 <link rel="prefetch" href="images/ra yatttra.jpg"/>
 <link rel="prefetch" href="images/vr advertising.jpg"/>
 
+<link rel="stylesheet" href="style.css"/>
+
 <!-- GSAP & ScrollTrigger -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
@@ -451,54 +453,75 @@
 
 <!-- Hero Section Wrapper -->
 <div id="hero-scroll-wrapper" class="relative w-full">
-<section id="hero-section" class="min-h-screen flex items-center relative overflow-hidden px-margin-edge py-12 md:py-20 z-10 hero-scanline-stripes">
-<div class="max-w-container-max mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-gutter relative z-10 items-center">
-<div id="hero-text-container" class="lg:col-span-5 flex flex-col gap-stack-lg fade-in-up relative" style="transition-delay: 0.1s;">
-<div class="relative z-10">
-<h2 class="font-label-sm text-label-sm text-primary tracking-[0.3em] uppercase mb-4 pl-1 border-l-2 border-primary">Portfolio</h2>
-<h1 class="font-headline-xl text-[60px] md:text-[85px] lg:text-[105px] font-black uppercase tracking-tighter text-on-surface leading-[0.9] mb-4">
+    <!-- Soft Ambient Cyan Glow Background -->
+    <div class="hero-ambient-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] md:w-[750px] md:h-[750px] bg-gradient-to-tr from-[#00D4FF]/20 via-[#00677E]/10 to-transparent rounded-full blur-[120px] pointer-events-none z-0"></div>
+
+    <section id="hero-section" class="min-h-screen flex items-center relative overflow-hidden px-margin-edge py-12 md:py-20 z-10 hero-scanline-stripes">
+        <div class="max-w-container-max mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-gutter relative z-10 items-center">
+            
+            <div id="hero-text-container" class="lg:col-span-5 flex flex-col gap-stack-lg relative z-10">
+                
+                <!-- Glassmorphism Badge: Available for Freelance Projects -->
+                <div class="hero-reveal-element hero-status-badge inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-[#00D4FF]/30 shadow-[0_0_20px_rgba(0,212,255,0.15)] w-fit cursor-default transition-all duration-300 hover:border-[#00D4FF]/60 hover:shadow-[0_0_25px_rgba(0,212,255,0.3)]">
+                    <span class="relative flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00D4FF] opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#00D4FF]"></span>
+                    </span>
+                    <span class="font-label-sm text-[11px] sm:text-xs text-on-surface tracking-wider uppercase font-semibold">Available for Freelance Projects</span>
+                </div>
+
+                <div class="relative z-10">
+                    <h2 class="hero-reveal-element font-label-sm text-label-sm text-primary tracking-[0.3em] uppercase mb-3 pl-1 border-l-2 border-primary">Portfolio</h2>
+                    <h1 class="hero-reveal-element font-headline-xl text-[60px] md:text-[85px] lg:text-[105px] font-black uppercase tracking-tighter text-on-surface leading-[0.9] mb-4 drop-shadow-[0_4px_25px_rgba(0,0,0,0.5)]">
                         SUMAN<br/>DAS
                     </h1>
-<h2 class="font-headline-xl text-[32px] md:text-[42px] text-on-surface leading-tight mt-2">
+                    <h2 class="hero-reveal-element font-headline-xl text-[32px] md:text-[42px] text-on-surface leading-tight mt-2">
                         Crafting <br/>
-<span class="text-gradient-cyan">Digital Realities</span>
-</h2>
-</div>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl fade-in-up leading-relaxed relative z-10" style="transition-delay: 0.3s;">
+                        <span class="text-gradient-cyan drop-shadow-[0_0_15px_rgba(0,212,255,0.3)]">Digital Realities</span>
+                    </h2>
+                </div>
+
+                <p class="hero-reveal-element font-body-lg text-body-lg text-on-surface-variant max-w-xl leading-relaxed relative z-10">
                     I am a Creative Designer specializing in <span class="text-[#00D4FF] font-semibold">Poster Design</span>, <span class="text-[#00D4FF] font-semibold">Thumbnail Creation</span>, <span class="text-[#00D4FF] font-semibold">Motion Graphics</span>, and <span class="text-[#00D4FF] font-semibold">Visual Storytelling</span>. I help brands, creators, filmmakers, and content creators transform ideas into eye-catching visuals that capture attention and drive engagement. From cinematic movie posters and YouTube thumbnails to promotional campaigns and digital artwork, I create impactful designs that elevate brands and leave a lasting impression.
                 </p>
-<div class="flex flex-wrap gap-stack-md mt-4 fade-in-up relative z-10" style="transition-delay: 0.5s;">
-<a class="btn-primary px-8 py-4 rounded-full font-label-sm text-label-sm uppercase tracking-widest font-bold flex items-center gap-2" href="#portfolio">
-                        View Portfolio <span class="material-symbols-outlined text-sm">arrow_forward</span>
-</a>
-<a class="btn-ghost px-8 py-4 rounded-full font-label-sm text-label-sm uppercase tracking-widest font-bold" href="#contact">
+
+                <!-- Modern CTA Buttons -->
+                <div class="hero-reveal-element flex flex-wrap gap-stack-md mt-4 relative z-10">
+                    <a class="btn-primary hero-btn-main px-8 py-4 rounded-full font-label-sm text-label-sm uppercase tracking-widest font-bold flex items-center gap-2 group shadow-[0_0_25px_rgba(0,212,255,0.35)] hover:shadow-[0_0_40px_rgba(0,212,255,0.65)]" href="#portfolio">
+                        View Portfolio <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                    </a>
+                    <a class="btn-ghost hero-btn-secondary px-8 py-4 rounded-full font-label-sm text-label-sm uppercase tracking-widest font-bold hover:shadow-[0_0_20px_rgba(0,212,255,0.4)]" href="#contact">
                         Hire Me
                     </a>
-<a class="text-on-surface hover:text-primary transition-colors px-4 py-4 font-label-sm text-label-sm uppercase tracking-widest font-bold flex items-center gap-2 border-b border-transparent hover:border-primary" href="#">
-<span class="material-symbols-outlined text-sm">download</span> Resume
+                    <a class="text-on-surface hover:text-primary transition-colors px-4 py-4 font-label-sm text-label-sm uppercase tracking-widest font-bold flex items-center gap-2 border-b border-transparent hover:border-primary group" href="#">
+                        <span class="material-symbols-outlined text-sm group-hover:translate-y-0.5 transition-transform">download</span> Resume
                     </a>
-</div>
-</div>
-<div id="hero-card-container" class="lg:col-span-7 relative mt-12 lg:mt-0 fade-in-up" style="transition-delay: 0.4s;">
-<!-- Landscape Widescreen Container -->
-<div class="relative w-full aspect-[16/9] rounded-2xl glass-panel icy-glow p-2 transition-all duration-500 portfolio-hero-card shadow-[0_0_40px_rgba(0,212,255,0.3)] border border-[#00D4FF]/30 z-10">
-<div class="w-full h-full rounded-xl overflow-hidden relative bg-[#101415]">
-<img alt="Hero Creative Design Artwork" class="w-full h-full object-cover rounded-xl block" src="frames/ezgif-frame-208.jpg" onerror="this.onerror=null; this.src='ezgif-frame-208.jpg';"/>
-</div>
-<!-- Floating Badges -->
-<div class="absolute left-0 sm:-left-4 -top-4 glass-panel px-4 py-2 rounded-lg flex items-center gap-2 animate-[bounce_4s_infinite] shadow-[0_0_15px_rgba(0,212,255,0.18)] border border-[#00D4FF]/25 z-20">
-<span class="material-symbols-outlined text-primary text-xl">brush</span>
-<span class="font-label-sm text-label-sm text-on-surface">Visual Design</span>
-</div>
-<div class="absolute right-0 sm:-right-4 -bottom-4 glass-panel px-4 py-2 rounded-lg flex items-center gap-2 z-20 motion-graphics-badge border border-[#00D4FF]/30 cursor-pointer">
-<div class="motion-badge-shine"></div>
-<span class="material-symbols-outlined text-secondary text-xl motion-badge-icon relative z-10">movie</span>
-<span class="font-label-sm text-label-sm text-on-surface relative z-10">Motion Graphics</span>
-</div>
-</div>
-</div>
-</div>
-</section>
+                </div>
+
+            </div>
+
+            <!-- Hero Card Container -->
+            <div id="hero-card-container" class="lg:col-span-7 relative mt-12 lg:mt-0 hero-reveal-element">
+                <!-- Landscape Widescreen Container -->
+                <div class="hero-card-inner relative w-full aspect-[16/9] rounded-2xl glass-panel icy-glow p-2 transition-all duration-500 portfolio-hero-card shadow-[0_0_45px_rgba(0,212,255,0.35)] border border-[#00D4FF]/30 z-10">
+                    <div class="w-full h-full rounded-xl overflow-hidden relative bg-[#101415]">
+                        <img alt="Hero Creative Design Artwork" class="w-full h-full object-cover rounded-xl block" src="frames/ezgif-frame-208.jpg" onerror="this.onerror=null; this.src='ezgif-frame-208.jpg';"/>
+                    </div>
+                    <!-- Floating Badges -->
+                    <div class="hero-parallax-badge-1 absolute left-0 sm:-left-4 -top-4 glass-panel px-4 py-2 rounded-lg flex items-center gap-2 shadow-[0_0_20px_rgba(0,212,255,0.25)] border border-[#00D4FF]/35 z-20">
+                        <span class="material-symbols-outlined text-primary text-xl">brush</span>
+                        <span class="font-label-sm text-label-sm text-on-surface">Visual Design</span>
+                    </div>
+                    <div class="hero-parallax-badge-2 absolute right-0 sm:-right-4 -bottom-4 glass-panel px-4 py-2 rounded-lg flex items-center gap-2 z-20 motion-graphics-badge border border-[#00D4FF]/35 cursor-pointer">
+                        <div class="motion-badge-shine"></div>
+                        <span class="material-symbols-outlined text-secondary text-xl motion-badge-icon relative z-10">movie</span>
+                        <span class="font-label-sm text-label-sm text-on-surface relative z-10">Motion Graphics</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
 </div>
 
 <!-- About / Services Bento -->
@@ -984,6 +1007,77 @@
             }
         }
 
+        function initHeroGSAPAnimations() {
+            if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+            
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Stagger reveal of hero elements
+            const heroElements = document.querySelectorAll('.hero-reveal-element');
+            if (heroElements.length > 0) {
+                gsap.fromTo(heroElements, 
+                    {
+                        y: 40,
+                        opacity: 0,
+                        scale: 0.97
+                    },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        scale: 1,
+                        duration: 1.0,
+                        stagger: 0.12,
+                        ease: 'power3.out',
+                        clearProps: 'transform,opacity',
+                        scrollTrigger: {
+                            trigger: '#hero-section',
+                            start: 'top 85%',
+                            toggleActions: 'play none none none'
+                        }
+                    }
+                );
+            }
+
+            // Scroll-triggered subtle parallax movement
+            const textContainer = document.getElementById('hero-text-container');
+            const cardContainer = document.getElementById('hero-card-container');
+            const badge1 = document.querySelector('.hero-parallax-badge-1');
+            const badge2 = document.querySelector('.hero-parallax-badge-2');
+            const ambientGlow = document.querySelector('.hero-ambient-glow');
+
+            const heroTl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: '#hero-section',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: 1,
+                    invalidateOnRefresh: true
+                }
+            });
+
+            if (textContainer) {
+                heroTl.to(textContainer, { y: -50, opacity: 0.85, ease: 'none' }, 0);
+            }
+
+            if (cardContainer) {
+                heroTl.to(cardContainer, { y: 35, scale: 0.96, opacity: 0.9, ease: 'none' }, 0);
+            }
+
+            if (badge1) {
+                heroTl.to(badge1, { y: -40, x: -10, ease: 'none' }, 0);
+            }
+
+            if (badge2) {
+                heroTl.to(badge2, { y: 30, x: 10, ease: 'none' }, 0);
+            }
+
+            if (ambientGlow) {
+                heroTl.to(ambientGlow, { opacity: 0, scale: 0.6, ease: 'none' }, 0);
+            }
+
+            ScrollTrigger.refresh();
+        }
+
         function completeIntro() {
             if (isIntroComplete) return;
             isIntroComplete = true;
@@ -997,6 +1091,7 @@
 
             setTimeout(() => {
                 introOverlay.style.display = 'none';
+                initHeroGSAPAnimations();
             }, 1000);
         }
 
