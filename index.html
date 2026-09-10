@@ -339,6 +339,22 @@
         }
 
 
+        /* 100% Uniform Full Viewport Horizontal Scanlines */
+        .hero-scanline-stripes::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 212, 255, 0.05) 0px,
+                rgba(0, 212, 255, 0.05) 1px,
+                transparent 1px,
+                transparent 4px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
         /* Fullscreen Intro Overlay Styles */
         #intro-overlay {
             position: fixed;
@@ -415,6 +431,44 @@
 </nav>
 
 <main>
+
+<!-- Hero Section Wrapper -->
+<div id="hero-scroll-wrapper" class="relative w-full">
+<section id="hero-section" class="min-h-screen flex items-center relative overflow-hidden px-margin-edge py-12 md:py-20 z-10 hero-scanline-stripes">
+<div class="max-w-container-max mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-gutter relative z-10 items-center">
+<div id="hero-text-container" class="lg:col-span-5 flex flex-col gap-stack-lg fade-in-up relative" style="transition-delay: 0.1s;">
+<div class="relative z-10">
+<h2 class="font-label-sm text-label-sm text-primary tracking-[0.3em] uppercase mb-4 pl-1 border-l-2 border-primary">CREATIVE UNIVERSE</h2>
+<h1 class="font-headline-xl text-[60px] md:text-[85px] lg:text-[105px] font-black uppercase tracking-tighter text-on-surface leading-[0.9] mb-4">
+                        SUMAN<br/>DAS
+                    </h1>
+<h2 class="font-headline-xl text-[32px] md:text-[42px] text-on-surface leading-tight mt-2">
+                        CREATIVE <br/>
+<span class="text-gradient-cyan">DESIGNER</span>
+</h2>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl fade-in-up leading-relaxed relative z-10" style="transition-delay: 0.3s;">
+                    Specializing in <span class="text-[#00D4FF] font-semibold">Poster Design</span>, <span class="text-[#00D4FF] font-semibold">YouTube Thumbnail Design</span>, <span class="text-[#00D4FF] font-semibold">Motion Graphics</span>, <span class="text-[#00D4FF] font-semibold">Logo Design</span>, and <span class="text-[#00D4FF] font-semibold">Visual Storytelling</span>.
+                </p>
+<div class="flex flex-wrap gap-stack-md mt-4 fade-in-up relative z-10" style="transition-delay: 0.5s;">
+<a class="btn-primary px-8 py-4 rounded-full font-label-sm text-label-sm uppercase tracking-widest font-bold flex items-center gap-2" href="#portfolio">
+                        VIEW PROJECTS <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</a>
+<a class="btn-ghost px-8 py-4 rounded-full font-label-sm text-label-sm uppercase tracking-widest font-bold" href="#contact">
+                        CONTACT ME
+                    </a>
+</div>
+</div>
+<div id="hero-card-container" class="lg:col-span-7 relative mt-12 lg:mt-0 fade-in-up h-[420px] sm:h-[500px] lg:h-[600px] w-full flex items-center justify-center cursor-grab active:cursor-grabbing rounded-3xl overflow-hidden" style="transition-delay: 0.4s;">
+    <!-- Three.js 3D Interactive Creative Globe Canvas -->
+    <canvas id="hero-globe-canvas" class="w-full h-full block absolute inset-0 z-10"></canvas>
+    
+    <!-- Atmospheric Ambient Cyan Radial Glow -->
+    <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.12)_0%,transparent_70%)]"></div>
+</div>
+</div>
+</section>
+</div>
 
 
 
@@ -1218,9 +1272,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- Hero Section - Three.js 3D Interactive Creative Globe Engine -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    const heroSection = document.getElementById("creative-universe");
-    const container = document.getElementById("three-globe-container");
-    const canvas = document.getElementById("three-globe-canvas");
+    const heroSection = document.getElementById("hero-section") || document.getElementById("creative-universe");
+    const container = document.getElementById("hero-card-container") || document.getElementById("three-globe-container");
+    const canvas = document.getElementById("hero-globe-canvas") || document.getElementById("three-globe-canvas");
 
     if (!heroSection || !container || !canvas || typeof THREE === "undefined") return;
 
