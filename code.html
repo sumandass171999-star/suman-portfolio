@@ -675,18 +675,18 @@
 </section>
 
 <!-- Creative Universe - Interactive 3D Designer Showcase -->
-<section id="creative-universe" class="relative w-full overflow-hidden bg-[#030b12] border-y border-[#00D4FF]/20 select-none h-[450px] md:h-[550px] lg:h-[700px] cursor-pointer">
-    <!-- 3D Canvas Background & Ball Study Engine -->
+<section id="creative-universe" class="relative w-full overflow-hidden bg-[#030b12] border-y border-[#00D4FF]/20 select-none h-[450px] md:h-[550px] lg:h-[700px] cursor-grab active:cursor-grabbing">
+    <!-- 3D Canvas Background & Portfolio Globe Engine -->
     <canvas id="universe-canvas" class="absolute inset-0 w-full h-full block z-10"></canvas>
     
     <!-- Atmospheric Background Radial Glow -->
-    <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.07)_0%,transparent_70%)]"></div>
+    <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.08)_0%,transparent_70%)]"></div>
 
     <!-- Center Floating Block -->
     <div class="relative z-20 w-full h-full flex items-center justify-center px-4 pointer-events-none">
-        <div class="glass-panel icy-glow p-6 sm:p-8 rounded-3xl max-w-md w-full text-center border border-[#00D4FF]/30 backdrop-blur-xl shadow-[0_0_50px_rgba(0,212,255,0.2)] pointer-events-auto transition-transform duration-500 hover:scale-[1.02]">
+        <div class="glass-panel icy-glow p-6 sm:p-8 rounded-3xl max-w-md w-full text-center border border-[#00D4FF]/30 backdrop-blur-xl shadow-[0_0_50px_rgba(0,212,255,0.25)] pointer-events-auto transition-transform duration-500 hover:scale-[1.02]">
             <span class="inline-block px-3 py-1 rounded-full bg-[#00D4FF]/10 text-[#00D4FF] font-label-sm text-[10px] sm:text-xs uppercase tracking-[0.25em] font-bold mb-3 border border-[#00D4FF]/25">
-                Creative Universe
+                CREATIVE UNIVERSE
             </span>
             <h2 class="font-headline-xl text-3xl sm:text-4xl font-black text-on-surface uppercase tracking-tight mb-1 drop-shadow-[0_0_15px_rgba(0,212,255,0.4)]">
                 SUMAN DAS
@@ -1263,7 +1263,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- Creative Universe - Ball Study 3D Sphere Interactive Engine -->
+    });
+});
+</script>
+
+<!-- Creative Universe - Premium 3D Portfolio Globe Engine -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const universeSection = document.getElementById("creative-universe");
@@ -1273,84 +1277,123 @@ document.addEventListener("DOMContentLoaded", () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Strict phrase list requested by user
-    const PHRASES = [
-        "SUMAN DAS",
-        "CREATIVE DESIGNER",
+    // Portfolio Projects for 3D Globe Tiles
+    const PROJECTS = [
+        {
+            src: 'images/krishna.jpg',
+            title: 'Lord Krishna Divine Artwork',
+            subtitle: 'Visual Storytelling • Digital Painting',
+            category: 'Visual Storytelling'
+        },
+        {
+            src: 'images/lagan poster.jpg',
+            title: 'Lagaan Movie Poster Key Art',
+            subtitle: 'Movie Poster • Key Art Design',
+            category: 'Poster Design'
+        },
+        {
+            src: 'images/movie poster.jpg',
+            title: 'Action Blockbuster Poster',
+            subtitle: 'Movie Poster • Film Key Art',
+            category: 'Poster Design'
+        },
+        {
+            src: 'images/poster of father.jpg',
+            title: 'Father Tribute Artwork',
+            subtitle: 'Visual Storytelling • Portrait Composition',
+            category: 'Visual Storytelling'
+        },
+        {
+            src: 'images/ra yatttra.jpg',
+            title: 'Ratha Yatra Cultural Key Art',
+            subtitle: 'Cultural Design • Event Poster',
+            category: 'Poster Design'
+        },
+        {
+            src: 'images/vr advertising.jpg',
+            title: 'Virtual Reality Experience Ad',
+            subtitle: '3D & VR Design • Brand Campaign',
+            category: 'Logo & Campaign'
+        },
+        {
+            src: 'images/ocean miracle.jpg',
+            title: 'Ocean Plastic Cleanup Thumbnail',
+            subtitle: 'YouTube Thumbnail Design',
+            category: 'Thumbnail Design'
+        }
+    ];
+
+    // Orbiting Categories
+    const ORBIT_CATEGORIES = [
         "POSTER DESIGN",
         "THUMBNAIL DESIGN",
         "MOTION GRAPHICS",
         "LOGO DESIGN",
         "VISUAL STORYTELLING",
-        "PHOTOSHOP",
-        "AFTER EFFECTS",
-        "ILLUSTRATOR",
-        "YOUTUBE THUMBNAILS",
-        "MOVIE POSTERS",
-        "BRANDING",
-        "DIGITAL ART",
-        "CREATIVE THINKING",
-        "DESIGN",
-        "CINEMATIC",
-        "VISUALS",
-        "SOCIAL MEDIA",
-        "CONTENT CREATION"
+        "BRANDING"
     ];
 
-    const TOTAL_NODES = 60; // Total 3D text nodes on sphere
-    const BACKGROUND_PARTICLES_COUNT = 45; // Ambient subtle particles
+    // Preload Project Images
+    const loadedImages = {};
+    PROJECTS.forEach(proj => {
+        const img = new Image();
+        img.src = proj.src;
+        loadedImages[proj.src] = img;
+    });
+
+    const TOTAL_TILES = 26; // Total 3D image tiles mapped on sphere
+    const PARTICLES_COUNT = 40; // Ambient particles
 
     let width = 0;
     let height = 0;
-    let radius = 200;
+    let radius = 220;
     let isIntersecting = false;
     let animationFrameId = null;
 
-    // Rotation & Physics State
-    let rotX = 0;
+    // Globe Physics & Rotation State
+    let rotX = 0.2;
     let rotY = 0;
-    let targetSpeedX = 0.002;
-    let targetSpeedY = 0.004;
-    let currentSpeedX = 0.002;
-    let currentSpeedY = 0.004;
+    let velX = 0.001;
+    let velY = 0.003;
 
-    let isMouseOver = false;
-    let mouseX = 0;
-    let mouseY = 0;
+    // Trackball Drag State
+    let isDragging = false;
+    let dragMoved = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let lastMouseX = 0;
+    let lastMouseY = 0;
+    let isHovered = false;
 
-    // Word Sphere Nodes & Ambient Particles
-    const nodes = [];
+    // Orbit Ring Angles
+    let orbitAngle = 0;
+
+    // 3D Nodes & Particles Container
+    const tiles = [];
     const particles = [];
+    let lastRenderedRenderList = [];
 
-    // Initialize Fibonacci 3D Sphere distribution
-    function initNodes() {
-        nodes.length = 0;
+    // Initialize Fibonacci 3D Sphere for Image Tiles
+    function initTiles() {
+        tiles.length = 0;
         const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
-        for (let i = 0; i < TOTAL_NODES; i++) {
-            const y = 1 - (i / (TOTAL_NODES - 1)) * 2; // -1 to 1
+        for (let i = 0; i < TOTAL_TILES; i++) {
+            const y = 1 - (i / (TOTAL_TILES - 1)) * 2; // -1 to 1
             const radiusAtY = Math.sqrt(1 - y * y);
             const theta = goldenAngle * i;
 
             const x = Math.cos(theta) * radiusAtY;
             const z = Math.sin(theta) * radiusAtY;
 
-            const phrase = PHRASES[i % PHRASES.length];
+            const project = PROJECTS[i % PROJECTS.length];
 
-            nodes.push({
+            tiles.push({
                 baseX: x,
                 baseY: y,
                 baseZ: z,
-                // Current exploded offset
-                offX: 0,
-                offY: 0,
-                offZ: 0,
-                // Explosion velocity
-                vx: 0,
-                vy: 0,
-                vz: 0,
-                phrase: phrase,
-                isPrimary: phrase === "SUMAN DAS" || phrase === "CREATIVE DESIGNER"
+                project: project,
+                aspect: (i % 2 === 0) ? 0.75 : 1.25 // Alternating 3:4 portrait & widescreen formats
             });
         }
     }
@@ -1358,16 +1401,14 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize Ambient Floating Background Particles
     function initParticles() {
         particles.length = 0;
-        for (let i = 0; i < BACKGROUND_PARTICLES_COUNT; i++) {
+        for (let i = 0; i < PARTICLES_COUNT; i++) {
             particles.push({
-                x: (Math.random() - 0.5) * 1.8,
-                y: (Math.random() - 0.5) * 1.8,
-                z: (Math.random() - 0.5) * 1.8,
-                offX: 0, offY: 0, offZ: 0,
-                vx: 0, vy: 0, vz: 0,
+                x: (Math.random() - 0.5) * 2.2,
+                y: (Math.random() - 0.5) * 2.2,
+                z: (Math.random() - 0.5) * 2.2,
                 size: Math.random() * 2 + 1,
-                alpha: Math.random() * 0.4 + 0.15,
-                floatSpeed: Math.random() * 0.002 + 0.001
+                alpha: Math.random() * 0.35 + 0.15,
+                floatSpeed: Math.random() * 0.0015 + 0.0008
             });
         }
     }
@@ -1382,78 +1423,135 @@ document.addEventListener("DOMContentLoaded", () => {
         canvas.height = height * dpr;
         ctx.scale(dpr, dpr);
 
-        // Dynamically adjust sphere radius based on section height and width
-        radius = Math.min(width, height) * (width < 640 ? 0.38 : 0.35);
+        // Dynamically scale sphere radius based on section dimensions
+        radius = Math.min(width, height) * (width < 640 ? 0.38 : 0.36);
     }
 
-    window.addEventListener("resize", () => {
-        resizeCanvas();
-    });
+    window.addEventListener("resize", resizeCanvas);
 
-    // Interaction Events
-    universeSection.addEventListener("mouseenter", () => {
-        isMouseOver = true;
-    });
-
-    universeSection.addEventListener("mouseleave", () => {
-        isMouseOver = false;
-        targetSpeedX = 0.002;
-        targetSpeedY = 0.004;
-    });
-
-    universeSection.addEventListener("mousemove", (e) => {
-        const rect = universeSection.getBoundingClientRect();
-        const relX = (e.clientX - rect.left - width / 2) / (width / 2);
-        const relY = (e.clientY - rect.top - height / 2) / (height / 2);
-
-        mouseX = relX;
-        mouseY = relY;
-
-        // Increase rotation speed on hover based on cursor offset
-        targetSpeedY = relX * 0.018;
-        targetSpeedX = -relY * 0.018;
-    });
-
-    // Click Burst / Particle Explosion Effect
-    function triggerBurst() {
-        nodes.forEach(node => {
-            const burstForce = Math.random() * 25 + 15;
-            const rx = node.baseX + (Math.random() - 0.5) * 0.5;
-            const ry = node.baseY + (Math.random() - 0.5) * 0.5;
-            const rz = node.baseZ + (Math.random() - 0.5) * 0.5;
-
-            const len = Math.hypot(rx, ry, rz) || 1;
-            node.vx = (rx / len) * burstForce;
-            node.vy = (ry / len) * burstForce;
-            node.vz = (rz / len) * burstForce;
-        });
-
-        particles.forEach(p => {
-            const burstForce = Math.random() * 30 + 10;
-            p.vx = (Math.random() - 0.5) * burstForce;
-            p.vy = (Math.random() - 0.5) * burstForce;
-            p.vz = (Math.random() - 0.5) * burstForce;
-        });
+    // Mouse & Touch Drag Event Handlers
+    function onPointerDown(clientX, clientY) {
+        isDragging = true;
+        dragMoved = false;
+        dragStartX = clientX;
+        dragStartY = clientY;
+        lastMouseX = clientX;
+        lastMouseY = clientY;
     }
 
-    universeSection.addEventListener("click", (e) => {
-        // Prevent trigger if click is on buttons inside center block
+    function onPointerMove(clientX, clientY) {
+        if (!isDragging) return;
+
+        const dx = clientX - lastMouseX;
+        const dy = clientY - lastMouseY;
+
+        if (Math.hypot(clientX - dragStartX, clientY - dragStartY) > 6) {
+            dragMoved = true;
+        }
+
+        velY = dx * 0.006;
+        velX = -dy * 0.006;
+
+        rotY += velY;
+        rotX += velX;
+
+        lastMouseX = clientX;
+        lastMouseY = clientY;
+    }
+
+    function onPointerUp() {
+        isDragging = false;
+    }
+
+    // Event Listeners
+    universeSection.addEventListener("mouseenter", () => { isHovered = true; });
+    universeSection.addEventListener("mouseleave", () => { isHovered = false; isDragging = false; });
+
+    universeSection.addEventListener("mousedown", (e) => {
         if (e.target.closest("a, button")) return;
-        triggerBurst();
+        onPointerDown(e.clientX, e.clientY);
     });
 
-    // Main 3D Render Loop
+    window.addEventListener("mousemove", (e) => {
+        if (isDragging) {
+            onPointerMove(e.clientX, e.clientY);
+        }
+    });
+
+    window.addEventListener("mouseup", () => {
+        if (isDragging) onPointerUp();
+    });
+
+    universeSection.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 1 && !e.target.closest("a, button")) {
+            onPointerDown(e.touches[0].clientX, e.touches[0].clientY);
+        }
+    }, { passive: true });
+
+    universeSection.addEventListener("touchmove", (e) => {
+        if (isDragging && e.touches.length === 1) {
+            onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
+        }
+    }, { passive: true });
+
+    universeSection.addEventListener("touchend", onPointerUp);
+
+    // Tile Click Lightbox Trigger
+    universeSection.addEventListener("click", (e) => {
+        if (dragMoved || e.target.closest("a, button")) return;
+
+        const rect = universeSection.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
+
+        // Check frontmost rendered tile collision (reversed order = front to back)
+        for (let i = lastRenderedRenderList.length - 1; i >= 0; i--) {
+            const item = lastRenderedRenderList[i];
+            if (item.z > -radius * 0.2) { // Only allow front-facing tiles to be clicked
+                const halfW = item.w / 2;
+                const halfH = item.h / 2;
+
+                if (clickX >= item.x - halfW && clickX <= item.x + halfW &&
+                    clickY >= item.y - halfH && clickY <= item.y + halfH) {
+                    if (typeof openLightbox === 'function') {
+                        openLightbox(item.project.src, item.project.title, item.project.subtitle);
+                    }
+                    break;
+                }
+            }
+        }
+    });
+
+    // Helper: Draw Rounded Rect Path
+    function drawRoundedRect(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        ctx.moveTo(x + r, y);
+        ctx.arcTo(x + w, y, x + w, y + h, r);
+        ctx.arcTo(x + w, y + h, x, y + h, r);
+        ctx.arcTo(x, y + h, x, y, r);
+        ctx.arcTo(x, y, x + w, y, r);
+        ctx.closePath();
+    }
+
+    // Main 3D Globe Render Loop
     function render() {
         if (!isIntersecting) return;
 
         ctx.clearRect(0, 0, width, height);
 
-        // Smooth speed lerp
-        currentSpeedX += (targetSpeedX - currentSpeedX) * 0.08;
-        currentSpeedY += (targetSpeedY - currentSpeedY) * 0.08;
+        // Inertia Damping & Default Ambient Velocity Lerp
+        if (!isDragging) {
+            rotY += velY;
+            rotX += velX;
 
-        rotX += currentSpeedX;
-        rotY += currentSpeedY;
+            const targetVectY = isHovered ? 0.005 : 0.0025;
+            const targetVectX = isHovered ? 0.002 : 0.001;
+
+            velY += (targetVectY - velY) * 0.03;
+            velX += (targetVectX - velX) * 0.03;
+        }
+
+        orbitAngle += 0.003;
 
         const cosX = Math.cos(rotX);
         const sinX = Math.sin(rotX);
@@ -1462,33 +1560,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const centerX = width / 2;
         const centerY = height / 2;
-        const focalLength = 400;
+        const focalLength = 450;
 
         // Render Ambient Background Particles
         particles.forEach(p => {
-            // Physics update for burst offsets
-            p.offX += p.vx;
-            p.offY += p.vy;
-            p.offZ += p.vz;
-
-            p.vx *= 0.92;
-            p.vy *= 0.92;
-            p.vz *= 0.92;
-
-            // Spring back to base floating coordinates
-            p.offX += -p.offX * 0.04;
-            p.offY += -p.offY * 0.04;
-            p.offZ += -p.offZ * 0.04;
-
-            // Base floating Y movement
             p.y -= p.floatSpeed;
-            if (p.y < -0.9) p.y = 0.9;
+            if (p.y < -1.1) p.y = 1.1;
 
-            const px = p.x * radius * 1.5 + p.offX;
-            const py = p.y * radius * 1.5 + p.offY;
-            const pz = p.z * radius * 1.5 + p.offZ;
+            const px = p.x * radius * 1.6;
+            const py = p.y * radius * 1.6;
+            const pz = p.z * radius * 1.6;
 
-            // Rotate coordinates
             const x1 = px * cosY - pz * sinY;
             const z1 = px * sinY + pz * cosY;
             const y1 = py * cosX - z1 * sinX;
@@ -1510,27 +1592,94 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // 3D Nodes Projection & Depth Sorting
+        // Render Orbit Rings & Orbiting Category Labels
+        const orbitRings = [
+            { tiltX: 0.4, ringAlpha: 0.25, radiusMult: 1.32 },
+            { tiltX: -0.5, ringAlpha: 0.18, radiusMult: 1.48 }
+        ];
+
+        orbitRings.forEach((ring, ringIdx) => {
+            const ringRadius = radius * ring.radiusMult;
+            const ringPoints = 60;
+
+            // Draw Orbit Ring Line
+            ctx.save();
+            ctx.beginPath();
+            for (let i = 0; i <= ringPoints; i++) {
+                const theta = (i / ringPoints) * Math.PI * 2;
+                const rx = Math.cos(theta) * ringRadius;
+                const ry = Math.sin(theta) * ringRadius * Math.sin(ring.tiltX);
+                const rz = Math.sin(theta) * ringRadius * Math.cos(ring.tiltX);
+
+                const x1 = rx * cosY - rz * sinY;
+                const z1 = rx * sinY + rz * cosY;
+                const y1 = ry * cosX - z1 * sinX;
+                const z2 = ry * sinX + z1 * cosX;
+
+                const scale = focalLength / (focalLength + z2 + 250);
+                const sx = centerX + x1 * scale;
+                const sy = centerY + y1 * scale;
+
+                if (i === 0) ctx.moveTo(sx, sy);
+                else ctx.lineTo(sx, sy);
+            }
+            ctx.strokeStyle = `rgba(0, 212, 255, ${ring.ringAlpha})`;
+            ctx.lineWidth = 1.2;
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = "rgba(0, 212, 255, 0.5)";
+            ctx.stroke();
+            ctx.restore();
+
+            // Draw Orbiting Category Text Labels
+            ORBIT_CATEGORIES.forEach((cat, catIdx) => {
+                if (catIdx % 2 === ringIdx) {
+                    const angleOffset = (catIdx / ORBIT_CATEGORIES.length) * Math.PI * 2;
+                    const theta = orbitAngle * (ringIdx === 0 ? 1 : -0.8) + angleOffset;
+
+                    const rx = Math.cos(theta) * ringRadius;
+                    const ry = Math.sin(theta) * ringRadius * Math.sin(ring.tiltX);
+                    const rz = Math.sin(theta) * ringRadius * Math.cos(ring.tiltX);
+
+                    const x1 = rx * cosY - rz * sinY;
+                    const z1 = rx * sinY + rz * cosY;
+                    const y1 = ry * cosX - z1 * sinX;
+                    const z2 = ry * sinX + z1 * cosX;
+
+                    const scale = focalLength / (focalLength + z2 + 250);
+                    const sx = centerX + x1 * scale;
+                    const sy = centerY + y1 * scale;
+
+                    const depthFactor = (z2 + ringRadius) / (2 * ringRadius);
+                    const alpha = Math.max(0.2, Math.min(0.95, 1 - depthFactor * 0.75));
+                    const fontSize = Math.max(9, Math.min(13, (width < 640 ? 9 : 11) * scale));
+
+                    ctx.save();
+                    ctx.font = `700 ${fontSize}px 'Sora', sans-serif`;
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+
+                    if (z2 < 0) {
+                        ctx.fillStyle = `rgba(224, 247, 255, ${alpha})`;
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = "rgba(0, 212, 255, 0.9)";
+                    } else {
+                        ctx.fillStyle = `rgba(0, 212, 255, ${alpha * 0.5})`;
+                        ctx.shadowBlur = 0;
+                    }
+
+                    ctx.fillText(cat, sx, sy);
+                    ctx.restore();
+                }
+            });
+        });
+
+        // 3D Image Tiles Projection & Depth Sorting
         const renderList = [];
 
-        nodes.forEach(node => {
-            // Physics update for burst offsets
-            node.offX += node.vx;
-            node.offY += node.vy;
-            node.offZ += node.vz;
-
-            node.vx *= 0.91;
-            node.vy *= 0.91;
-            node.vz *= 0.91;
-
-            // Smooth spring return to original sphere position
-            node.offX += -node.offX * 0.05;
-            node.offY += -node.offY * 0.05;
-            node.offZ += -node.offZ * 0.05;
-
-            const bx = node.baseX * radius + node.offX;
-            const by = node.baseY * radius + node.offY;
-            const bz = node.baseZ * radius + node.offZ;
+        tiles.forEach(tile => {
+            const bx = tile.baseX * radius;
+            const by = tile.baseY * radius;
+            const bz = tile.baseZ * radius;
 
             // Rotate coordinates (Y-axis then X-axis)
             const x1 = bx * cosY - bz * sinY;
@@ -1542,50 +1691,83 @@ document.addEventListener("DOMContentLoaded", () => {
             const sx = centerX + x1 * scale;
             const sy = centerY + y1 * scale;
 
+            // Tile dimensions scaled by depth
+            const baseW = width < 640 ? 50 : 68;
+            const w = baseW * scale * tile.aspect;
+            const h = baseW * scale;
+
             renderList.push({
                 x: sx,
                 y: sy,
                 z: z1Rotated,
+                w: w,
+                h: h,
                 scale: scale,
-                phrase: node.phrase,
-                isPrimary: node.isPrimary
+                project: tile.project
             });
         });
 
         // Sort back to front (furthest Z rendered first)
         renderList.sort((a, b) => b.z - a.z);
+        lastRenderedRenderList = renderList;
 
-        // Render 3D Text Items
+        // Render 3D Image Tiles
         renderList.forEach(item => {
-            // Alpha and scale mapping based on Z depth
             const depthFactor = (item.z + radius) / (2 * radius); // 0 (front) to 1 (back)
-            const alpha = Math.max(0.15, Math.min(0.95, 1 - depthFactor * 0.75));
-            const baseFontSize = Math.max(10, Math.min(18, (width < 640 ? 11 : 14) * item.scale));
+            const alpha = Math.max(0.15, Math.min(1.0, 1.15 - depthFactor * 0.9));
+            const img = loadedImages[item.project.src];
 
             ctx.save();
-            ctx.textAlign = "center";
-            ctx.textBaseline = "middle";
 
-            if (depthFactor < 0.4) {
-                // Front items: Bright cyan glow and white/cyan highlight
-                ctx.font = `700 ${baseFontSize}px 'Sora', sans-serif`;
-                ctx.fillStyle = `rgba(224, 247, 255, ${alpha})`;
-                ctx.shadowBlur = 12 * (1 - depthFactor);
-                ctx.shadowColor = "rgba(0, 212, 255, 0.9)";
-            } else if (depthFactor < 0.7) {
-                // Mid-depth items
-                ctx.font = `600 ${baseFontSize}px 'Inter', sans-serif`;
-                ctx.fillStyle = `rgba(0, 212, 255, ${alpha * 0.85})`;
-                ctx.shadowBlur = 6;
-                ctx.shadowColor = "rgba(0, 212, 255, 0.4)";
+            const left = item.x - item.w / 2;
+            const top = item.y - item.h / 2;
+            const cornerRadius = Math.max(4, 8 * item.scale);
+
+            if (depthFactor < 0.55) {
+                // Front Tiles: Premium Cyan Border, Glow & Full Color Image
+                ctx.shadowBlur = 20 * (1 - depthFactor);
+                ctx.shadowColor = "rgba(0, 212, 255, 0.6)";
+
+                drawRoundedRect(ctx, left, top, item.w, item.h, cornerRadius);
+                ctx.fillStyle = `rgba(16, 20, 21, ${alpha})`;
+                ctx.fill();
+
+                if (img && img.complete && img.naturalWidth > 0) {
+                    ctx.save();
+                    drawRoundedRect(ctx, left, top, item.w, item.h, cornerRadius);
+                    ctx.clip();
+                    ctx.globalAlpha = alpha;
+                    ctx.drawImage(img, left, top, item.w, item.h);
+                    ctx.restore();
+                }
+
+                // Cyan Border
+                ctx.strokeStyle = `rgba(0, 212, 255, ${Math.min(0.9, (1 - depthFactor) * 1.4)})`;
+                ctx.lineWidth = Math.max(1, 1.8 * item.scale);
+                drawRoundedRect(ctx, left, top, item.w, item.h, cornerRadius);
+                ctx.stroke();
+
             } else {
-                // Rear items: Subtle muted tone
-                ctx.font = `500 ${baseFontSize}px 'Inter', sans-serif`;
-                ctx.fillStyle = `rgba(133, 147, 152, ${alpha * 0.6})`;
-                ctx.shadowBlur = 0;
+                // Rear Tiles: Muted Dark Overlay
+                drawRoundedRect(ctx, left, top, item.w, item.h, cornerRadius);
+                ctx.fillStyle = `rgba(10, 14, 16, ${alpha * 0.8})`;
+                ctx.fill();
+
+                if (img && img.complete && img.naturalWidth > 0) {
+                    ctx.save();
+                    drawRoundedRect(ctx, left, top, item.w, item.h, cornerRadius);
+                    ctx.clip();
+                    ctx.globalAlpha = alpha * 0.35;
+                    ctx.drawImage(img, left, top, item.w, item.h);
+                    ctx.restore();
+                }
+
+                ctx.strokeStyle = `rgba(0, 212, 255, ${alpha * 0.25})`;
+                ctx.lineWidth = 1;
+                drawRoundedRect(ctx, left, top, item.w, item.h, cornerRadius);
+                ctx.stroke();
             }
 
-            ctx.fillText(item.phrase, item.x, item.y);
             ctx.restore();
         });
 
@@ -1604,7 +1786,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!isIntersecting) {
                     isIntersecting = true;
                     resizeCanvas();
-                    initNodes();
+                    initTiles();
                     initParticles();
                     animationFrameId = requestAnimationFrame(render);
                 }
