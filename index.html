@@ -706,6 +706,41 @@
 </div>
 </section>
 
+<!-- Creative Universe - Interactive 3D Designer Showcase -->
+<section id="creative-universe" class="relative w-full overflow-hidden bg-[#030b12] border-y border-[#00D4FF]/20 select-none h-[450px] md:h-[550px] lg:h-[700px] cursor-pointer">
+    <!-- 3D Canvas Background & Ball Study Engine -->
+    <canvas id="universe-canvas" class="absolute inset-0 w-full h-full block z-10"></canvas>
+    
+    <!-- Atmospheric Background Radial Glow -->
+    <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.07)_0%,transparent_70%)]"></div>
+
+    <!-- Center Floating Block -->
+    <div class="relative z-20 w-full h-full flex items-center justify-center px-4 pointer-events-none">
+        <div class="glass-panel icy-glow p-6 sm:p-8 rounded-3xl max-w-md w-full text-center border border-[#00D4FF]/30 backdrop-blur-xl shadow-[0_0_50px_rgba(0,212,255,0.2)] pointer-events-auto transition-transform duration-500 hover:scale-[1.02]">
+            <span class="inline-block px-3 py-1 rounded-full bg-[#00D4FF]/10 text-[#00D4FF] font-label-sm text-[10px] sm:text-xs uppercase tracking-[0.25em] font-bold mb-3 border border-[#00D4FF]/25">
+                Creative Universe
+            </span>
+            <h2 class="font-headline-xl text-3xl sm:text-4xl font-black text-on-surface uppercase tracking-tight mb-1 drop-shadow-[0_0_15px_rgba(0,212,255,0.4)]">
+                SUMAN DAS
+            </h2>
+            <h3 class="font-label-sm text-xs sm:text-sm text-[#00D4FF] uppercase tracking-[0.25em] font-bold mb-3">
+                Creative Designer
+            </h3>
+            <p class="font-body-md text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-6 max-w-xs mx-auto">
+                Specializing in Poster Design, YouTube Thumbnail Design, Motion Graphics, Logo Design, and Visual Storytelling.
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <a href="#portfolio" class="btn-primary px-6 py-2.5 rounded-full font-label-sm text-xs uppercase tracking-widest font-bold inline-flex items-center gap-1.5">
+                    View Projects <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                </a>
+                <a href="#contact" class="btn-ghost px-6 py-2.5 rounded-full font-label-sm text-xs uppercase tracking-widest font-bold">
+                    Contact Me
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
 <!-- Lightbox Modal for HD Image Viewing -->
 <div id="gallery-lightbox" class="fixed inset-0 z-[999999] bg-[#030b12]/95 backdrop-blur-2xl flex items-center justify-center p-4 md:p-8 opacity-0 pointer-events-none transition-opacity duration-400">
 <div class="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center">
@@ -1281,6 +1316,365 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     });
+});
+</script>
+
+<!-- Creative Universe - Ball Study 3D Sphere Interactive Engine -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const universeSection = document.getElementById("creative-universe");
+    const canvas = document.getElementById("universe-canvas");
+    if (!canvas || !universeSection) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Strict phrase list requested by user
+    const PHRASES = [
+        "SUMAN DAS",
+        "CREATIVE DESIGNER",
+        "POSTER DESIGN",
+        "THUMBNAIL DESIGN",
+        "MOTION GRAPHICS",
+        "LOGO DESIGN",
+        "VISUAL STORYTELLING",
+        "PHOTOSHOP",
+        "AFTER EFFECTS",
+        "ILLUSTRATOR",
+        "YOUTUBE THUMBNAILS",
+        "MOVIE POSTERS",
+        "BRANDING",
+        "DIGITAL ART",
+        "CREATIVE THINKING",
+        "DESIGN",
+        "CINEMATIC",
+        "VISUALS",
+        "SOCIAL MEDIA",
+        "CONTENT CREATION"
+    ];
+
+    const TOTAL_NODES = 60; // Total 3D text nodes on sphere
+    const BACKGROUND_PARTICLES_COUNT = 45; // Ambient subtle particles
+
+    let width = 0;
+    let height = 0;
+    let radius = 200;
+    let isIntersecting = false;
+    let animationFrameId = null;
+
+    // Rotation & Physics State
+    let rotX = 0;
+    let rotY = 0;
+    let targetSpeedX = 0.002;
+    let targetSpeedY = 0.004;
+    let currentSpeedX = 0.002;
+    let currentSpeedY = 0.004;
+
+    let isMouseOver = false;
+    let mouseX = 0;
+    let mouseY = 0;
+
+    // Word Sphere Nodes & Ambient Particles
+    const nodes = [];
+    const particles = [];
+
+    // Initialize Fibonacci 3D Sphere distribution
+    function initNodes() {
+        nodes.length = 0;
+        const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+
+        for (let i = 0; i < TOTAL_NODES; i++) {
+            const y = 1 - (i / (TOTAL_NODES - 1)) * 2; // -1 to 1
+            const radiusAtY = Math.sqrt(1 - y * y);
+            const theta = goldenAngle * i;
+
+            const x = Math.cos(theta) * radiusAtY;
+            const z = Math.sin(theta) * radiusAtY;
+
+            const phrase = PHRASES[i % PHRASES.length];
+
+            nodes.push({
+                baseX: x,
+                baseY: y,
+                baseZ: z,
+                // Current exploded offset
+                offX: 0,
+                offY: 0,
+                offZ: 0,
+                // Explosion velocity
+                vx: 0,
+                vy: 0,
+                vz: 0,
+                phrase: phrase,
+                isPrimary: phrase === "SUMAN DAS" || phrase === "CREATIVE DESIGNER"
+            });
+        }
+    }
+
+    // Initialize Ambient Floating Background Particles
+    function initParticles() {
+        particles.length = 0;
+        for (let i = 0; i < BACKGROUND_PARTICLES_COUNT; i++) {
+            particles.push({
+                x: (Math.random() - 0.5) * 1.8,
+                y: (Math.random() - 0.5) * 1.8,
+                z: (Math.random() - 0.5) * 1.8,
+                offX: 0, offY: 0, offZ: 0,
+                vx: 0, vy: 0, vz: 0,
+                size: Math.random() * 2 + 1,
+                alpha: Math.random() * 0.4 + 0.15,
+                floatSpeed: Math.random() * 0.002 + 0.001
+            });
+        }
+    }
+
+    function resizeCanvas() {
+        const rect = universeSection.getBoundingClientRect();
+        width = rect.width;
+        height = rect.height;
+
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        ctx.scale(dpr, dpr);
+
+        // Dynamically adjust sphere radius based on section height and width
+        radius = Math.min(width, height) * (width < 640 ? 0.38 : 0.35);
+    }
+
+    window.addEventListener("resize", () => {
+        resizeCanvas();
+    });
+
+    // Interaction Events
+    universeSection.addEventListener("mouseenter", () => {
+        isMouseOver = true;
+    });
+
+    universeSection.addEventListener("mouseleave", () => {
+        isMouseOver = false;
+        targetSpeedX = 0.002;
+        targetSpeedY = 0.004;
+    });
+
+    universeSection.addEventListener("mousemove", (e) => {
+        const rect = universeSection.getBoundingClientRect();
+        const relX = (e.clientX - rect.left - width / 2) / (width / 2);
+        const relY = (e.clientY - rect.top - height / 2) / (height / 2);
+
+        mouseX = relX;
+        mouseY = relY;
+
+        // Increase rotation speed on hover based on cursor offset
+        targetSpeedY = relX * 0.018;
+        targetSpeedX = -relY * 0.018;
+    });
+
+    // Click Burst / Particle Explosion Effect
+    function triggerBurst() {
+        nodes.forEach(node => {
+            const burstForce = Math.random() * 25 + 15;
+            const rx = node.baseX + (Math.random() - 0.5) * 0.5;
+            const ry = node.baseY + (Math.random() - 0.5) * 0.5;
+            const rz = node.baseZ + (Math.random() - 0.5) * 0.5;
+
+            const len = Math.hypot(rx, ry, rz) || 1;
+            node.vx = (rx / len) * burstForce;
+            node.vy = (ry / len) * burstForce;
+            node.vz = (rz / len) * burstForce;
+        });
+
+        particles.forEach(p => {
+            const burstForce = Math.random() * 30 + 10;
+            p.vx = (Math.random() - 0.5) * burstForce;
+            p.vy = (Math.random() - 0.5) * burstForce;
+            p.vz = (Math.random() - 0.5) * burstForce;
+        });
+    }
+
+    universeSection.addEventListener("click", (e) => {
+        // Prevent trigger if click is on buttons inside center block
+        if (e.target.closest("a, button")) return;
+        triggerBurst();
+    });
+
+    // Main 3D Render Loop
+    function render() {
+        if (!isIntersecting) return;
+
+        ctx.clearRect(0, 0, width, height);
+
+        // Smooth speed lerp
+        currentSpeedX += (targetSpeedX - currentSpeedX) * 0.08;
+        currentSpeedY += (targetSpeedY - currentSpeedY) * 0.08;
+
+        rotX += currentSpeedX;
+        rotY += currentSpeedY;
+
+        const cosX = Math.cos(rotX);
+        const sinX = Math.sin(rotX);
+        const cosY = Math.cos(rotY);
+        const sinY = Math.sin(rotY);
+
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const focalLength = 400;
+
+        // Render Ambient Background Particles
+        particles.forEach(p => {
+            // Physics update for burst offsets
+            p.offX += p.vx;
+            p.offY += p.vy;
+            p.offZ += p.vz;
+
+            p.vx *= 0.92;
+            p.vy *= 0.92;
+            p.vz *= 0.92;
+
+            // Spring back to base floating coordinates
+            p.offX += -p.offX * 0.04;
+            p.offY += -p.offY * 0.04;
+            p.offZ += -p.offZ * 0.04;
+
+            // Base floating Y movement
+            p.y -= p.floatSpeed;
+            if (p.y < -0.9) p.y = 0.9;
+
+            const px = p.x * radius * 1.5 + p.offX;
+            const py = p.y * radius * 1.5 + p.offY;
+            const pz = p.z * radius * 1.5 + p.offZ;
+
+            // Rotate coordinates
+            const x1 = px * cosY - pz * sinY;
+            const z1 = px * sinY + pz * cosY;
+            const y1 = py * cosX - z1 * sinX;
+            const z2 = py * sinX + z1 * cosX;
+
+            const scale = focalLength / (focalLength + z2 + 300);
+            const sx = centerX + x1 * scale;
+            const sy = centerY + y1 * scale;
+
+            if (scale > 0) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(sx, sy, Math.max(1, p.size * scale), 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(0, 212, 255, ${p.alpha * scale})`;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = "rgba(0, 212, 255, 0.8)";
+                ctx.fill();
+                ctx.restore();
+            }
+        });
+
+        // 3D Nodes Projection & Depth Sorting
+        const renderList = [];
+
+        nodes.forEach(node => {
+            // Physics update for burst offsets
+            node.offX += node.vx;
+            node.offY += node.vy;
+            node.offZ += node.vz;
+
+            node.vx *= 0.91;
+            node.vy *= 0.91;
+            node.vz *= 0.91;
+
+            // Smooth spring return to original sphere position
+            node.offX += -node.offX * 0.05;
+            node.offY += -node.offY * 0.05;
+            node.offZ += -node.offZ * 0.05;
+
+            const bx = node.baseX * radius + node.offX;
+            const by = node.baseY * radius + node.offY;
+            const bz = node.baseZ * radius + node.offZ;
+
+            // Rotate coordinates (Y-axis then X-axis)
+            const x1 = bx * cosY - bz * sinY;
+            const z1 = bx * sinY + bz * cosY;
+            const y1 = by * cosX - z1 * sinX;
+            const z1Rotated = by * sinX + z1 * cosX;
+
+            const scale = focalLength / (focalLength + z1Rotated + 250);
+            const sx = centerX + x1 * scale;
+            const sy = centerY + y1 * scale;
+
+            renderList.push({
+                x: sx,
+                y: sy,
+                z: z1Rotated,
+                scale: scale,
+                phrase: node.phrase,
+                isPrimary: node.isPrimary
+            });
+        });
+
+        // Sort back to front (furthest Z rendered first)
+        renderList.sort((a, b) => b.z - a.z);
+
+        // Render 3D Text Items
+        renderList.forEach(item => {
+            // Alpha and scale mapping based on Z depth
+            const depthFactor = (item.z + radius) / (2 * radius); // 0 (front) to 1 (back)
+            const alpha = Math.max(0.15, Math.min(0.95, 1 - depthFactor * 0.75));
+            const baseFontSize = Math.max(10, Math.min(18, (width < 640 ? 11 : 14) * item.scale));
+
+            ctx.save();
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            if (depthFactor < 0.4) {
+                // Front items: Bright cyan glow and white/cyan highlight
+                ctx.font = `700 ${baseFontSize}px 'Sora', sans-serif`;
+                ctx.fillStyle = `rgba(224, 247, 255, ${alpha})`;
+                ctx.shadowBlur = 12 * (1 - depthFactor);
+                ctx.shadowColor = "rgba(0, 212, 255, 0.9)";
+            } else if (depthFactor < 0.7) {
+                // Mid-depth items
+                ctx.font = `600 ${baseFontSize}px 'Inter', sans-serif`;
+                ctx.fillStyle = `rgba(0, 212, 255, ${alpha * 0.85})`;
+                ctx.shadowBlur = 6;
+                ctx.shadowColor = "rgba(0, 212, 255, 0.4)";
+            } else {
+                // Rear items: Subtle muted tone
+                ctx.font = `500 ${baseFontSize}px 'Inter', sans-serif`;
+                ctx.fillStyle = `rgba(133, 147, 152, ${alpha * 0.6})`;
+                ctx.shadowBlur = 0;
+            }
+
+            ctx.fillText(item.phrase, item.x, item.y);
+            ctx.restore();
+        });
+
+        animationFrameId = requestAnimationFrame(render);
+    }
+
+    // Lazy load observer: only run animation when section is in viewport
+    const observerOptions = {
+        root: null,
+        threshold: 0.05
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                if (!isIntersecting) {
+                    isIntersecting = true;
+                    resizeCanvas();
+                    initNodes();
+                    initParticles();
+                    animationFrameId = requestAnimationFrame(render);
+                }
+            } else {
+                isIntersecting = false;
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+            }
+        });
+    }, observerOptions);
+
+    observer.observe(universeSection);
 });
 </script>
 </body></html>
