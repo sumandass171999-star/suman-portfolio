@@ -676,20 +676,7 @@
 </div>
 </section>
 
-<!-- Creative Universe - Three.js 3D Designer Portfolio Globe Showcase -->
-<section id="creative-universe" class="relative w-full overflow-hidden bg-[#030b12] border-y border-[#00D4FF]/20 select-none py-12 lg:py-16 px-margin-edge">
-    <!-- Atmospheric Background Radial Glow -->
-    <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.08)_0%,transparent_70%)]"></div>
 
-    <div class="max-w-container-max mx-auto relative z-10 min-h-[500px] md:min-h-[550px] lg:min-h-[620px] flex items-center justify-center">
-        <!-- Three.js 3D Globe Container -->
-        <div class="h-[450px] sm:h-[520px] lg:h-[620px] w-full relative flex items-center justify-center">
-            <div id="three-globe-container" class="w-full h-full relative cursor-grab active:cursor-grabbing rounded-3xl overflow-hidden">
-                <canvas id="three-globe-canvas" class="w-full h-full block absolute inset-0 z-10"></canvas>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- Lightbox Modal for HD Image Viewing -->
 <div id="gallery-lightbox" class="fixed inset-0 z-[999999] bg-[#030b12]/95 backdrop-blur-2xl flex items-center justify-center p-4 md:p-8 opacity-0 pointer-events-none transition-opacity duration-400">
@@ -1272,9 +1259,9 @@ document.addEventListener('DOMContentLoaded', () => {
 <!-- Hero Section - Three.js 3D Interactive Creative Globe Engine -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    const heroSection = document.getElementById("hero-section") || document.getElementById("creative-universe");
-    const container = document.getElementById("hero-card-container") || document.getElementById("three-globe-container");
-    const canvas = document.getElementById("hero-globe-canvas") || document.getElementById("three-globe-canvas");
+    const heroSection = document.getElementById("hero-section");
+    const container = document.getElementById("hero-card-container");
+    const canvas = document.getElementById("hero-globe-canvas");
 
     if (!heroSection || !container || !canvas || typeof THREE === "undefined") return;
 
