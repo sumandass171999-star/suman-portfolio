@@ -30,6 +30,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 
+<!-- Three.js 3D Engine -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
 <script id="tailwind-config">
         tailwind.config = {
           darkMode: "class",
@@ -706,38 +709,46 @@
 </div>
 </section>
 
-<!-- Creative Universe - Interactive 3D Designer Showcase -->
-<section id="creative-universe" class="relative w-full overflow-hidden bg-[#030b12] border-y border-[#00D4FF]/20 select-none h-[450px] md:h-[550px] lg:h-[700px] cursor-grab active:cursor-grabbing">
-    <!-- 3D Canvas Background & Portfolio Globe Engine -->
-    <canvas id="universe-canvas" class="absolute inset-0 w-full h-full block z-10"></canvas>
-    
+<!-- Creative Universe - Three.js 3D Designer Portfolio Globe Showcase -->
+<section id="creative-universe" class="relative w-full overflow-hidden bg-[#030b12] border-y border-[#00D4FF]/20 select-none py-12 lg:py-16 px-margin-edge">
     <!-- Atmospheric Background Radial Glow -->
     <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.08)_0%,transparent_70%)]"></div>
 
-    <!-- Center Floating Block -->
-    <div class="relative z-20 w-full h-full flex items-center justify-center px-4 pointer-events-none">
-        <div class="glass-panel icy-glow p-6 sm:p-8 rounded-3xl max-w-md w-full text-center border border-[#00D4FF]/30 backdrop-blur-xl shadow-[0_0_50px_rgba(0,212,255,0.25)] pointer-events-auto transition-transform duration-500 hover:scale-[1.02]">
-            <span class="inline-block px-3 py-1 rounded-full bg-[#00D4FF]/10 text-[#00D4FF] font-label-sm text-[10px] sm:text-xs uppercase tracking-[0.25em] font-bold mb-3 border border-[#00D4FF]/25">
-                CREATIVE UNIVERSE
-            </span>
-            <h2 class="font-headline-xl text-3xl sm:text-4xl font-black text-on-surface uppercase tracking-tight mb-1 drop-shadow-[0_0_15px_rgba(0,212,255,0.4)]">
-                SUMAN DAS
-            </h2>
-            <h3 class="font-label-sm text-xs sm:text-sm text-[#00D4FF] uppercase tracking-[0.25em] font-bold mb-3">
-                Creative Designer
-            </h3>
-            <p class="font-body-md text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-6 max-w-xs mx-auto">
-                Specializing in Poster Design, YouTube Thumbnail Design, Motion Graphics, Logo Design, and Visual Storytelling.
-            </p>
-            <div class="flex flex-wrap items-center justify-center gap-3">
-                <a href="#portfolio" class="btn-primary px-6 py-2.5 rounded-full font-label-sm text-xs uppercase tracking-widest font-bold inline-flex items-center gap-1.5">
-                    View Projects <span class="material-symbols-outlined text-xs">arrow_forward</span>
-                </a>
-                <a href="#contact" class="btn-ghost px-6 py-2.5 rounded-full font-label-sm text-xs uppercase tracking-widest font-bold">
-                    Contact Me
-                </a>
+    <div class="max-w-container-max mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10 min-h-[500px] md:min-h-[550px] lg:min-h-[620px]">
+        
+        <!-- Left Column: Three.js 3D Globe Container -->
+        <div class="lg:col-span-7 h-[420px] sm:h-[500px] lg:h-[600px] w-full relative flex items-center justify-center">
+            <div id="three-globe-container" class="w-full h-full relative cursor-grab active:cursor-grabbing rounded-3xl overflow-hidden">
+                <canvas id="three-globe-canvas" class="w-full h-full block absolute inset-0 z-10"></canvas>
             </div>
         </div>
+
+        <!-- Right Column: Glassmorphic Content Card -->
+        <div class="lg:col-span-5 flex justify-center lg:justify-end w-full">
+            <div class="glass-panel icy-glow p-6 sm:p-8 md:p-10 rounded-3xl max-w-md w-full text-center lg:text-left border border-[#00D4FF]/30 backdrop-blur-xl shadow-[0_0_50px_rgba(0,212,255,0.25)] relative z-20 transition-transform duration-500 hover:scale-[1.02]">
+                <span class="inline-block px-3 py-1 rounded-full bg-[#00D4FF]/10 text-[#00D4FF] font-label-sm text-[10px] sm:text-xs uppercase tracking-[0.25em] font-bold mb-3 border border-[#00D4FF]/25">
+                    CREATIVE UNIVERSE
+                </span>
+                <h2 class="font-headline-xl text-3xl sm:text-4xl font-black text-on-surface uppercase tracking-tight mb-1 drop-shadow-[0_0_15px_rgba(0,212,255,0.4)]">
+                    SUMAN DAS
+                </h2>
+                <h3 class="font-label-sm text-xs sm:text-sm text-[#00D4FF] uppercase tracking-[0.25em] font-bold mb-3">
+                    Creative Designer
+                </h3>
+                <p class="font-body-md text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-6">
+                    Specializing in Poster Design, YouTube Thumbnail Design, Motion Graphics, Logo Design, and Visual Storytelling.
+                </p>
+                <div class="flex flex-wrap items-center justify-center lg:justify-start gap-3">
+                    <a href="#portfolio" class="btn-primary px-6 py-2.5 rounded-full font-label-sm text-xs uppercase tracking-widest font-bold inline-flex items-center gap-1.5">
+                        View Projects <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                    </a>
+                    <a href="#contact" class="btn-ghost px-6 py-2.5 rounded-full font-label-sm text-xs uppercase tracking-widest font-bold">
+                        Contact Me
+                    </a>
+                </div>
+            </div>
+        </div>
+
     </div>
 </section>
 
@@ -1323,540 +1334,350 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
-<!-- Creative Universe - Premium 3D Portfolio Globe Engine -->
+<!-- Creative Universe - Three.js 3D Portfolio Globe Engine -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    const universeSection = document.getElementById("creative-universe");
-    const canvas = document.getElementById("universe-canvas");
-    if (!canvas || !universeSection) return;
+    const section = document.getElementById("creative-universe");
+    const container = document.getElementById("three-globe-container");
+    const canvas = document.getElementById("three-globe-canvas");
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!section || !container || !canvas || typeof THREE === "undefined") return;
 
-    // Portfolio Projects for 3D Globe Tiles
+    // Portfolio Projects
     const PROJECTS = [
         {
             src: 'images/krishna.jpg',
             title: 'Lord Krishna Divine Artwork',
-            subtitle: 'Visual Storytelling • Digital Painting',
-            category: 'Visual Storytelling'
+            subtitle: 'Visual Storytelling • Digital Painting'
         },
         {
             src: 'images/lagan poster.jpg',
             title: 'Lagaan Movie Poster Key Art',
-            subtitle: 'Movie Poster • Key Art Design',
-            category: 'Poster Design'
+            subtitle: 'Movie Poster • Key Art Design'
         },
         {
             src: 'images/movie poster.jpg',
             title: 'Action Blockbuster Poster',
-            subtitle: 'Movie Poster • Film Key Art',
-            category: 'Poster Design'
+            subtitle: 'Movie Poster • Film Key Art'
         },
         {
             src: 'images/poster of father.jpg',
             title: 'Father Tribute Artwork',
-            subtitle: 'Visual Storytelling • Portrait Composition',
-            category: 'Visual Storytelling'
+            subtitle: 'Visual Storytelling • Portrait Composition'
         },
         {
             src: 'images/ra yatttra.jpg',
             title: 'Ratha Yatra Cultural Key Art',
-            subtitle: 'Cultural Design • Event Poster',
-            category: 'Poster Design'
+            subtitle: 'Cultural Design • Event Poster'
         },
         {
             src: 'images/vr advertising.jpg',
             title: 'Virtual Reality Experience Ad',
-            subtitle: '3D & VR Design • Brand Campaign',
-            category: 'Logo & Campaign'
+            subtitle: '3D & VR Design • Brand Campaign'
         },
         {
             src: 'images/ocean miracle.jpg',
             title: 'Ocean Plastic Cleanup Thumbnail',
-            subtitle: 'YouTube Thumbnail Design',
-            category: 'Thumbnail Design'
+            subtitle: 'YouTube Thumbnail Design'
         }
     ];
 
-    // Orbiting Categories
-    const ORBIT_CATEGORIES = [
-        "POSTER DESIGN",
-        "THUMBNAIL DESIGN",
-        "MOTION GRAPHICS",
-        "LOGO DESIGN",
-        "VISUAL STORYTELLING",
-        "BRANDING"
-    ];
-
-    // Preload Project Images
-    const loadedImages = {};
-    PROJECTS.forEach(proj => {
-        const img = new Image();
-        img.src = proj.src;
-        loadedImages[proj.src] = img;
-    });
-
-    const TOTAL_TILES = 26; // Total 3D image tiles mapped on sphere
-    const PARTICLES_COUNT = 40; // Ambient particles
-
-    let width = 0;
-    let height = 0;
-    let radius = 220;
+    let scene, camera, renderer, globeGroup, orbitRingsGroup, particlesGroup;
+    let tileMeshes = [];
     let isIntersecting = false;
-    let animationFrameId = null;
+    let animFrameId = null;
 
-    // Globe Physics & Rotation State
-    let rotX = 0.2;
-    let rotY = 0;
-    let velX = 0.001;
-    let velY = 0.003;
-
-    // Trackball Drag State
+    // Drag / Physics State
     let isDragging = false;
     let dragMoved = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
-    let lastMouseX = 0;
-    let lastMouseY = 0;
+    let pointerStartX = 0;
+    let pointerStartY = 0;
+    let previousPointerX = 0;
+    let previousPointerY = 0;
+    let velX = 0.001;
+    let velY = 0.003;
     let isHovered = false;
 
-    // Orbit Ring Angles
-    let orbitAngle = 0;
+    // Texture Loader
+    const textureLoader = new THREE.TextureLoader();
+    const loadedTextures = PROJECTS.map(p => textureLoader.load(p.src));
 
-    // 3D Nodes & Particles Container
-    const tiles = [];
-    const particles = [];
-    let lastRenderedRenderList = [];
+    function initThree() {
+        const width = container.clientWidth;
+        const height = container.clientHeight;
 
-    // Initialize Fibonacci 3D Sphere for Image Tiles
-    function initTiles() {
-        tiles.length = 0;
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+        camera.position.z = 320;
+
+        renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        renderer.setSize(width, height);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+
+        // Lighting System
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+        scene.add(ambientLight);
+
+        const cyanPointLight = new THREE.PointLight(0x00d4ff, 2.2, 600);
+        cyanPointLight.position.set(180, 180, 200);
+        scene.add(cyanPointLight);
+
+        const rimLight = new THREE.PointLight(0x3cd7ff, 1.5, 600);
+        rimLight.position.set(-180, -120, -100);
+        scene.add(rimLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+        dirLight.position.set(0, 100, 150);
+        scene.add(dirLight);
+
+        // Main Globe Group
+        globeGroup = new THREE.Group();
+        globeGroup.rotation.x = 0.2;
+        scene.add(globeGroup);
+
+        // Core Inner Glowing Sphere Mesh
+        const sphereRadius = Math.min(width, height) * 0.28;
+        const coreGeo = new THREE.SphereGeometry(sphereRadius * 0.92, 32, 32);
+        const coreMat = new THREE.MeshPhongMaterial({
+            color: 0x031726,
+            emissive: 0x002233,
+            specular: 0x00d4ff,
+            shininess: 40,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.6
+        });
+        const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+        globeGroup.add(coreMesh);
+
+        // 3D Portfolio Image Tile Meshes
+        const TOTAL_TILES = 28;
         const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
         for (let i = 0; i < TOTAL_TILES; i++) {
-            const y = 1 - (i / (TOTAL_TILES - 1)) * 2; // -1 to 1
-            const radiusAtY = Math.sqrt(1 - y * y);
+            const y = 1 - (i / (TOTAL_TILES - 1)) * 2;
+            const rAtY = Math.sqrt(1 - y * y);
             const theta = goldenAngle * i;
 
-            const x = Math.cos(theta) * radiusAtY;
-            const z = Math.sin(theta) * radiusAtY;
+            const x = Math.cos(theta) * rAtY;
+            const z = Math.sin(theta) * rAtY;
 
-            const project = PROJECTS[i % PROJECTS.length];
+            const pos = new THREE.Vector3(x, y, z).multiplyScalar(sphereRadius);
+            const proj = PROJECTS[i % PROJECTS.length];
+            const tex = loadedTextures[i % PROJECTS.length];
 
-            tiles.push({
-                baseX: x,
-                baseY: y,
-                baseZ: z,
-                project: project,
-                aspect: (i % 2 === 0) ? 0.75 : 1.25 // Alternating 3:4 portrait & widescreen formats
+            const aspect = (i % 2 === 0) ? 0.75 : 1.25;
+            const tileW = (sphereRadius * 0.32) * aspect;
+            const tileH = sphereRadius * 0.32;
+
+            const planeGeo = new THREE.PlaneGeometry(tileW, tileH);
+            const planeMat = new THREE.MeshPhongMaterial({
+                map: tex,
+                transparent: true,
+                side: THREE.DoubleSide,
+                shininess: 30,
+                emissive: 0x001522
             });
+
+            const tileMesh = new THREE.Mesh(planeGeo, planeMat);
+            tileMesh.position.copy(pos);
+            tileMesh.lookAt(pos.clone().multiplyScalar(2));
+            tileMesh.userData = { project: proj };
+
+            globeGroup.add(tileMesh);
+            tileMeshes.push(tileMesh);
         }
-    }
 
-    // Initialize Ambient Floating Background Particles
-    function initParticles() {
-        particles.length = 0;
-        for (let i = 0; i < PARTICLES_COUNT; i++) {
-            particles.push({
-                x: (Math.random() - 0.5) * 2.2,
-                y: (Math.random() - 0.5) * 2.2,
-                z: (Math.random() - 0.5) * 2.2,
-                size: Math.random() * 2 + 1,
-                alpha: Math.random() * 0.35 + 0.15,
-                floatSpeed: Math.random() * 0.0015 + 0.0008
-            });
+        // Orbit Rings Group
+        orbitRingsGroup = new THREE.Group();
+        scene.add(orbitRingsGroup);
+
+        const ringRadius1 = sphereRadius * 1.35;
+        const ringRadius2 = sphereRadius * 1.52;
+
+        const createRing = (r, tiltX, tiltZ, color, opacity) => {
+            const ringGeo = new THREE.TorusGeometry(r, 0.8, 16, 100);
+            const ringMat = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: opacity });
+            const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+            ringMesh.rotation.x = tiltX;
+            ringMesh.rotation.z = tiltZ;
+            return ringMesh;
+        };
+
+        const ring1 = createRing(ringRadius1, Math.PI / 3, 0.2, 0x00d4ff, 0.35);
+        const ring2 = createRing(ringRadius2, -Math.PI / 4, -0.3, 0x00d4ff, 0.25);
+        orbitRingsGroup.add(ring1);
+        orbitRingsGroup.add(ring2);
+
+        // Ambient Particles Group
+        particlesGroup = new THREE.Group();
+        scene.add(particlesGroup);
+
+        const partGeo = new THREE.BufferGeometry();
+        const partCount = 45;
+        const posArray = new Float32Array(partCount * 3);
+
+        for (let i = 0; i < partCount * 3; i += 3) {
+            posArray[i] = (Math.random() - 0.5) * 600;
+            posArray[i + 1] = (Math.random() - 0.5) * 600;
+            posArray[i + 2] = (Math.random() - 0.5) * 600;
         }
+        partGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const partMat = new THREE.PointsMaterial({
+            size: 2.5,
+            color: 0x00d4ff,
+            transparent: true,
+            opacity: 0.4
+        });
+        const particlesMesh = new THREE.Points(partGeo, partMat);
+        particlesGroup.add(particlesMesh);
     }
 
-    function resizeCanvas() {
-        const rect = universeSection.getBoundingClientRect();
-        width = rect.width;
-        height = rect.height;
+    function onResize() {
+        if (!container || !renderer || !camera) return;
+        const width = container.clientWidth;
+        const height = container.clientHeight;
 
-        const dpr = Math.min(window.devicePixelRatio || 1, 2);
-        canvas.width = width * dpr;
-        canvas.height = height * dpr;
-        ctx.scale(dpr, dpr);
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
 
-        // Dynamically scale sphere radius based on section dimensions
-        radius = Math.min(width, height) * (width < 640 ? 0.38 : 0.36);
+        renderer.setSize(width, height);
     }
 
-    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("resize", onResize);
 
-    // Mouse & Touch Drag Event Handlers
-    function onPointerDown(clientX, clientY) {
+    // Pointer Drag & Momentum Logic
+    function onPointerDown(x, y) {
         isDragging = true;
         dragMoved = false;
-        dragStartX = clientX;
-        dragStartY = clientY;
-        lastMouseX = clientX;
-        lastMouseY = clientY;
+        pointerStartX = x;
+        pointerStartY = y;
+        previousPointerX = x;
+        previousPointerY = y;
     }
 
-    function onPointerMove(clientX, clientY) {
+    function onPointerMove(x, y) {
         if (!isDragging) return;
 
-        const dx = clientX - lastMouseX;
-        const dy = clientY - lastMouseY;
+        const dx = x - previousPointerX;
+        const dy = y - previousPointerY;
 
-        if (Math.hypot(clientX - dragStartX, clientY - dragStartY) > 6) {
+        if (Math.hypot(x - pointerStartX, y - pointerStartY) > 5) {
             dragMoved = true;
         }
 
-        velY = dx * 0.006;
-        velX = -dy * 0.006;
+        velY = dx * 0.005;
+        velX = dy * 0.005;
 
-        rotY += velY;
-        rotX += velX;
+        globeGroup.rotation.y += velY;
+        globeGroup.rotation.x += velX;
 
-        lastMouseX = clientX;
-        lastMouseY = clientY;
+        previousPointerX = x;
+        previousPointerY = y;
     }
 
     function onPointerUp() {
         isDragging = false;
     }
 
-    // Event Listeners
-    universeSection.addEventListener("mouseenter", () => { isHovered = true; });
-    universeSection.addEventListener("mouseleave", () => { isHovered = false; isDragging = false; });
+    container.addEventListener("mouseenter", () => { isHovered = true; });
+    container.addEventListener("mouseleave", () => { isHovered = false; isDragging = false; });
 
-    universeSection.addEventListener("mousedown", (e) => {
-        if (e.target.closest("a, button")) return;
+    container.addEventListener("mousedown", (e) => {
         onPointerDown(e.clientX, e.clientY);
     });
 
     window.addEventListener("mousemove", (e) => {
-        if (isDragging) {
-            onPointerMove(e.clientX, e.clientY);
-        }
+        if (isDragging) onPointerMove(e.clientX, e.clientY);
     });
 
-    window.addEventListener("mouseup", () => {
-        if (isDragging) onPointerUp();
-    });
+    window.addEventListener("mouseup", onPointerUp);
 
-    universeSection.addEventListener("touchstart", (e) => {
-        if (e.touches.length === 1 && !e.target.closest("a, button")) {
-            onPointerDown(e.touches[0].clientX, e.touches[0].clientY);
-        }
+    container.addEventListener("touchstart", (e) => {
+        if (e.touches.length === 1) onPointerDown(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
 
-    universeSection.addEventListener("touchmove", (e) => {
-        if (isDragging && e.touches.length === 1) {
-            onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
-        }
+    container.addEventListener("touchmove", (e) => {
+        if (isDragging && e.touches.length === 1) onPointerMove(e.touches[0].clientX, e.touches[0].clientY);
     }, { passive: true });
 
-    universeSection.addEventListener("touchend", onPointerUp);
+    container.addEventListener("touchend", onPointerUp);
 
-    // Tile Click Lightbox Trigger
-    universeSection.addEventListener("click", (e) => {
-        if (dragMoved || e.target.closest("a, button")) return;
+    // Three.js Raycaster Tile Click Handling
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
 
-        const rect = universeSection.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        const clickY = e.clientY - rect.top;
+    container.addEventListener("click", (e) => {
+        if (dragMoved) return;
 
-        // Check frontmost rendered tile collision (reversed order = front to back)
-        for (let i = lastRenderedRenderList.length - 1; i >= 0; i--) {
-            const item = lastRenderedRenderList[i];
-            if (item.z > -radius * 0.2) { // Only allow front-facing tiles to be clicked
-                const halfW = item.w / 2;
-                const halfH = item.h / 2;
+        const rect = container.getBoundingClientRect();
+        mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+        mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
-                if (clickX >= item.x - halfW && clickX <= item.x + halfW &&
-                    clickY >= item.y - halfH && clickY <= item.y + halfH) {
-                    if (typeof openLightbox === 'function') {
-                        openLightbox(item.project.src, item.project.title, item.project.subtitle);
-                    }
-                    break;
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObjects(tileMeshes);
+
+        if (intersects.length > 0) {
+            const hitTile = intersects[0].object;
+            if (hitTile.userData && hitTile.userData.project) {
+                const proj = hitTile.userData.project;
+                if (typeof openLightbox === 'function') {
+                    openLightbox(proj.src, proj.title, proj.subtitle);
                 }
             }
         }
     });
 
-    // Helper: Draw Rounded Rect Path
-    function drawRoundedRect(ctx, x, y, w, h, r) {
-        ctx.beginPath();
-        ctx.moveTo(x + r, y);
-        ctx.arcTo(x + w, y, x + w, y + h, r);
-        ctx.arcTo(x + w, y + h, x, y + h, r);
-        ctx.arcTo(x, y + h, x, y, r);
-        ctx.arcTo(x, y, x + w, y, r);
-        ctx.closePath();
-    }
-
-    // Main 3D Globe Render Loop
-    function render() {
+    // Three.js Render Loop
+    function animate() {
         if (!isIntersecting) return;
 
-        ctx.clearRect(0, 0, width, height);
-
-        // Inertia Damping & Default Ambient Velocity Lerp
         if (!isDragging) {
-            rotY += velY;
-            rotX += velX;
+            globeGroup.rotation.y += velY;
+            globeGroup.rotation.x += velX;
 
-            const targetVectY = isHovered ? 0.005 : 0.0025;
-            const targetVectX = isHovered ? 0.002 : 0.001;
+            const targetVy = isHovered ? 0.004 : 0.002;
+            const targetVx = isHovered ? 0.0015 : 0.0005;
 
-            velY += (targetVectY - velY) * 0.03;
-            velX += (targetVectX - velX) * 0.03;
+            velY += (targetVy - velY) * 0.03;
+            velX += (targetVx - velX) * 0.03;
         }
 
-        orbitAngle += 0.003;
+        if (orbitRingsGroup) {
+            orbitRingsGroup.rotation.y += 0.0025;
+            orbitRingsGroup.rotation.x += 0.001;
+        }
 
-        const cosX = Math.cos(rotX);
-        const sinX = Math.sin(rotX);
-        const cosY = Math.cos(rotY);
-        const sinY = Math.sin(rotY);
+        if (particlesGroup) {
+            particlesGroup.rotation.y -= 0.0005;
+        }
 
-        const centerX = width / 2;
-        const centerY = height / 2;
-        const focalLength = 450;
-
-        // Render Ambient Background Particles
-        particles.forEach(p => {
-            p.y -= p.floatSpeed;
-            if (p.y < -1.1) p.y = 1.1;
-
-            const px = p.x * radius * 1.6;
-            const py = p.y * radius * 1.6;
-            const pz = p.z * radius * 1.6;
-
-            const x1 = px * cosY - pz * sinY;
-            const z1 = px * sinY + pz * cosY;
-            const y1 = py * cosX - z1 * sinX;
-            const z2 = py * sinX + z1 * cosX;
-
-            const scale = focalLength / (focalLength + z2 + 300);
-            const sx = centerX + x1 * scale;
-            const sy = centerY + y1 * scale;
-
-            if (scale > 0) {
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(sx, sy, Math.max(1, p.size * scale), 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(0, 212, 255, ${p.alpha * scale})`;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = "rgba(0, 212, 255, 0.8)";
-                ctx.fill();
-                ctx.restore();
-            }
-        });
-
-        // Render Orbit Rings & Orbiting Category Labels
-        const orbitRings = [
-            { tiltX: 0.4, ringAlpha: 0.25, radiusMult: 1.32 },
-            { tiltX: -0.5, ringAlpha: 0.18, radiusMult: 1.48 }
-        ];
-
-        orbitRings.forEach((ring, ringIdx) => {
-            const ringRadius = radius * ring.radiusMult;
-            const ringPoints = 60;
-
-            // Draw Orbit Ring Line
-            ctx.save();
-            ctx.beginPath();
-            for (let i = 0; i <= ringPoints; i++) {
-                const theta = (i / ringPoints) * Math.PI * 2;
-                const rx = Math.cos(theta) * ringRadius;
-                const ry = Math.sin(theta) * ringRadius * Math.sin(ring.tiltX);
-                const rz = Math.sin(theta) * ringRadius * Math.cos(ring.tiltX);
-
-                const x1 = rx * cosY - rz * sinY;
-                const z1 = rx * sinY + rz * cosY;
-                const y1 = ry * cosX - z1 * sinX;
-                const z2 = ry * sinX + z1 * cosX;
-
-                const scale = focalLength / (focalLength + z2 + 250);
-                const sx = centerX + x1 * scale;
-                const sy = centerY + y1 * scale;
-
-                if (i === 0) ctx.moveTo(sx, sy);
-                else ctx.lineTo(sx, sy);
-            }
-            ctx.strokeStyle = `rgba(0, 212, 255, ${ring.ringAlpha})`;
-            ctx.lineWidth = 1.2;
-            ctx.shadowBlur = 12;
-            ctx.shadowColor = "rgba(0, 212, 255, 0.5)";
-            ctx.stroke();
-            ctx.restore();
-
-            // Draw Orbiting Category Text Labels
-            ORBIT_CATEGORIES.forEach((cat, catIdx) => {
-                if (catIdx % 2 === ringIdx) {
-                    const angleOffset = (catIdx / ORBIT_CATEGORIES.length) * Math.PI * 2;
-                    const theta = orbitAngle * (ringIdx === 0 ? 1 : -0.8) + angleOffset;
-
-                    const rx = Math.cos(theta) * ringRadius;
-                    const ry = Math.sin(theta) * ringRadius * Math.sin(ring.tiltX);
-                    const rz = Math.sin(theta) * ringRadius * Math.cos(ring.tiltX);
-
-                    const x1 = rx * cosY - rz * sinY;
-                    const z1 = rx * sinY + rz * cosY;
-                    const y1 = ry * cosX - z1 * sinX;
-                    const z2 = ry * sinX + z1 * cosX;
-
-                    const scale = focalLength / (focalLength + z2 + 250);
-                    const sx = centerX + x1 * scale;
-                    const sy = centerY + y1 * scale;
-
-                    const depthFactor = (z2 + ringRadius) / (2 * ringRadius);
-                    const alpha = Math.max(0.2, Math.min(0.95, 1 - depthFactor * 0.75));
-                    const fontSize = Math.max(9, Math.min(13, (width < 640 ? 9 : 11) * scale));
-
-                    ctx.save();
-                    ctx.font = `700 ${fontSize}px 'Sora', sans-serif`;
-                    ctx.textAlign = "center";
-                    ctx.textBaseline = "middle";
-
-                    if (z2 < 0) {
-                        ctx.fillStyle = `rgba(224, 247, 255, ${alpha})`;
-                        ctx.shadowBlur = 10;
-                        ctx.shadowColor = "rgba(0, 212, 255, 0.9)";
-                    } else {
-                        ctx.fillStyle = `rgba(0, 212, 255, ${alpha * 0.5})`;
-                        ctx.shadowBlur = 0;
-                    }
-
-                    ctx.fillText(cat, sx, sy);
-                    ctx.restore();
-                }
-            });
-        });
-
-        // 3D Image Tiles Projection & Depth Sorting
-        const renderList = [];
-
-        tiles.forEach(tile => {
-            const bx = tile.baseX * radius;
-            const by = tile.baseY * radius;
-            const bz = tile.baseZ * radius;
-
-            // Rotate coordinates (Y-axis then X-axis)
-            const x1 = bx * cosY - bz * sinY;
-            const z1 = bx * sinY + bz * cosY;
-            const y1 = by * cosX - z1 * sinX;
-            const z1Rotated = by * sinX + z1 * cosX;
-
-            const scale = focalLength / (focalLength + z1Rotated + 250);
-            const sx = centerX + x1 * scale;
-            const sy = centerY + y1 * scale;
-
-            // Tile dimensions scaled by depth
-            const baseW = width < 640 ? 50 : 68;
-            const w = baseW * scale * tile.aspect;
-            const h = baseW * scale;
-
-            renderList.push({
-                x: sx,
-                y: sy,
-                z: z1Rotated,
-                w: w,
-                h: h,
-                scale: scale,
-                project: tile.project
-            });
-        });
-
-        // Sort back to front (furthest Z rendered first)
-        renderList.sort((a, b) => b.z - a.z);
-        lastRenderedRenderList = renderList;
-
-        // Render 3D Image Tiles
-        renderList.forEach(item => {
-            const depthFactor = (item.z + radius) / (2 * radius); // 0 (front) to 1 (back)
-            const alpha = Math.max(0.15, Math.min(1.0, 1.15 - depthFactor * 0.9));
-            const img = loadedImages[item.project.src];
-
-            ctx.save();
-
-            const left = item.x - item.w / 2;
-            const top = item.y - item.h / 2;
-            const cornerRadius = Math.max(4, 8 * item.scale);
-
-            if (depthFactor < 0.55) {
-                // Front Tiles: Premium Cyan Border, Glow & Full Color Image
-                ctx.shadowBlur = 20 * (1 - depthFactor);
-                ctx.shadowColor = "rgba(0, 212, 255, 0.6)";
-
-                drawRoundedRect(ctx, left, top, item.w, item.h, cornerRadius);
-                ctx.fillStyle = `rgba(16, 20, 21, ${alpha})`;
-                ctx.fill();
-
-                if (img && img.complete && img.naturalWidth > 0) {
-                    ctx.save();
-                    drawRoundedRect(ctx, left, top, item.w, item.h, cornerRadius);
-                    ctx.clip();
-                    ctx.globalAlpha = alpha;
-                    ctx.drawImage(img, left, top, item.w, item.h);
-                    ctx.restore();
-                }
-
-                // Cyan Border
-                ctx.strokeStyle = `rgba(0, 212, 255, ${Math.min(0.9, (1 - depthFactor) * 1.4)})`;
-                ctx.lineWidth = Math.max(1, 1.8 * item.scale);
-                drawRoundedRect(ctx, left, top, item.w, item.h, cornerRadius);
-                ctx.stroke();
-
-            } else {
-                // Rear Tiles: Muted Dark Overlay
-                drawRoundedRect(ctx, left, top, item.w, item.h, cornerRadius);
-                ctx.fillStyle = `rgba(10, 14, 16, ${alpha * 0.8})`;
-                ctx.fill();
-
-                if (img && img.complete && img.naturalWidth > 0) {
-                    ctx.save();
-                    drawRoundedRect(ctx, left, top, item.w, item.h, cornerRadius);
-                    ctx.clip();
-                    ctx.globalAlpha = alpha * 0.35;
-                    ctx.drawImage(img, left, top, item.w, item.h);
-                    ctx.restore();
-                }
-
-                ctx.strokeStyle = `rgba(0, 212, 255, ${alpha * 0.25})`;
-                ctx.lineWidth = 1;
-                drawRoundedRect(ctx, left, top, item.w, item.h, cornerRadius);
-                ctx.stroke();
-            }
-
-            ctx.restore();
-        });
-
-        animationFrameId = requestAnimationFrame(render);
+        renderer.render(scene, camera);
+        animFrameId = requestAnimationFrame(animate);
     }
 
-    // Lazy load observer: only run animation when section is in viewport
-    const observerOptions = {
-        root: null,
-        threshold: 0.05
-    };
-
+    // Lazy load observer: only run WebGL animation when visible in viewport
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 if (!isIntersecting) {
                     isIntersecting = true;
-                    resizeCanvas();
-                    initTiles();
-                    initParticles();
-                    animationFrameId = requestAnimationFrame(render);
+                    if (!scene) initThree();
+                    onResize();
+                    animFrameId = requestAnimationFrame(animate);
                 }
             } else {
                 isIntersecting = false;
-                if (animationFrameId) {
-                    cancelAnimationFrame(animationFrameId);
-                    animationFrameId = null;
+                if (animFrameId) {
+                    cancelAnimationFrame(animFrameId);
+                    animFrameId = null;
                 }
             }
         });
-    }, observerOptions);
+    }, { threshold: 0.05 });
 
-    observer.observe(universeSection);
+    observer.observe(section);
 });
 </script>
 </body></html>
