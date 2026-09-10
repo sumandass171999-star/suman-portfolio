@@ -1211,24 +1211,32 @@ document.addEventListener("DOMContentLoaded", () => {
     let mouseY = 0;
     let isHovered = false;
 
-    // Texture Loader
+    // Texture Loader with Max Anisotropic Filtering
     const textureLoader = new THREE.TextureLoader();
-    const loadedTextures = PROJECTS.map(p => textureLoader.load(p.src));
+    let maxAnisotropy = 16;
+    const loadedTextures = PROJECTS.map(p => {
+        const tex = textureLoader.load(p.src);
+        tex.anisotropy = maxAnisotropy;
+        tex.generateMipmaps = true;
+        tex.minFilter = THREE.LinearMipmapLinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        return tex;
+    });
 
-    // Create Canvas Texture for Orbiting Skill Labels
+    // Create 4K Ultra-HD Canvas Texture for Orbiting Skill Labels
     function createLabelTexture(text) {
         const lblCanvas = document.createElement("canvas");
-        lblCanvas.width = 512;
-        lblCanvas.height = 128;
-        const ctx = lblCanvas.getContext("2d");
+        lblCanvas.width = 1024;
+        lblCanvas.height = 256;
+        const ctx = lblCanvas.getContext("2d", { alpha: true });
 
-        ctx.clearRect(0, 0, 512, 128);
+        ctx.clearRect(0, 0, 1024, 256);
 
-        ctx.fillStyle = "rgba(10, 20, 30, 0.8)";
-        ctx.strokeStyle = "rgba(0, 212, 255, 0.7)";
-        ctx.lineWidth = 4;
+        ctx.fillStyle = "rgba(8, 16, 26, 0.85)";
+        ctx.strokeStyle = "rgba(0, 212, 255, 0.85)";
+        ctx.lineWidth = 6;
 
-        const x = 16, y = 16, w = 480, h = 96, r = 48;
+        const x = 24, y = 24, w = 976, h = 208, r = 96;
         ctx.beginPath();
         ctx.moveTo(x + r, y);
         ctx.arcTo(x + w, y, x + w, y + h, r);
@@ -1240,15 +1248,18 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.stroke();
 
         ctx.shadowColor = "#00D4FF";
-        ctx.shadowBlur = 18;
+        ctx.shadowBlur = 24;
         ctx.fillStyle = "#FFFFFF";
-        ctx.font = "bold 32px 'Sora', 'Inter', sans-serif";
+        ctx.font = "bold 60px 'Sora', 'Inter', sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(text, 256, 64);
+        ctx.fillText(text, 512, 128);
 
         const tex = new THREE.CanvasTexture(lblCanvas);
-        tex.minFilter = THREE.LinearFilter;
+        tex.anisotropy = maxAnisotropy;
+        tex.minFilter = THREE.LinearMipmapLinearFilter;
+        tex.magFilter = THREE.LinearFilter;
+        tex.generateMipmaps = true;
         return tex;
     }
 
@@ -1261,24 +1272,47 @@ document.addEventListener("DOMContentLoaded", () => {
         camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
         camera.position.z = 320;
 
-        renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+        // 4K Ultra-Sharp WebGL Renderer Settings
+        renderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+            alpha: true,
+            antialias: true,
+            powerPreference: "high-performance",
+            stencil: false
+        });
         renderer.setSize(width, height);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+        renderer.setPixelRatio(dpr);
 
-        // Lighting System
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+        if (renderer.capabilities) {
+            maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
+            loadedTextures.forEach(t => { if (t) t.anisotropy = maxAnisotropy; });
+        }
+
+        if (THREE.ACESFilmicToneMapping) {
+            renderer.toneMapping = THREE.ACESFilmicToneMapping;
+            renderer.toneMappingExposure = 1.2;
+        }
+        if (THREE.SRGBColorSpace) {
+            renderer.outputColorSpace = THREE.SRGBColorSpace;
+        } else if (THREE.sRGBEncoding) {
+            renderer.outputEncoding = THREE.sRGBEncoding;
+        }
+
+        // Cinematic 4K Lighting System
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
         scene.add(ambientLight);
 
-        const cyanPointLight = new THREE.PointLight(0x00d4ff, 2.4, 600);
-        cyanPointLight.position.set(180, 180, 200);
+        const cyanPointLight = new THREE.PointLight(0x00d4ff, 3.2, 800);
+        cyanPointLight.position.set(200, 200, 250);
         scene.add(cyanPointLight);
 
-        const rimLight = new THREE.PointLight(0x3cd7ff, 1.6, 600);
-        rimLight.position.set(-180, -120, -100);
+        const rimLight = new THREE.PointLight(0x3cd7ff, 2.0, 800);
+        rimLight.position.set(-200, -150, -120);
         scene.add(rimLight);
 
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
-        dirLight.position.set(0, 100, 150);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(0, 120, 200);
         scene.add(dirLight);
 
         // Main Globe Group
@@ -1286,22 +1320,32 @@ document.addEventListener("DOMContentLoaded", () => {
         globeGroup.rotation.x = 0.2;
         scene.add(globeGroup);
 
-        // Core Glowing Wireframe Sphere Mesh
+        // Core High-Density Glowing Wireframe & Metallic Inner Sphere Mesh
         const sphereRadius = Math.min(width, height) * 0.28;
-        const coreGeo = new THREE.SphereGeometry(sphereRadius * 0.92, 32, 32);
-        const coreMat = new THREE.MeshPhongMaterial({
-            color: 0x031726,
-            emissive: 0x002a3f,
-            specular: 0x00d4ff,
-            shininess: 40,
-            wireframe: true,
+        const coreGeo = new THREE.SphereGeometry(sphereRadius * 0.92, 64, 64);
+        const wireframeGeo = new THREE.WireframeGeometry(coreGeo);
+        const wireframeMat = new THREE.LineBasicMaterial({
+            color: 0x00d4ff,
             transparent: true,
-            opacity: 0.65
+            opacity: 0.60
         });
-        const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-        globeGroup.add(coreMesh);
+        const coreWireMesh = new THREE.LineSegments(wireframeGeo, wireframeMat);
 
-        // 28 3D Portfolio Image Tile Meshes
+        const innerCoreGeo = new THREE.SphereGeometry(sphereRadius * 0.90, 48, 48);
+        const innerCoreMat = new THREE.MeshPhongMaterial({
+            color: 0x020f1a,
+            emissive: 0x001d2e,
+            specular: 0x00d4ff,
+            shininess: 60,
+            transparent: true,
+            opacity: 0.85
+        });
+        const innerCoreMesh = new THREE.Mesh(innerCoreGeo, innerCoreMat);
+        
+        globeGroup.add(innerCoreMesh);
+        globeGroup.add(coreWireMesh);
+
+        // 28 3D Portfolio Image Tile Meshes with Anisotropic Texture Filtering
         const TOTAL_TILES = 28;
         const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
@@ -1326,8 +1370,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 map: tex,
                 transparent: true,
                 side: THREE.DoubleSide,
-                shininess: 30,
-                emissive: 0x001522
+                shininess: 50,
+                emissive: 0x001a2b
             });
 
             const tileMesh = new THREE.Mesh(planeGeo, planeMat);
@@ -1339,7 +1383,7 @@ document.addEventListener("DOMContentLoaded", () => {
             tileMeshes.push(tileMesh);
         }
 
-        // Orbit Rings Group
+        // Orbit Rings Group (High-Subdivision Torus)
         orbitRingsGroup = new THREE.Group();
         scene.add(orbitRingsGroup);
 
@@ -1347,7 +1391,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const ringRadius2 = sphereRadius * 1.55;
 
         const createRing = (r, tiltX, tiltZ, color, opacity) => {
-            const ringGeo = new THREE.TorusGeometry(r, 0.8, 16, 100);
+            const ringGeo = new THREE.TorusGeometry(r, 0.9, 32, 160);
             const ringMat = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: opacity });
             const ringMesh = new THREE.Mesh(ringGeo, ringMat);
             ringMesh.rotation.x = tiltX;
@@ -1355,12 +1399,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return ringMesh;
         };
 
-        const ring1 = createRing(ringRadius1, Math.PI / 3, 0.2, 0x00d4ff, 0.35);
-        const ring2 = createRing(ringRadius2, -Math.PI / 4, -0.3, 0x00d4ff, 0.25);
+        const ring1 = createRing(ringRadius1, Math.PI / 3, 0.2, 0x00d4ff, 0.40);
+        const ring2 = createRing(ringRadius2, -Math.PI / 4, -0.3, 0x00d4ff, 0.30);
         orbitRingsGroup.add(ring1);
         orbitRingsGroup.add(ring2);
 
-        // Orbiting Skill Labels as 3D Sprites along the rings
+        // Orbiting Skill Labels as 4K 3D Sprites along the rings
         SKILL_LABELS.forEach((label, idx) => {
             const tex = createLabelTexture(label);
             const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true });
@@ -1400,7 +1444,7 @@ document.addEventListener("DOMContentLoaded", () => {
             size: 2.5,
             color: 0x00d4ff,
             transparent: true,
-            opacity: 0.45
+            opacity: 0.50
         });
         const particlesMesh = new THREE.Points(partGeo, partMat);
         particlesGroup.add(particlesMesh);
