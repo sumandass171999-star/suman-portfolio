@@ -375,26 +375,7 @@
 </head>
 <body class="antialiased selection:bg-primary/30 selection:text-primary relative bg-[#030b12]">
 
-<!-- Cinematic Fullscreen Intro Frame Animation Overlay -->
-<div id="intro-overlay" class="flex items-center justify-center">
-    <!-- Intro Frame Canvas -->
-    <canvas id="intro-frame-canvas" class="w-full h-full object-cover block"></canvas>
 
-    <!-- Preloader Overlay inside Intro -->
-    <div id="intro-loader" class="absolute inset-0 bg-[#030b12] flex flex-col items-center justify-center gap-4 z-20 transition-opacity duration-700">
-        <div class="w-10 h-10 border-2 border-[#00D4FF]/20 border-t-[#00D4FF] rounded-full animate-spin"></div>
-        <span id="intro-loader-text" class="font-label-sm text-sm text-[#00D4FF] tracking-[0.2em] uppercase font-bold">LOADING 0%</span>
-        <div class="w-48 h-1 bg-white/10 rounded-full overflow-hidden mt-2">
-            <div id="intro-loader-bar" class="w-0 h-full bg-[#00D4FF] transition-all duration-150"></div>
-        </div>
-    </div>
-
-    <!-- Optional Skip / Scroll Indicator overlay -->
-    <div id="intro-ui-hud" class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none opacity-0 transition-opacity duration-500 z-10">
-        <span class="font-label-sm text-xs text-primary/70 uppercase tracking-widest">Scroll to Scrub Intro</span>
-        <span class="material-symbols-outlined text-primary text-xl animate-bounce">expand_more</span>
-    </div>
-</div>
 
 <!-- Background WebGL Shader -->
 <canvas class="gl-canvas" id="shader-bg"></canvas>
@@ -467,8 +448,26 @@
     <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.12)_0%,transparent_70%)]"></div>
 </div>
 </div>
-</section>
 </div>
+
+<!-- Direct Reference Video Showcase Section -->
+<section id="motion-video-section" class="w-full relative overflow-hidden py-8 sm:py-12 px-margin-edge bg-surface-container-low/20 border-y border-white/5 flex items-center justify-center">
+  <div class="max-w-container-max mx-auto w-full flex items-center justify-center">
+    <div class="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden glass-panel icy-glow shadow-2xl border border-[#00D4FF]/20 flex items-center justify-center bg-[#030b12]">
+      <video
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+        class="w-full h-auto max-h-[85vh] object-contain rounded-2xl sm:rounded-3xl block mx-auto pointer-events-none"
+      >
+        <source src="assets/frames/animo-carousel-flow-720p.mp4" type="video/mp4"/>
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+</section>
 
 
 
@@ -812,240 +811,9 @@
     });
 </script>
 
-<!-- Embedded Premium Intro Animation Engine (Fullscreen Canvas + 208 Preloaded Frames + Session Check + Smooth Transition + Scroll Scrubbing) -->
+<!-- Mobile Menu Toggle Handler -->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const TOTAL_FRAMES = 208;
-
-        const introOverlay = document.getElementById('intro-overlay');
-        const introCanvas = document.getElementById('intro-frame-canvas');
-        const introLoader = document.getElementById('intro-loader');
-        const introLoaderText = document.getElementById('intro-loader-text');
-        const introLoaderBar = document.getElementById('intro-loader-bar');
-        const introHud = document.getElementById('intro-ui-hud');
-
-        if (!introCanvas || !introOverlay) return;
-
-        // Check if intro animation has already been played in this browser session
-        const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
-        if (hasSeenIntro === 'true') {
-            introOverlay.style.display = 'none';
-            document.body.style.overflow = 'auto';
-            return;
-        }
-
-        // Lock body scrolling during active intro loading/playback
-        document.body.style.overflow = 'hidden';
-
-        const ctx = introCanvas.getContext('2d', { alpha: false });
-        const images = [];
-        let loadedCount = 0;
-        let currentFrame = 0;
-        let isIntroComplete = false;
-        let autoplayTween = null;
-
-        let pendingFrameIndex = null;
-        let isTicking = false;
-
-        function getFramePath(index) {
-            const paddedNum = String(index).padStart(3, '0');
-            return `frames/ezgif-frame-${paddedNum}.jpg`;
-        }
-
-        // Render frame on Canvas with responsive aspect-cover (desktop) and aspect-contain (mobile) scaling
-        function renderFrame(index) {
-            const targetIndex = Math.min(Math.max(Math.round(index), 0), TOTAL_FRAMES - 1);
-            const img = images[targetIndex];
-            if (!img || !img.complete || img.naturalWidth === 0) return;
-
-            const canvasWidth = introCanvas.width;
-            const canvasHeight = introCanvas.height;
-
-            const imgRatio = img.naturalWidth / img.naturalHeight;
-            const canvasRatio = canvasWidth / canvasHeight;
-
-            let drawWidth, drawHeight, offsetX, offsetY;
-
-            const isMobile = window.innerWidth <= 768 || canvasRatio < 1.0;
-
-            if (isMobile) {
-                // Mobile-specific aspect-contain scaling: keep entire frame visible without cropping
-                drawWidth = canvasWidth;
-                drawHeight = canvasWidth / imgRatio;
-
-                if (drawHeight > canvasHeight) {
-                    drawHeight = canvasHeight;
-                    drawWidth = canvasHeight * imgRatio;
-                }
-
-                offsetX = (canvasWidth - drawWidth) / 2;
-                offsetY = (canvasHeight - drawHeight) / 2;
-            } else {
-                // Desktop aspect-cover scaling (unchanged visual behavior for desktop)
-                if (canvasRatio > imgRatio) {
-                    drawWidth = canvasWidth;
-                    drawHeight = canvasWidth / imgRatio;
-                    offsetX = 0;
-                    offsetY = (canvasHeight - drawHeight) / 2;
-                } else {
-                    drawWidth = canvasHeight * imgRatio;
-                    drawHeight = canvasHeight;
-                    offsetX = (canvasWidth - drawWidth) / 2;
-                    offsetY = 0;
-                }
-            }
-
-            // Solid fill background to avoid alpha blending or ghosting artifacts
-            ctx.fillStyle = '#030b12';
-            ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-            ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-            currentFrame = targetIndex;
-        }
-
-        // Throttled frame renderer using requestAnimationFrame
-        function scheduleRender(index) {
-            const targetIndex = Math.min(Math.max(Math.round(index), 0), TOTAL_FRAMES - 1);
-            if (targetIndex === currentFrame && pendingFrameIndex === null) return;
-
-            pendingFrameIndex = targetIndex;
-            if (!isTicking) {
-                isTicking = true;
-                requestAnimationFrame(() => {
-                    if (pendingFrameIndex !== null) {
-                        renderFrame(pendingFrameIndex);
-                        pendingFrameIndex = null;
-                    }
-                    isTicking = false;
-                });
-            }
-        }
-
-        function resizeCanvas() {
-            const isMobile = window.innerWidth <= 768;
-            const dprCap = isMobile ? 1.5 : 2;
-            const dpr = Math.min(window.devicePixelRatio || 1, dprCap);
-            introCanvas.width = window.innerWidth * dpr;
-            introCanvas.height = window.innerHeight * dpr;
-            renderFrame(currentFrame);
-        }
-
-        window.addEventListener('resize', resizeCanvas, { passive: true });
-
-        // Preload all 208 image frames
-        for (let i = 1; i <= TOTAL_FRAMES; i++) {
-            const img = new Image();
-            img.loading = 'eager';
-            img.src = getFramePath(i);
-            img.onload = () => handleLoad();
-            img.onerror = () => {
-                // Fallback path attempt
-                const altImg = new Image();
-                altImg.loading = 'eager';
-                altImg.src = `ezgif-frame-${String(i).padStart(3, '0')}.jpg`;
-                altImg.onload = () => {
-                    images[i - 1] = altImg;
-                    handleLoad();
-                };
-                altImg.onerror = () => handleLoad();
-            };
-            images.push(img);
-        }
-
-        function handleLoad() {
-            loadedCount++;
-            const percent = Math.min(Math.floor((loadedCount / TOTAL_FRAMES) * 100), 100);
-            
-            if (introLoaderText) introLoaderText.textContent = `LOADING ${percent}%`;
-            if (introLoaderBar) introLoaderBar.style.width = `${percent}%`;
-
-            if (loadedCount >= TOTAL_FRAMES) {
-                // Fade out preloader inside intro
-                if (introLoader) {
-                    introLoader.style.opacity = '0';
-                    setTimeout(() => { introLoader.style.display = 'none'; }, 700);
-                }
-                if (introHud) introHud.style.opacity = '1';
-                startIntroAnimation();
-            }
-        }
-
-        function completeIntro() {
-            if (isIntroComplete) return;
-            isIntroComplete = true;
-            sessionStorage.setItem('hasSeenIntro', 'true');
-
-            if (autoplayTween) autoplayTween.kill();
-
-            // Smooth fade transition into portfolio website
-            introOverlay.classList.add('intro-hidden');
-            document.body.style.overflow = 'auto';
-
-            setTimeout(() => {
-                introOverlay.style.display = 'none';
-            }, 1000);
-        }
-
-        function startIntroAnimation() {
-            resizeCanvas();
-            renderFrame(0);
-
-            const frameObj = { frame: 0 };
-
-            // Smooth 60FPS automatic intro playback over 3.8 seconds
-            if (typeof gsap !== 'undefined') {
-                autoplayTween = gsap.to(frameObj, {
-                    frame: TOTAL_FRAMES - 1,
-                    duration: 3.8,
-                    ease: 'power1.inOut',
-                    onUpdate: () => {
-                        scheduleRender(frameObj.frame);
-                    },
-                    onComplete: () => {
-                        completeIntro();
-                    }
-                });
-            } else {
-                let startTime = null;
-                const duration = 3800; // ms
-
-                function step(timestamp) {
-                    if (!startTime) startTime = timestamp;
-                    const elapsed = timestamp - startTime;
-                    const progress = Math.min(elapsed / duration, 1.0);
-                    scheduleRender(progress * (TOTAL_FRAMES - 1));
-
-                    if (progress < 1.0 && !isIntroComplete) {
-                        requestAnimationFrame(step);
-                    } else {
-                        completeIntro();
-                    }
-                }
-                requestAnimationFrame(step);
-            }
-
-            // Optional Scroll Scrubbing during Intro
-            const handleScrollScrub = (e) => {
-                if (isIntroComplete) return;
-                
-                const delta = e.deltaY || e.detail || (e.touches ? -10 : 10);
-                if (delta > 0) {
-                    currentFrame = Math.min(currentFrame + 6, TOTAL_FRAMES - 1);
-                } else {
-                    currentFrame = Math.max(currentFrame - 6, 0);
-                }
-
-                scheduleRender(currentFrame);
-
-                if (currentFrame >= TOTAL_FRAMES - 1) {
-                    completeIntro();
-                }
-            };
-
-            window.addEventListener('wheel', handleScrollScrub, { passive: true });
-            window.addEventListener('touchmove', handleScrollScrub, { passive: true });
-        }
-
-        // Mobile Menu Dropdown Toggle Handler
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         if (mobileMenuBtn && mobileMenu) {
