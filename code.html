@@ -473,12 +473,13 @@
         muted
         loop
         playsinline
+        webkit-playsinline
         preload="auto"
         class="w-full h-auto max-h-[85vh] object-contain rounded-2xl sm:rounded-3xl block mx-auto"
       >
-        <source src="assets/video/animo-carousel-flow-720p.mp4" type="video/mp4" />
-        <source src="assets/frames/animo-carousel-flow-720p.mp4" type="video/mp4" />
         <source src="assets/video/portfolio-intro-final.mp4" type="video/mp4" />
+        <source src="assets/video/portfolio intro final.mp4" type="video/mp4" />
+        <source src="assets/video/animo-carousel-flow-720p.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
     </div>
@@ -495,28 +496,33 @@
             video.defaultMuted = true;
             video.playsInline = true;
             
-            const startPlayback = () => {
-                const playPromise = video.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(() => {
-                        const enablePlayOnTouch = () => {
+            const forcePlay = () => {
+                video.muted = true;
+                const p = video.play();
+                if (p !== undefined) {
+                    p.catch(() => {
+                        const playOnInteract = () => {
                             video.play();
-                            window.removeEventListener("touchstart", enablePlayOnTouch);
-                            window.removeEventListener("scroll", enablePlayOnTouch);
+                            window.removeEventListener("touchstart", playOnInteract);
+                            window.removeEventListener("scroll", playOnInteract);
+                            window.removeEventListener("click", playOnInteract);
                         };
-                        window.addEventListener("touchstart", enablePlayOnTouch, { passive: true });
-                        window.addEventListener("scroll", enablePlayOnTouch, { passive: true });
+                        window.addEventListener("touchstart", playOnInteract, { passive: true });
+                        window.addEventListener("scroll", playOnInteract, { passive: true });
+                        window.addEventListener("click", playOnInteract, { passive: true });
                     });
                 }
             };
 
-            startPlayback();
+            video.addEventListener("canplay", forcePlay, { once: true });
+            video.addEventListener("loadedmetadata", forcePlay, { once: true });
+            forcePlay();
 
             if ("IntersectionObserver" in window) {
                 const observer = new IntersectionObserver((entries) => {
                     entries.forEach(entry => {
                         if (entry.isIntersecting) {
-                            startPlayback();
+                            forcePlay();
                         }
                     });
                 }, { threshold: 0.1 });
