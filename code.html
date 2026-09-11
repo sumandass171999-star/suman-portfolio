@@ -1370,7 +1370,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let previousPointerX = 0;
     let previousPointerY = 0;
     let velX = 0.001;
-    let velY = 0.0025;
+    let velY = 0.003;
     let mouseX = 0;
     let mouseY = 0;
     let isHovered = false;
@@ -1387,20 +1387,20 @@ document.addEventListener("DOMContentLoaded", () => {
         return tex;
     });
 
-    // Create Minimal Futuristic Holographic Pill Texture for UI Labels
+    // Create 4K Ultra-HD Canvas Texture for Orbiting Skill Labels
     function createLabelTexture(text) {
         const lblCanvas = document.createElement("canvas");
-        lblCanvas.width = 512;
-        lblCanvas.height = 128;
+        lblCanvas.width = 1024;
+        lblCanvas.height = 256;
         const ctx = lblCanvas.getContext("2d", { alpha: true });
 
-        ctx.clearRect(0, 0, 512, 128);
+        ctx.clearRect(0, 0, 1024, 256);
 
-        ctx.fillStyle = "rgba(4, 16, 28, 0.85)";
-        ctx.strokeStyle = "rgba(0, 212, 255, 0.6)";
-        ctx.lineWidth = 4;
+        ctx.fillStyle = "rgba(10, 20, 30, 0.85)";
+        ctx.strokeStyle = "rgba(0, 212, 255, 0.7)";
+        ctx.lineWidth = 6;
 
-        const x = 12, y = 12, w = 488, h = 104, r = 52;
+        const x = 24, y = 24, w = 976, h = 208, r = 96;
         ctx.beginPath();
         ctx.moveTo(x + r, y);
         ctx.arcTo(x + w, y, x + w, y + h, r);
@@ -1412,12 +1412,12 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.stroke();
 
         ctx.shadowColor = "#00D4FF";
-        ctx.shadowBlur = 12;
-        ctx.fillStyle = "#00D4FF";
-        ctx.font = "bold 34px 'Sora', 'Inter', sans-serif";
+        ctx.shadowBlur = 24;
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = "bold 60px 'Sora', 'Inter', sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(text, 256, 64);
+        ctx.fillText(text, 512, 128);
 
         const tex = new THREE.CanvasTexture(lblCanvas);
         tex.anisotropy = maxAnisotropy;
@@ -1433,10 +1433,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         scene = new THREE.Scene();
 
-        camera = new THREE.PerspectiveCamera(40, width / height, 1, 1000);
-        camera.position.z = 420;
+        camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+        camera.position.z = 320;
 
-        // WebGL 4K Renderer Settings
+        // Ultra-Sharp WebGL Renderer Settings
         renderer = new THREE.WebGLRenderer({
             canvas: canvas,
             alpha: true,
@@ -1447,36 +1447,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
         renderer.setPixelRatio(dpr);
 
-        if (typeof THREE.ACESFilmicToneMapping !== "undefined") {
-            renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.0;
-        }
-        if (typeof THREE.SRGBColorSpace !== "undefined") {
-            renderer.outputColorSpace = THREE.SRGBColorSpace;
-        }
-
         if (renderer.capabilities) {
             maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
-            loadedTextures.forEach(t => {
-                if (t) {
-                    t.anisotropy = maxAnisotropy;
-                    t.generateMipmaps = true;
-                    t.minFilter = THREE.LinearMipmapLinearFilter;
-                    t.magFilter = THREE.LinearFilter;
-                    if (typeof THREE.SRGBColorSpace !== "undefined") t.colorSpace = THREE.SRGBColorSpace;
-                }
-            });
+            loadedTextures.forEach(t => { if (t) t.anisotropy = maxAnisotropy; });
         }
 
-        // Cinematic 4K Lighting System
+        // Soft Lighting System (Subtle Glow)
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
         scene.add(ambientLight);
 
-        const cyanPointLight = new THREE.PointLight(0x00d4ff, 2.5, 600);
+        const cyanPointLight = new THREE.PointLight(0x00d4ff, 1.8, 600);
         cyanPointLight.position.set(180, 180, 200);
         scene.add(cyanPointLight);
 
-        const rimLight = new THREE.PointLight(0x3cd7ff, 1.8, 600);
+        const rimLight = new THREE.PointLight(0x3cd7ff, 1.2, 600);
         rimLight.position.set(-180, -120, -100);
         scene.add(rimLight);
 
@@ -1489,37 +1473,25 @@ document.addEventListener("DOMContentLoaded", () => {
         globeGroup.rotation.x = 0.2;
         scene.add(globeGroup);
 
-        const sphereRadius = Math.min(width, height) * 0.22;
-
-        // Solid Dark Navy Inner Core Sphere
-        const innerCoreGeo = new THREE.SphereGeometry(sphereRadius * 0.96, 48, 48);
-        const innerCoreMat = new THREE.MeshPhongMaterial({
-            color: 0x030f1d,
-            emissive: 0x001220,
-            specular: 0x00d4ff,
-            shininess: 70,
-            transparent: true,
-            opacity: 0.95
-        });
-        const innerCoreMesh = new THREE.Mesh(innerCoreGeo, innerCoreMat);
-        globeGroup.add(innerCoreMesh);
-
-        // Subtle Cyan Holographic Wireframe Grid Mesh
-        const coreGeo = new THREE.SphereGeometry(sphereRadius * 0.97, 32, 32);
+        // Core Glowing Wireframe Sphere Mesh
+        const sphereRadius = Math.min(width, height) * 0.28;
+        const coreGeo = new THREE.SphereGeometry(sphereRadius * 0.92, 48, 48);
         const coreMat = new THREE.MeshPhongMaterial({
-            color: 0x00d4ff,
-            emissive: 0x001e30,
+            color: 0x031726,
+            emissive: 0x002a3f,
             specular: 0x00d4ff,
-            shininess: 30,
+            shininess: 40,
             wireframe: true,
             transparent: true,
-            opacity: 0.35
+            opacity: 0.55,
+            depthWrite: false
         });
         const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+        coreMesh.renderOrder = 1;
         globeGroup.add(coreMesh);
 
-        // 8 Curated 3D Portfolio Image Tile Meshes (Floating at distinct depths)
-        const TOTAL_TILES = 8;
+        // 28 3D Portfolio Image Tile Meshes
+        const TOTAL_TILES = 28;
         const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
         for (let i = 0; i < TOTAL_TILES; i++) {
@@ -1530,77 +1502,76 @@ document.addEventListener("DOMContentLoaded", () => {
             const x = Math.cos(theta) * rAtY;
             const z = Math.sin(theta) * rAtY;
 
-            // Vary 3D orbital radius (1.15x to 1.32x) for clean depth layer separation
-            const depthScale = 1.15 + (i % 3) * 0.08;
-            const pos = new THREE.Vector3(x, y, z).multiplyScalar(sphereRadius * depthScale);
+            // Tile position floating smoothly slightly outside wireframe surface
+            const pos = new THREE.Vector3(x, y, z).multiplyScalar(sphereRadius * 1.05);
             const proj = PROJECTS[i % PROJECTS.length];
             const tex = loadedTextures[i % PROJECTS.length];
 
             const aspect = (i % 2 === 0) ? 0.75 : 1.25;
-            const tileW = (sphereRadius * 0.38) * aspect;
-            const tileH = sphereRadius * 0.38;
+            const tileW = (sphereRadius * 0.32) * aspect;
+            const tileH = sphereRadius * 0.32;
 
             const planeGeo = new THREE.PlaneGeometry(tileW, tileH);
             const planeMat = new THREE.MeshPhongMaterial({
                 map: tex,
                 transparent: true,
                 side: THREE.DoubleSide,
-                shininess: 50,
-                specular: 0xffffff,
-                emissive: 0x002233
+                shininess: 30,
+                emissive: 0x001522,
+                depthTest: true,
+                depthWrite: true
             });
 
             const tileMesh = new THREE.Mesh(planeGeo, planeMat);
             tileMesh.position.copy(pos);
             tileMesh.lookAt(pos.clone().multiplyScalar(2));
             tileMesh.userData = { project: proj };
+            tileMesh.renderOrder = 5;
 
             globeGroup.add(tileMesh);
             tileMeshes.push(tileMesh);
         }
 
-        // 3 Thin Luminous 3D Orbital Rings
+        // Orbit Rings Group
         orbitRingsGroup = new THREE.Group();
         scene.add(orbitRingsGroup);
 
-        const ringRadius1 = sphereRadius * 1.30;
-        const ringRadius2 = sphereRadius * 1.50;
-        const ringRadius3 = sphereRadius * 1.68;
+        const ringRadius1 = sphereRadius * 1.35;
+        const ringRadius2 = sphereRadius * 1.55;
 
         const createRing = (r, tiltX, tiltZ, color, opacity) => {
-            const ringGeo = new THREE.TorusGeometry(r, 0.6, 16, 100);
-            const ringMat = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: opacity });
+            const ringGeo = new THREE.TorusGeometry(r, 0.8, 16, 100);
+            const ringMat = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: opacity, depthWrite: false });
             const ringMesh = new THREE.Mesh(ringGeo, ringMat);
             ringMesh.rotation.x = tiltX;
             ringMesh.rotation.z = tiltZ;
+            ringMesh.renderOrder = 2;
             return ringMesh;
         };
 
-        const ring1 = createRing(ringRadius1, Math.PI / 3.5, 0.2, 0x00d4ff, 0.35);
-        const ring2 = createRing(ringRadius2, -Math.PI / 4, -0.3, 0x00d4ff, 0.28);
-        const ring3 = createRing(ringRadius3, Math.PI / 6, 0.4, 0x00d4ff, 0.22);
+        const ring1 = createRing(ringRadius1, Math.PI / 3, 0.2, 0x00d4ff, 0.35);
+        const ring2 = createRing(ringRadius2, -Math.PI / 4, -0.3, 0x00d4ff, 0.25);
         orbitRingsGroup.add(ring1);
         orbitRingsGroup.add(ring2);
-        orbitRingsGroup.add(ring3);
 
-        // 6 Minimal Holographic UI Labels along 3 orbital rings
+        // Orbiting Skill Labels as 4K 3D Sprites along the rings
         SKILL_LABELS.forEach((label, idx) => {
             const tex = createLabelTexture(label);
-            const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+            const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
             const sprite = new THREE.Sprite(spriteMat);
 
-            const isRing1 = idx % 3 === 0;
-            const isRing2 = idx % 3 === 1;
-            const r = isRing1 ? ringRadius1 : (isRing2 ? ringRadius2 : ringRadius3);
-            const angle = (idx / SKILL_LABELS.length) * Math.PI * 2 + 0.3;
-            const tiltX = isRing1 ? Math.PI / 3.5 : (isRing2 ? -Math.PI / 4 : Math.PI / 6);
+            const isRing1 = idx % 2 === 0;
+            const r = isRing1 ? ringRadius1 : ringRadius2;
+            const angle = (idx / SKILL_LABELS.length) * Math.PI * 2;
+            const tiltX = isRing1 ? Math.PI / 3 : -Math.PI / 4;
 
             const rx = Math.cos(angle) * r;
             const ry = Math.sin(angle) * r * Math.sin(tiltX);
             const rz = Math.sin(angle) * r * Math.cos(tiltX);
 
             sprite.position.set(rx, ry, rz);
-            sprite.scale.set(48, 12, 1);
+            sprite.scale.set(65, 16, 1);
+            sprite.renderOrder = 10;
 
             orbitRingsGroup.add(sprite);
             labelSprites.push(sprite);
@@ -1611,7 +1582,7 @@ document.addEventListener("DOMContentLoaded", () => {
         scene.add(particlesGroup);
 
         const partGeo = new THREE.BufferGeometry();
-        const partCount = 40;
+        const partCount = 50;
         const posArray = new Float32Array(partCount * 3);
 
         for (let i = 0; i < partCount * 3; i += 3) {
@@ -1621,10 +1592,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         partGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
         const partMat = new THREE.PointsMaterial({
-            size: 2.2,
+            size: 2.5,
             color: 0x00d4ff,
             transparent: true,
-            opacity: 0.40
+            opacity: 0.50
         });
         const particlesMesh = new THREE.Points(partGeo, partMat);
         particlesGroup.add(particlesMesh);
@@ -1782,4 +1753,5 @@ document.addEventListener("DOMContentLoaded", () => {
     observer.observe(heroSection);
 });
 </script>
-</body></html>
+</body>
+</html>
