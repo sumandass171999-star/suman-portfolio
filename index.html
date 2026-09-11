@@ -440,12 +440,12 @@
                     </a>
 </div>
 </div>
-<div id="hero-card-container" class="lg:col-span-7 relative mt-8 lg:mt-0 fade-in-up h-[450px] sm:h-[520px] lg:h-[580px] w-full max-w-[620px] mx-auto flex items-center justify-center cursor-grab active:cursor-grabbing rounded-3xl overflow-hidden glass-panel border border-[#00D4FF]/20 shadow-[0_0_40px_rgba(0,212,255,0.15)]" style="transition-delay: 0.4s;">
+<div id="hero-card-container" class="lg:col-span-7 relative mt-8 lg:mt-0 fade-in-up h-[450px] sm:h-[520px] lg:h-[560px] w-full max-w-[580px] mx-auto flex items-center justify-center cursor-grab active:cursor-grabbing rounded-3xl overflow-hidden glass-panel border border-[#00D4FF]/20 shadow-[0_0_20px_rgba(0,212,255,0.08)]" style="transition-delay: 0.4s;">
     <!-- Three.js 3D Interactive Creative Globe Canvas -->
     <canvas id="hero-globe-canvas" class="w-full h-full block absolute inset-0 z-10 rounded-3xl overflow-hidden"></canvas>
     
-    <!-- Atmospheric Ambient Cyan Radial Glow -->
-    <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.12)_0%,transparent_70%)]"></div>
+    <!-- Atmospheric Ambient Cyan Radial Glow (Subtle Accent: 80% lower opacity, 60% smaller radius) -->
+    <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.03)_0%,transparent_45%)]"></div>
 </div>
 </div>
 </div>
@@ -1219,7 +1219,7 @@ document.addEventListener("DOMContentLoaded", () => {
         scene = new THREE.Scene();
 
         camera = new THREE.PerspectiveCamera(40, width / height, 1, 1000);
-        camera.position.z = 360;
+        camera.position.z = 440;
 
         // Ultra-Sharp WebGL 4K Renderer Settings
         renderer = new THREE.WebGLRenderer({
@@ -1254,7 +1254,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Cinematic 4K Lighting System
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
         scene.add(ambientLight);
 
         const cyanPointLight = new THREE.PointLight(0x00d4ff, 2.6, 600);
@@ -1275,36 +1275,36 @@ document.addEventListener("DOMContentLoaded", () => {
         scene.add(globeGroup);
 
         // Core Glowing Wireframe Sphere Mesh
-        const sphereRadius = Math.min(width, height) * 0.26;
+        const sphereRadius = Math.min(width, height) * 0.20;
 
         // Ultra-Smooth High-Density Solid Inner Core Mesh
         const innerCoreGeo = new THREE.SphereGeometry(sphereRadius * 0.94, 64, 64);
         const innerCoreMat = new THREE.MeshPhongMaterial({
-            color: 0x020f1a,
-            emissive: 0x001a2e,
+            color: 0x010810,
+            emissive: 0x000c18,
             specular: 0x00d4ff,
             shininess: 50,
             transparent: true,
-            opacity: 0.92
+            opacity: 0.88
         });
         const innerCoreMesh = new THREE.Mesh(innerCoreGeo, innerCoreMat);
         globeGroup.add(innerCoreMesh);
 
-        // Ultra-Sharp High-Density Outer Wireframe Grid Mesh
+        // Subdued Outer Wireframe Grid Mesh (Secondary to artwork: 38% opacity)
         const coreGeo = new THREE.SphereGeometry(sphereRadius * 0.95, 48, 48);
         const coreMat = new THREE.MeshPhongMaterial({
             color: 0x00d4ff,
-            emissive: 0x002a3f,
+            emissive: 0x001d2d,
             specular: 0x00d4ff,
-            shininess: 40,
+            shininess: 30,
             wireframe: true,
             transparent: true,
-            opacity: 0.55
+            opacity: 0.38
         });
         const coreMesh = new THREE.Mesh(coreGeo, coreMat);
         globeGroup.add(coreMesh);
 
-        // 28 3D Portfolio Image Tile Meshes
+        // 28 3D Portfolio Image Tile Meshes (Separated 15% off surface for 3D depth & clarity)
         const TOTAL_TILES = 28;
         const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
@@ -1316,21 +1316,23 @@ document.addEventListener("DOMContentLoaded", () => {
             const x = Math.cos(theta) * rAtY;
             const z = Math.sin(theta) * rAtY;
 
-            const pos = new THREE.Vector3(x, y, z).multiplyScalar(sphereRadius);
+            // Float posters 15% out from sphere surface for maximum separation & visual clarity
+            const pos = new THREE.Vector3(x, y, z).multiplyScalar(sphereRadius * 1.15);
             const proj = PROJECTS[i % PROJECTS.length];
             const tex = loadedTextures[i % PROJECTS.length];
 
             const aspect = (i % 2 === 0) ? 0.75 : 1.25;
-            const tileW = (sphereRadius * 0.32) * aspect;
-            const tileH = sphereRadius * 0.32;
+            const tileW = (sphereRadius * 0.35) * aspect;
+            const tileH = sphereRadius * 0.35;
 
             const planeGeo = new THREE.PlaneGeometry(tileW, tileH);
             const planeMat = new THREE.MeshPhongMaterial({
                 map: tex,
                 transparent: true,
                 side: THREE.DoubleSide,
-                shininess: 30,
-                emissive: 0x001522
+                shininess: 60,
+                specular: 0xffffff,
+                emissive: 0x002233
             });
 
             const tileMesh = new THREE.Mesh(planeGeo, planeMat);
