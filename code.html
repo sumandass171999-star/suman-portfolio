@@ -1389,21 +1389,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return tex;
     });
 
-    // Crisp Luminous Holographic Pill Canvas Texture for UI Category Labels
+    // 4K Ultra-Crisp Holographic Pill Canvas Texture for UI Category Labels (1024x256 HD Canvas)
     function createLabelTexture(text) {
         const lblCanvas = document.createElement("canvas");
-        lblCanvas.width = 512;
-        lblCanvas.height = 128;
+        lblCanvas.width = 1024;
+        lblCanvas.height = 256;
         const ctx = lblCanvas.getContext("2d", { alpha: true });
 
-        ctx.clearRect(0, 0, 512, 128);
+        ctx.clearRect(0, 0, 1024, 256);
 
         // Semi-transparent dark cyan pill container with crisp electric cyan border
-        ctx.fillStyle = "rgba(2, 14, 28, 0.90)";
-        ctx.strokeStyle = "rgba(0, 229, 255, 0.90)";
-        ctx.lineWidth = 5;
+        ctx.fillStyle = "rgba(2, 14, 28, 0.92)";
+        ctx.strokeStyle = "rgba(0, 240, 255, 0.92)";
+        ctx.lineWidth = 10;
 
-        const x = 12, y = 12, w = 488, h = 104, r = 52;
+        const x = 24, y = 24, w = 976, h = 208, r = 104;
         ctx.beginPath();
         ctx.moveTo(x + r, y);
         ctx.arcTo(x + w, y, x + w, y + h, r);
@@ -1414,13 +1414,13 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.fill();
         ctx.stroke();
 
-        ctx.shadowColor = "#00E5FF";
-        ctx.shadowBlur = 18;
-        ctx.fillStyle = "#00E5FF";
-        ctx.font = "bold 34px 'Sora', 'Inter', sans-serif";
+        ctx.shadowColor = "#00F0FF";
+        ctx.shadowBlur = 24;
+        ctx.fillStyle = "#00F0FF";
+        ctx.font = "bold 68px 'Sora', 'Inter', sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(text, 256, 64);
+        ctx.fillText(text, 512, 128);
 
         const tex = new THREE.CanvasTexture(lblCanvas);
         tex.anisotropy = maxAnisotropy;
@@ -1440,7 +1440,7 @@ document.addEventListener("DOMContentLoaded", () => {
         camera = new THREE.PerspectiveCamera(38, width / height, 1, 1000);
         camera.position.set(0, 0, 450);
 
-        // WebGL High-Performance Renderer
+        // WebGL High-Performance 4K Renderer Settings
         renderer = new THREE.WebGLRenderer({
             canvas: canvas,
             alpha: true,
@@ -1496,14 +1496,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const sphereRadius = Math.min(width, height) * 0.24;
 
         // 1. Solid Dark Navy Inner Occlusion Core Sphere
-        const innerCoreGeo = new THREE.IcosahedronGeometry(sphereRadius * 0.95, 3);
+        const innerCoreGeo = new THREE.IcosahedronGeometry(sphereRadius * 0.95, 4);
         const innerCoreMat = new THREE.MeshPhongMaterial({
-            color: 0x020a14,
-            emissive: 0x000e1c,
+            color: 0x010814,
+            emissive: 0x000a18,
             specular: 0x00d4ff,
-            shininess: 85,
+            shininess: 90,
             transparent: true,
-            opacity: 0.96,
+            opacity: 0.97,
             depthWrite: true,
             depthTest: true
         });
@@ -1519,37 +1519,37 @@ document.addEventListener("DOMContentLoaded", () => {
         coreLight2.position.set(-sphereRadius * 0.25, -sphereRadius * 0.2, sphereRadius * 0.1);
         globeGroup.add(coreLight2);
 
-        // 2. High-Density Geodesic Cyan Wireframe Sphere (REFERENCE 2 style)
-        const coreGeo = new THREE.IcosahedronGeometry(sphereRadius * 0.98, 4);
+        // 2. High-Density Geodesic Cyan Wireframe Sphere (High Segment Resolution)
+        const coreGeo = new THREE.IcosahedronGeometry(sphereRadius * 0.98, 5);
         const coreMat = new THREE.MeshPhongMaterial({
-            color: 0x00e5ff,
+            color: 0x00f0ff,
             emissive: 0x003352,
             specular: 0x00ffff,
-            shininess: 40,
+            shininess: 50,
             wireframe: true,
             transparent: true,
-            opacity: 0.60,
+            opacity: 0.65,
             depthTest: true,
             depthWrite: false
         });
         const coreMesh = new THREE.Mesh(coreGeo, coreMat);
         globeGroup.add(coreMesh);
 
-        // Secondary Radial Sphere Grid Lines
-        const gridGeo = new THREE.SphereGeometry(sphereRadius * 0.99, 40, 40);
+        // Secondary High-Density Radial Sphere Grid Lines
+        const gridGeo = new THREE.SphereGeometry(sphereRadius * 0.99, 48, 48);
         const gridMat = new THREE.MeshPhongMaterial({
             color: 0x00bfff,
             emissive: 0x001d30,
             wireframe: true,
             transparent: true,
-            opacity: 0.25,
+            opacity: 0.28,
             depthTest: true,
             depthWrite: false
         });
         const gridMesh = new THREE.Mesh(gridGeo, gridMat);
         globeGroup.add(gridMesh);
 
-        // 3. 3D Elliptical Orbital Rings System
+        // 3. 3D High-Precision Elliptical Orbital Rings System
         orbitRingsGroup = new THREE.Group();
         scene.add(orbitRingsGroup);
 
@@ -1561,7 +1561,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ];
 
         ORBITS.forEach(orb => {
-            const ringGeo = new THREE.TorusGeometry(orb.r, 0.75, 16, 120);
+            const ringGeo = new THREE.TorusGeometry(orb.r, 0.65, 24, 160);
             const ringMat = new THREE.MeshBasicMaterial({
                 color: orb.color,
                 transparent: true,
@@ -1597,7 +1597,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 map: tex,
                 transparent: true,
                 side: THREE.DoubleSide,
-                shininess: 60,
+                shininess: 70,
                 specular: 0xffffff,
                 emissive: 0x00283d,
                 depthTest: true,
@@ -1615,7 +1615,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 angle: (i / TOTAL_TILES) * Math.PI * 2 + 0.2
             };
 
-            // Cyan glowing border frame
+            // Crisp cyan glowing border frame
             const borderGeo = new THREE.PlaneGeometry(tileW * 1.05, tileH * 1.05);
             const borderMat = new THREE.MeshBasicMaterial({
                 color: 0x00e5ff,
@@ -1693,6 +1693,8 @@ document.addEventListener("DOMContentLoaded", () => {
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
 
+        const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+        renderer.setPixelRatio(dpr);
         renderer.setSize(width, height);
     }
 
