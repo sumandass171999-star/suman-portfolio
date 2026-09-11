@@ -1346,7 +1346,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     ];
 
-    // Orbiting Category Labels
+    // Orbiting Skill Labels
     const SKILL_LABELS = [
         "POSTER DESIGN",
         "THUMBNAIL DESIGN",
@@ -1356,25 +1356,23 @@ document.addEventListener("DOMContentLoaded", () => {
         "BRANDING"
     ];
 
-    let scene, camera, renderer, globeGroup, orbitRingsGroup, orbitItemsGroup, particlesGroup;
+    let scene, camera, renderer, globeGroup, orbitRingsGroup, particlesGroup;
     let tileMeshes = [];
     let labelSprites = [];
     let isIntersecting = false;
     let animFrameId = null;
 
-    // Pointer & Parallax State
+    // Pointer / Inertia State
     let isDragging = false;
     let dragMoved = false;
     let pointerStartX = 0;
     let pointerStartY = 0;
     let previousPointerX = 0;
     let previousPointerY = 0;
-    let velX = 0.0008;
-    let velY = 0.0022;
-    let targetMouseX = 0;
-    let targetMouseY = 0;
-    let currentMouseX = 0;
-    let currentMouseY = 0;
+    let velX = 0.001;
+    let velY = 0.0025;
+    let mouseX = 0;
+    let mouseY = 0;
     let isHovered = false;
 
     // Texture Loader with Max Anisotropic Filtering
@@ -1389,21 +1387,20 @@ document.addEventListener("DOMContentLoaded", () => {
         return tex;
     });
 
-    // 4K Ultra-Crisp Holographic Pill Canvas Texture for UI Category Labels (1024x256 HD Canvas)
+    // Create Minimal Futuristic Holographic Pill Texture for UI Labels
     function createLabelTexture(text) {
         const lblCanvas = document.createElement("canvas");
-        lblCanvas.width = 1024;
-        lblCanvas.height = 256;
+        lblCanvas.width = 512;
+        lblCanvas.height = 128;
         const ctx = lblCanvas.getContext("2d", { alpha: true });
 
-        ctx.clearRect(0, 0, 1024, 256);
+        ctx.clearRect(0, 0, 512, 128);
 
-        // Semi-transparent dark cyan pill container with crisp electric cyan border
-        ctx.fillStyle = "rgba(2, 14, 28, 0.92)";
-        ctx.strokeStyle = "rgba(0, 240, 255, 0.92)";
-        ctx.lineWidth = 10;
+        ctx.fillStyle = "rgba(4, 16, 28, 0.85)";
+        ctx.strokeStyle = "rgba(0, 212, 255, 0.6)";
+        ctx.lineWidth = 4;
 
-        const x = 24, y = 24, w = 976, h = 208, r = 104;
+        const x = 12, y = 12, w = 488, h = 104, r = 52;
         ctx.beginPath();
         ctx.moveTo(x + r, y);
         ctx.arcTo(x + w, y, x + w, y + h, r);
@@ -1414,13 +1411,13 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.fill();
         ctx.stroke();
 
-        ctx.shadowColor = "#00F0FF";
-        ctx.shadowBlur = 24;
-        ctx.fillStyle = "#00F0FF";
-        ctx.font = "bold 68px 'Sora', 'Inter', sans-serif";
+        ctx.shadowColor = "#00D4FF";
+        ctx.shadowBlur = 12;
+        ctx.fillStyle = "#00D4FF";
+        ctx.font = "bold 34px 'Sora', 'Inter', sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(text, 512, 128);
+        ctx.fillText(text, 256, 64);
 
         const tex = new THREE.CanvasTexture(lblCanvas);
         tex.anisotropy = maxAnisotropy;
@@ -1436,11 +1433,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         scene = new THREE.Scene();
 
-        // 3D Perspective Camera
-        camera = new THREE.PerspectiveCamera(38, width / height, 1, 1000);
-        camera.position.set(0, 0, 450);
+        camera = new THREE.PerspectiveCamera(40, width / height, 1, 1000);
+        camera.position.z = 420;
 
-        // WebGL High-Performance 4K Renderer Settings
+        // WebGL 4K Renderer Settings
         renderer = new THREE.WebGLRenderer({
             canvas: canvas,
             alpha: true,
@@ -1453,7 +1449,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (typeof THREE.ACESFilmicToneMapping !== "undefined") {
             renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.15;
+            renderer.toneMappingExposure = 1.0;
         }
         if (typeof THREE.SRGBColorSpace !== "undefined") {
             renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -1472,123 +1468,75 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Cinematic 3D Lighting matching REFERENCE 2
+        // Cinematic 4K Lighting System
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
         scene.add(ambientLight);
 
-        const cyanPointLight = new THREE.PointLight(0x00e5ff, 2.5, 750);
-        cyanPointLight.position.set(180, 220, 240);
+        const cyanPointLight = new THREE.PointLight(0x00d4ff, 2.5, 600);
+        cyanPointLight.position.set(180, 180, 200);
         scene.add(cyanPointLight);
 
-        const rimLight = new THREE.PointLight(0x00ffff, 2.0, 750);
-        rimLight.position.set(-220, -160, -140);
+        const rimLight = new THREE.PointLight(0x3cd7ff, 1.8, 600);
+        rimLight.position.set(-180, -120, -100);
         scene.add(rimLight);
 
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.65);
-        dirLight.position.set(0, 160, 220);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+        dirLight.position.set(0, 100, 150);
         scene.add(dirLight);
 
-        // Main 3D Sphere Group
+        // Main Globe Group
         globeGroup = new THREE.Group();
-        globeGroup.rotation.x = 0.15;
+        globeGroup.rotation.x = 0.2;
         scene.add(globeGroup);
 
-        const sphereRadius = Math.min(width, height) * 0.24;
+        const sphereRadius = Math.min(width, height) * 0.22;
 
-        // 1. Solid Dark Navy Inner Occlusion Core Sphere
-        const innerCoreGeo = new THREE.IcosahedronGeometry(sphereRadius * 0.95, 4);
+        // Solid Dark Navy Inner Core Sphere
+        const innerCoreGeo = new THREE.SphereGeometry(sphereRadius * 0.96, 48, 48);
         const innerCoreMat = new THREE.MeshPhongMaterial({
-            color: 0x010814,
-            emissive: 0x000a18,
+            color: 0x030f1d,
+            emissive: 0x001220,
             specular: 0x00d4ff,
-            shininess: 90,
+            shininess: 70,
             transparent: true,
-            opacity: 0.97,
-            depthWrite: true,
-            depthTest: true
+            opacity: 0.95
         });
         const innerCoreMesh = new THREE.Mesh(innerCoreGeo, innerCoreMat);
         globeGroup.add(innerCoreMesh);
 
-        // Dual Internal Volumetric Glowing Core Lights (Inside sphere)
-        const coreLight1 = new THREE.PointLight(0x00f0ff, 3.2, sphereRadius * 3);
-        coreLight1.position.set(sphereRadius * 0.2, sphereRadius * 0.3, sphereRadius * 0.25);
-        globeGroup.add(coreLight1);
-
-        const coreLight2 = new THREE.PointLight(0x00d4ff, 2.4, sphereRadius * 3);
-        coreLight2.position.set(-sphereRadius * 0.25, -sphereRadius * 0.2, sphereRadius * 0.1);
-        globeGroup.add(coreLight2);
-
-        // 2. High-Density Geodesic Cyan Wireframe Sphere (High Segment Resolution)
-        const coreGeo = new THREE.IcosahedronGeometry(sphereRadius * 0.98, 5);
+        // Subtle Cyan Holographic Wireframe Grid Mesh
+        const coreGeo = new THREE.SphereGeometry(sphereRadius * 0.97, 32, 32);
         const coreMat = new THREE.MeshPhongMaterial({
-            color: 0x00f0ff,
-            emissive: 0x003352,
-            specular: 0x00ffff,
-            shininess: 50,
+            color: 0x00d4ff,
+            emissive: 0x001e30,
+            specular: 0x00d4ff,
+            shininess: 30,
             wireframe: true,
             transparent: true,
-            opacity: 0.65,
-            depthTest: true,
-            depthWrite: false
+            opacity: 0.35
         });
         const coreMesh = new THREE.Mesh(coreGeo, coreMat);
         globeGroup.add(coreMesh);
 
-        // Secondary High-Density Radial Sphere Grid Lines
-        const gridGeo = new THREE.SphereGeometry(sphereRadius * 0.99, 48, 48);
-        const gridMat = new THREE.MeshPhongMaterial({
-            color: 0x00bfff,
-            emissive: 0x001d30,
-            wireframe: true,
-            transparent: true,
-            opacity: 0.28,
-            depthTest: true,
-            depthWrite: false
-        });
-        const gridMesh = new THREE.Mesh(gridGeo, gridMat);
-        globeGroup.add(gridMesh);
+        // 8 Curated 3D Portfolio Image Tile Meshes (Floating at distinct depths)
+        const TOTAL_TILES = 8;
+        const goldenAngle = Math.PI * (3 - Math.sqrt(5));
 
-        // 3. 3D High-Precision Elliptical Orbital Rings System
-        orbitRingsGroup = new THREE.Group();
-        scene.add(orbitRingsGroup);
-
-        const ORBITS = [
-            { r: sphereRadius * 1.35, tiltX: Math.PI / 3.2, tiltZ: 0.2, speed: 0.0022, color: 0x00e5ff, opacity: 0.45 },
-            { r: sphereRadius * 1.58, tiltX: -Math.PI / 3.6, tiltZ: -0.25, speed: -0.0018, color: 0x00e5ff, opacity: 0.38 },
-            { r: sphereRadius * 1.82, tiltX: Math.PI / 5.2, tiltZ: 0.35, speed: 0.0014, color: 0x00e5ff, opacity: 0.30 },
-            { r: sphereRadius * 2.05, tiltX: -Math.PI / 6.5, tiltZ: -0.4, speed: -0.0011, color: 0x00e5ff, opacity: 0.22 }
-        ];
-
-        ORBITS.forEach(orb => {
-            const ringGeo = new THREE.TorusGeometry(orb.r, 0.65, 24, 160);
-            const ringMat = new THREE.MeshBasicMaterial({
-                color: orb.color,
-                transparent: true,
-                opacity: orb.opacity,
-                depthTest: true,
-                depthWrite: false
-            });
-            const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-            ringMesh.rotation.x = orb.tiltX;
-            ringMesh.rotation.z = orb.tiltZ;
-            orbitRingsGroup.add(ringMesh);
-        });
-
-        // 4. Dynamic 3D Orbiting Artwork Cards & Category Typography Labels Group
-        orbitItemsGroup = new THREE.Group();
-        scene.add(orbitItemsGroup);
-
-        // 10 Floating Design Panels Orbiting in 3D Space (REFERENCE 2)
-        const TOTAL_TILES = 10;
         for (let i = 0; i < TOTAL_TILES; i++) {
-            const orbIdx = i % ORBITS.length;
-            const orb = ORBITS[orbIdx];
+            const y = 1 - (i / (TOTAL_TILES - 1)) * 2;
+            const rAtY = Math.sqrt(1 - y * y);
+            const theta = goldenAngle * i;
 
+            const x = Math.cos(theta) * rAtY;
+            const z = Math.sin(theta) * rAtY;
+
+            // Vary 3D orbital radius (1.15x to 1.32x) for clean depth layer separation
+            const depthScale = 1.15 + (i % 3) * 0.08;
+            const pos = new THREE.Vector3(x, y, z).multiplyScalar(sphereRadius * depthScale);
             const proj = PROJECTS[i % PROJECTS.length];
             const tex = loadedTextures[i % PROJECTS.length];
 
-            const aspect = (i % 3 === 0) ? 0.72 : (i % 3 === 1 ? 1.35 : 1.0);
+            const aspect = (i % 2 === 0) ? 0.75 : 1.25;
             const tileW = (sphereRadius * 0.38) * aspect;
             const tileH = sphereRadius * 0.38;
 
@@ -1597,89 +1545,86 @@ document.addEventListener("DOMContentLoaded", () => {
                 map: tex,
                 transparent: true,
                 side: THREE.DoubleSide,
-                shininess: 70,
+                shininess: 50,
                 specular: 0xffffff,
-                emissive: 0x00283d,
-                depthTest: true,
-                depthWrite: true
+                emissive: 0x002233
             });
 
             const tileMesh = new THREE.Mesh(planeGeo, planeMat);
-            tileMesh.userData = {
-                project: proj,
-                orbIdx: orbIdx,
-                radius: orb.r,
-                tiltX: orb.tiltX,
-                tiltZ: orb.tiltZ,
-                speed: orb.speed,
-                angle: (i / TOTAL_TILES) * Math.PI * 2 + 0.2
-            };
+            tileMesh.position.copy(pos);
+            tileMesh.lookAt(pos.clone().multiplyScalar(2));
+            tileMesh.userData = { project: proj };
 
-            // Crisp cyan glowing border frame
-            const borderGeo = new THREE.PlaneGeometry(tileW * 1.05, tileH * 1.05);
-            const borderMat = new THREE.MeshBasicMaterial({
-                color: 0x00e5ff,
-                side: THREE.DoubleSide,
-                transparent: true,
-                opacity: 0.55,
-                depthTest: true,
-                depthWrite: false
-            });
-            const borderMesh = new THREE.Mesh(borderGeo, borderMat);
-            borderMesh.position.set(0, 0, -0.2);
-            tileMesh.add(borderMesh);
-
-            orbitItemsGroup.add(tileMesh);
+            globeGroup.add(tileMesh);
             tileMeshes.push(tileMesh);
         }
 
-        // 6 Orbiting Category Typography Badges (REFERENCE 2 style)
+        // 3 Thin Luminous 3D Orbital Rings
+        orbitRingsGroup = new THREE.Group();
+        scene.add(orbitRingsGroup);
+
+        const ringRadius1 = sphereRadius * 1.30;
+        const ringRadius2 = sphereRadius * 1.50;
+        const ringRadius3 = sphereRadius * 1.68;
+
+        const createRing = (r, tiltX, tiltZ, color, opacity) => {
+            const ringGeo = new THREE.TorusGeometry(r, 0.6, 16, 100);
+            const ringMat = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: opacity });
+            const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+            ringMesh.rotation.x = tiltX;
+            ringMesh.rotation.z = tiltZ;
+            return ringMesh;
+        };
+
+        const ring1 = createRing(ringRadius1, Math.PI / 3.5, 0.2, 0x00d4ff, 0.35);
+        const ring2 = createRing(ringRadius2, -Math.PI / 4, -0.3, 0x00d4ff, 0.28);
+        const ring3 = createRing(ringRadius3, Math.PI / 6, 0.4, 0x00d4ff, 0.22);
+        orbitRingsGroup.add(ring1);
+        orbitRingsGroup.add(ring2);
+        orbitRingsGroup.add(ring3);
+
+        // 6 Minimal Holographic UI Labels along 3 orbital rings
         SKILL_LABELS.forEach((label, idx) => {
             const tex = createLabelTexture(label);
-            const spriteMat = new THREE.SpriteMaterial({
-                map: tex,
-                transparent: true,
-                depthTest: true,
-                depthWrite: false
-            });
+            const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true });
             const sprite = new THREE.Sprite(spriteMat);
 
-            const orbIdx = idx % ORBITS.length;
-            const orb = ORBITS[orbIdx];
+            const isRing1 = idx % 3 === 0;
+            const isRing2 = idx % 3 === 1;
+            const r = isRing1 ? ringRadius1 : (isRing2 ? ringRadius2 : ringRadius3);
+            const angle = (idx / SKILL_LABELS.length) * Math.PI * 2 + 0.3;
+            const tiltX = isRing1 ? Math.PI / 3.5 : (isRing2 ? -Math.PI / 4 : Math.PI / 6);
 
-            sprite.userData = {
-                orbIdx: orbIdx,
-                radius: orb.r * 1.05,
-                tiltX: orb.tiltX,
-                tiltZ: orb.tiltZ,
-                speed: orb.speed * 0.9,
-                angle: (idx / SKILL_LABELS.length) * Math.PI * 2 + 0.5
-            };
-            sprite.scale.set(54, 13.5, 1);
+            const rx = Math.cos(angle) * r;
+            const ry = Math.sin(angle) * r * Math.sin(tiltX);
+            const rz = Math.sin(angle) * r * Math.cos(tiltX);
 
-            orbitItemsGroup.add(sprite);
+            sprite.position.set(rx, ry, rz);
+            sprite.scale.set(48, 12, 1);
+
+            orbitRingsGroup.add(sprite);
             labelSprites.push(sprite);
         });
 
-        // 5. Sparse Ambient 3D Space Particles
+        // Ambient Background Particles
         particlesGroup = new THREE.Group();
         scene.add(particlesGroup);
 
         const partGeo = new THREE.BufferGeometry();
-        const partCount = 55;
+        const partCount = 40;
         const posArray = new Float32Array(partCount * 3);
 
         for (let i = 0; i < partCount * 3; i += 3) {
-            posArray[i] = (Math.random() - 0.5) * 680;
-            posArray[i + 1] = (Math.random() - 0.5) * 680;
-            posArray[i + 2] = (Math.random() - 0.5) * 680;
+            posArray[i] = (Math.random() - 0.5) * 600;
+            posArray[i + 1] = (Math.random() - 0.5) * 600;
+            posArray[i + 2] = (Math.random() - 0.5) * 600;
         }
         partGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
         const partMat = new THREE.PointsMaterial({
-            size: 2.5,
-            color: 0x00e5ff,
+            size: 2.2,
+            color: 0x00d4ff,
             transparent: true,
-            opacity: 0.45
+            opacity: 0.40
         });
         const particlesMesh = new THREE.Points(partGeo, partMat);
         particlesGroup.add(particlesMesh);
@@ -1693,14 +1638,12 @@ document.addEventListener("DOMContentLoaded", () => {
         camera.aspect = width / height;
         camera.updateProjectionMatrix();
 
-        const dpr = Math.min(window.devicePixelRatio || 1, 2.5);
-        renderer.setPixelRatio(dpr);
         renderer.setSize(width, height);
     }
 
     window.addEventListener("resize", onResize);
 
-    // Pointer Drag & Inertia Dynamics
+    // Pointer Drag & Parallax Dynamics
     function onPointerDown(x, y) {
         isDragging = true;
         dragMoved = false;
@@ -1720,8 +1663,8 @@ document.addEventListener("DOMContentLoaded", () => {
             dragMoved = true;
         }
 
-        velY = dx * 0.004;
-        velX = dy * 0.004;
+        velY = dx * 0.005;
+        velX = dy * 0.005;
 
         globeGroup.rotation.y += velY;
         globeGroup.rotation.x += velX;
@@ -1746,8 +1689,8 @@ document.addEventListener("DOMContentLoaded", () => {
             onPointerMove(e.clientX, e.clientY);
         } else {
             const rect = heroSection.getBoundingClientRect();
-            targetMouseX = (e.clientX - rect.left - rect.width / 2) * 0.00006;
-            targetMouseY = (e.clientY - rect.top - rect.height / 2) * 0.00006;
+            mouseX = (e.clientX - rect.left - rect.width / 2) * 0.00008;
+            mouseY = (e.clientY - rect.top - rect.height / 2) * 0.00008;
         }
     });
 
@@ -1788,72 +1731,35 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Three.js Dynamic 3D Render Loop
+    // Three.js Render Loop
     function animate() {
         if (!isIntersecting) return;
 
-        // Smooth Mouse Parallax
-        currentMouseX += (targetMouseX - currentMouseX) * 0.05;
-        currentMouseY += (targetMouseY - currentMouseY) * 0.05;
-
         if (!isDragging) {
-            globeGroup.rotation.y += velY + currentMouseX;
-            globeGroup.rotation.x += velX + currentMouseY;
+            globeGroup.rotation.y += velY + mouseX;
+            globeGroup.rotation.x += velX + mouseY;
 
-            const targetVy = isHovered ? 0.0035 : 0.0018;
-            const targetVx = isHovered ? 0.0012 : 0.0004;
+            const targetVy = isHovered ? 0.004 : 0.002;
+            const targetVx = isHovered ? 0.0015 : 0.0005;
 
             velY += (targetVy - velY) * 0.03;
             velX += (targetVx - velX) * 0.03;
         }
 
-        // 1. Orbit Ring Rotation
         if (orbitRingsGroup) {
-            orbitRingsGroup.rotation.y += 0.0012;
+            orbitRingsGroup.rotation.y += 0.0025;
+            orbitRingsGroup.rotation.x += 0.001;
         }
 
-        // 2. Dynamic 3D Orbital Path Calculations for Artwork Panels
-        tileMeshes.forEach(t => {
-            const d = t.userData;
-            d.angle += d.speed;
-
-            const ox = Math.cos(d.angle) * d.radius;
-            const oz = Math.sin(d.angle) * d.radius;
-            const oy = Math.sin(d.angle * 2) * 12;
-
-            const pos = new THREE.Vector3(ox, oy, oz);
-            pos.applyAxisAngle(new THREE.Vector3(1, 0, 0), d.tiltX);
-            pos.applyAxisAngle(new THREE.Vector3(0, 0, 1), d.tiltZ);
-
-            t.position.copy(pos);
-            t.lookAt(camera.position); // Always face viewer smoothly for crisp artwork display
-        });
-
-        // 3. Dynamic 3D Orbital Path Calculations for Category Typography Badges
-        labelSprites.forEach(s => {
-            const d = s.userData;
-            d.angle += d.speed;
-
-            const ox = Math.cos(d.angle) * d.radius;
-            const oz = Math.sin(d.angle) * d.radius;
-            const oy = Math.sin(d.angle * 2) * 10;
-
-            const pos = new THREE.Vector3(ox, oy, oz);
-            pos.applyAxisAngle(new THREE.Vector3(1, 0, 0), d.tiltX);
-            pos.applyAxisAngle(new THREE.Vector3(0, 0, 1), d.tiltZ);
-
-            s.position.copy(pos);
-        });
-
         if (particlesGroup) {
-            particlesGroup.rotation.y -= 0.0004;
+            particlesGroup.rotation.y -= 0.0005;
         }
 
         renderer.render(scene, camera);
         animFrameId = requestAnimationFrame(animate);
     }
 
-    // IntersectionObserver Lazy Load
+    // Lazy load observer
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
