@@ -421,7 +421,14 @@
 <div id="hero-scroll-wrapper" class="relative w-full">
 <section id="hero-section" class="relative overflow-hidden px-margin-edge py-10 md:py-16 z-10 hero-scanline-stripes">
 <div class="max-w-container-max mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-gutter relative z-10 items-center">
-<div id="hero-text-container" class="lg:col-span-5 flex flex-col gap-stack-lg fade-in-up relative" style="transition-delay: 0.1s;">
+<div id="hero-card-container" class="lg:col-span-7 relative order-2 lg:order-1 mt-8 lg:mt-0 fade-in-up h-[450px] sm:h-[520px] lg:h-[580px] w-full max-w-[600px] mx-auto flex items-center justify-center cursor-grab active:cursor-grabbing rounded-3xl overflow-hidden glass-panel border border-[#00D4FF]/20 shadow-[0_0_30px_rgba(0,212,255,0.12)]" style="transition-delay: 0.2s;">
+    <!-- Three.js 3D Interactive Creative Globe Canvas -->
+    <canvas id="hero-globe-canvas" class="w-full h-full block absolute inset-0 z-10 rounded-3xl overflow-hidden"></canvas>
+    
+    <!-- Atmospheric Ambient Cyan Radial Glow -->
+    <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.05)_0%,transparent_50%)]"></div>
+</div>
+<div id="hero-text-container" class="lg:col-span-5 flex flex-col gap-stack-lg order-1 lg:order-2 fade-in-up relative" style="transition-delay: 0.1s;">
 <div class="relative z-10">
 <h2 class="font-label-sm text-label-sm text-primary tracking-[0.3em] uppercase mb-4 pl-1 border-l-2 border-primary">CREATIVE UNIVERSE</h2>
 <h1 class="font-headline-xl text-[60px] md:text-[85px] lg:text-[105px] font-black uppercase tracking-tighter text-on-surface leading-[0.9] mb-4">
@@ -443,13 +450,6 @@
                         CONTACT ME
                     </a>
 </div>
-</div>
-<div id="hero-card-container" class="lg:col-span-7 relative mt-8 lg:mt-0 fade-in-up h-[450px] sm:h-[520px] lg:h-[560px] w-full max-w-[580px] mx-auto flex items-center justify-center cursor-grab active:cursor-grabbing rounded-3xl overflow-hidden glass-panel border border-[#00D4FF]/20 shadow-[0_0_20px_rgba(0,212,255,0.08)]" style="transition-delay: 0.4s;">
-    <!-- Three.js 3D Interactive Creative Globe Canvas -->
-    <canvas id="hero-globe-canvas" class="w-full h-full block absolute inset-0 z-10 rounded-3xl overflow-hidden"></canvas>
-    
-    <!-- Atmospheric Ambient Cyan Radial Glow (Subtle Accent: 80% lower opacity, 60% smaller radius) -->
-    <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.03)_0%,transparent_45%)]"></div>
 </div>
 </div>
 </div>
@@ -1290,6 +1290,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             });
+
 <!-- Hero Section - Three.js 3D Interactive Creative Globe Engine -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -1379,7 +1380,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return tex;
     });
 
-    // Create Minimal Futuristic Holographic Pill Texture for UI Labels
+    // Create Holographic Pill Texture for UI Labels
     function createLabelTexture(text) {
         const lblCanvas = document.createElement("canvas");
         lblCanvas.width = 512;
@@ -1389,7 +1390,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.clearRect(0, 0, 512, 128);
 
         ctx.fillStyle = "rgba(4, 16, 28, 0.85)";
-        ctx.strokeStyle = "rgba(0, 212, 255, 0.6)";
+        ctx.strokeStyle = "rgba(0, 212, 255, 0.65)";
         ctx.lineWidth = 4;
 
         const x = 12, y = 12, w = 488, h = 104, r = 52;
@@ -1441,7 +1442,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (typeof THREE.ACESFilmicToneMapping !== "undefined") {
             renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.0;
+            renderer.toneMappingExposure = 1.05;
         }
         if (typeof THREE.SRGBColorSpace !== "undefined") {
             renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -1460,7 +1461,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Cinematic 4K Lighting System
+        // Cinematic 3D Lighting System
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
         scene.add(ambientLight);
 
