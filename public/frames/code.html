@@ -421,14 +421,8 @@
 <div id="hero-scroll-wrapper" class="relative w-full">
 <section id="hero-section" class="relative overflow-hidden px-margin-edge py-10 md:py-16 z-10 hero-scanline-stripes">
 <div class="max-w-container-max mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-gutter relative z-10 items-center">
-<div id="hero-card-container" class="lg:col-span-7 relative order-2 lg:order-1 mt-6 lg:mt-0 fade-in-up h-[480px] sm:h-[560px] lg:h-[640px] w-full max-w-[680px] mx-auto flex items-center justify-center cursor-grab active:cursor-grabbing relative" style="transition-delay: 0.2s;">
-    <!-- Three.js 3D Interactive Creative Globe Canvas -->
-    <canvas id="hero-globe-canvas" class="w-full h-full block absolute inset-0 z-10 pointer-events-auto"></canvas>
-    
-    <!-- Atmospheric Ambient Cyan Radial Glow -->
-    <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.08)_0%,transparent_65%)]"></div>
-</div>
-<div id="hero-text-container" class="lg:col-span-5 flex flex-col gap-stack-lg order-1 lg:order-2 fade-in-up relative glass-panel p-8 sm:p-10 rounded-3xl border border-[#00D4FF]/25 shadow-[0_0_30px_rgba(0,212,255,0.12)] bg-[#030b12]/60 backdrop-blur-xl" style="transition-delay: 0.1s;">
+<!-- Left Side: Hero Text Content (Reference 1 Layout, NO card background) -->
+<div id="hero-text-container" class="lg:col-span-5 flex flex-col gap-stack-lg order-1 fade-in-up relative" style="transition-delay: 0.1s;">
 <div class="relative z-10">
 <h2 class="font-label-sm text-label-sm text-primary tracking-[0.3em] uppercase mb-4 pl-1 border-l-2 border-primary">CREATIVE UNIVERSE</h2>
 <h1 class="font-headline-xl text-[60px] md:text-[85px] lg:text-[105px] font-black uppercase tracking-tighter text-on-surface leading-[0.9] mb-4">
@@ -449,6 +443,16 @@
 <a class="btn-ghost px-8 py-4 rounded-full font-label-sm text-label-sm uppercase tracking-widest font-bold" href="#contact">
                         CONTACT ME
                     </a>
+</div>
+</div>
+
+<!-- Right Side: Rebuilt 3D Creative Universe Globe (REFERENCE 2 visual, borderless floating visual zone) -->
+<div id="hero-card-container" class="lg:col-span-7 relative order-2 mt-8 lg:mt-0 fade-in-up h-[500px] sm:h-[600px] lg:h-[680px] w-full max-w-[720px] mx-auto flex items-center justify-center cursor-grab active:cursor-grabbing relative overflow-visible" style="transition-delay: 0.2s;">
+    <!-- Three.js 3D Interactive Creative Globe Canvas -->
+    <canvas id="hero-globe-canvas" class="w-full h-full block absolute inset-0 z-10 pointer-events-auto"></canvas>
+    
+    <!-- Atmospheric Ambient Cyan Radial Glow (Borderless, space-like) -->
+    <div class="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_center,rgba(0,212,255,0.07)_0%,transparent_68%)]"></div>
 </div>
 </div>
 </div>
@@ -1258,7 +1262,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     ];
 
-    // Orbiting Skill Labels
+    // Orbiting Category Labels
     const SKILL_LABELS = [
         "POSTER DESIGN",
         "THUMBNAIL DESIGN",
@@ -1268,13 +1272,13 @@ document.addEventListener("DOMContentLoaded", () => {
         "BRANDING"
     ];
 
-    let scene, camera, renderer, globeGroup, orbitRingsGroup, particlesGroup;
+    let scene, camera, renderer, globeGroup, orbitRingsGroup, orbitItemsGroup, particlesGroup;
     let tileMeshes = [];
     let labelSprites = [];
     let isIntersecting = false;
     let animFrameId = null;
 
-    // Pointer & Parallax Dynamics State
+    // Pointer & Parallax State
     let isDragging = false;
     let dragMoved = false;
     let pointerStartX = 0;
@@ -1301,7 +1305,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return tex;
     });
 
-    // Create Crisp Luminous Holographic Pill Canvas Texture for UI Labels
+    // Crisp Luminous Holographic Pill Canvas Texture for UI Category Labels
     function createLabelTexture(text) {
         const lblCanvas = document.createElement("canvas");
         lblCanvas.width = 512;
@@ -1310,9 +1314,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         ctx.clearRect(0, 0, 512, 128);
 
-        // Futuristic pill outline & semi-transparent dark cyan fill
-        ctx.fillStyle = "rgba(2, 12, 24, 0.88)";
-        ctx.strokeStyle = "rgba(0, 229, 255, 0.85)";
+        // Semi-transparent dark cyan pill container with crisp electric cyan border
+        ctx.fillStyle = "rgba(2, 14, 28, 0.90)";
+        ctx.strokeStyle = "rgba(0, 229, 255, 0.90)";
         ctx.lineWidth = 5;
 
         const x = 12, y = 12, w = 488, h = 104, r = 52;
@@ -1327,7 +1331,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ctx.stroke();
 
         ctx.shadowColor = "#00E5FF";
-        ctx.shadowBlur = 16;
+        ctx.shadowBlur = 18;
         ctx.fillStyle = "#00E5FF";
         ctx.font = "bold 34px 'Sora', 'Inter', sans-serif";
         ctx.textAlign = "center";
@@ -1348,10 +1352,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         scene = new THREE.Scene();
 
+        // 3D Perspective Camera
         camera = new THREE.PerspectiveCamera(38, width / height, 1, 1000);
-        camera.position.z = 430;
+        camera.position.set(0, 0, 450);
 
-        // WebGL 4K Renderer Settings
+        // WebGL High-Performance Renderer
         renderer = new THREE.WebGLRenderer({
             canvas: canvas,
             alpha: true,
@@ -1364,7 +1369,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (typeof THREE.ACESFilmicToneMapping !== "undefined") {
             renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.1;
+            renderer.toneMappingExposure = 1.15;
         }
         if (typeof THREE.SRGBColorSpace !== "undefined") {
             renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -1383,101 +1388,125 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
 
-        // Cinematic 3D Lighting System matching IMAGE 2
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+        // Cinematic 3D Lighting matching REFERENCE 2
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
         scene.add(ambientLight);
 
-        // Key Front Point Light (Cyan Glow)
-        const cyanPointLight = new THREE.PointLight(0x00e5ff, 2.8, 700);
-        cyanPointLight.position.set(200, 200, 220);
+        const cyanPointLight = new THREE.PointLight(0x00e5ff, 2.5, 750);
+        cyanPointLight.position.set(180, 220, 240);
         scene.add(cyanPointLight);
 
-        // Rim Light (Electric Cyan)
-        const rimLight = new THREE.PointLight(0x00ffff, 2.2, 700);
-        rimLight.position.set(-200, -140, -120);
+        const rimLight = new THREE.PointLight(0x00ffff, 2.0, 750);
+        rimLight.position.set(-220, -160, -140);
         scene.add(rimLight);
 
-        // Directional Highlight
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.7);
-        dirLight.position.set(0, 150, 200);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.65);
+        dirLight.position.set(0, 160, 220);
         scene.add(dirLight);
 
-        // Main Globe Group
+        // Main 3D Sphere Group
         globeGroup = new THREE.Group();
-        globeGroup.rotation.x = 0.18;
+        globeGroup.rotation.x = 0.15;
         scene.add(globeGroup);
 
-        const sphereRadius = Math.min(width, height) * 0.23;
+        const sphereRadius = Math.min(width, height) * 0.24;
 
-        // 1. Solid Dark Navy Inner Core Sphere
+        // 1. Solid Dark Navy Inner Occlusion Core Sphere
         const innerCoreGeo = new THREE.IcosahedronGeometry(sphereRadius * 0.95, 3);
         const innerCoreMat = new THREE.MeshPhongMaterial({
-            color: 0x010a17,
-            emissive: 0x001226,
+            color: 0x020a14,
+            emissive: 0x000e1c,
             specular: 0x00d4ff,
-            shininess: 90,
+            shininess: 85,
             transparent: true,
-            opacity: 0.95
+            opacity: 0.96,
+            depthWrite: true,
+            depthTest: true
         });
         const innerCoreMesh = new THREE.Mesh(innerCoreGeo, innerCoreMat);
         globeGroup.add(innerCoreMesh);
 
-        // Dual Internal Volumetric Glowing Core Lights (Inside the sphere like IMAGE 2)
-        const coreLight1 = new THREE.PointLight(0x00f0ff, 3.5, sphereRadius * 3);
-        coreLight1.position.set(sphereRadius * 0.25, sphereRadius * 0.35, sphereRadius * 0.3);
+        // Dual Internal Volumetric Glowing Core Lights (Inside sphere)
+        const coreLight1 = new THREE.PointLight(0x00f0ff, 3.2, sphereRadius * 3);
+        coreLight1.position.set(sphereRadius * 0.2, sphereRadius * 0.3, sphereRadius * 0.25);
         globeGroup.add(coreLight1);
 
-        const coreLight2 = new THREE.PointLight(0x00d4ff, 2.8, sphereRadius * 3);
-        coreLight2.position.set(-sphereRadius * 0.3, -sphereRadius * 0.2, sphereRadius * 0.1);
+        const coreLight2 = new THREE.PointLight(0x00d4ff, 2.4, sphereRadius * 3);
+        coreLight2.position.set(-sphereRadius * 0.25, -sphereRadius * 0.2, sphereRadius * 0.1);
         globeGroup.add(coreLight2);
 
-        // 2. Dense Geodesic Cyan Wireframe Sphere Mesh (IMAGE 2 style)
-        const coreGeo = new THREE.IcosahedronGeometry(sphereRadius * 0.97, 4);
+        // 2. High-Density Geodesic Cyan Wireframe Sphere (REFERENCE 2 style)
+        const coreGeo = new THREE.IcosahedronGeometry(sphereRadius * 0.98, 4);
         const coreMat = new THREE.MeshPhongMaterial({
             color: 0x00e5ff,
-            emissive: 0x003b5c,
+            emissive: 0x003352,
             specular: 0x00ffff,
             shininess: 40,
             wireframe: true,
             transparent: true,
-            opacity: 0.65
+            opacity: 0.60,
+            depthTest: true,
+            depthWrite: false
         });
         const coreMesh = new THREE.Mesh(coreGeo, coreMat);
         globeGroup.add(coreMesh);
 
-        // Secondary Radial Sphere Lines
-        const gridGeo = new THREE.SphereGeometry(sphereRadius * 0.98, 36, 36);
+        // Secondary Radial Sphere Grid Lines
+        const gridGeo = new THREE.SphereGeometry(sphereRadius * 0.99, 40, 40);
         const gridMat = new THREE.MeshPhongMaterial({
             color: 0x00bfff,
-            emissive: 0x002238,
+            emissive: 0x001d30,
             wireframe: true,
             transparent: true,
-            opacity: 0.28
+            opacity: 0.25,
+            depthTest: true,
+            depthWrite: false
         });
         const gridMesh = new THREE.Mesh(gridGeo, gridMat);
         globeGroup.add(gridMesh);
 
-        // 3. 12 Floating Design Panels Wrapping in 3D Space (IMAGE 2 style)
-        const TOTAL_TILES = 12;
-        const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+        // 3. 3D Elliptical Orbital Rings System
+        orbitRingsGroup = new THREE.Group();
+        scene.add(orbitRingsGroup);
 
+        const ORBITS = [
+            { r: sphereRadius * 1.35, tiltX: Math.PI / 3.2, tiltZ: 0.2, speed: 0.0022, color: 0x00e5ff, opacity: 0.45 },
+            { r: sphereRadius * 1.58, tiltX: -Math.PI / 3.6, tiltZ: -0.25, speed: -0.0018, color: 0x00e5ff, opacity: 0.38 },
+            { r: sphereRadius * 1.82, tiltX: Math.PI / 5.2, tiltZ: 0.35, speed: 0.0014, color: 0x00e5ff, opacity: 0.30 },
+            { r: sphereRadius * 2.05, tiltX: -Math.PI / 6.5, tiltZ: -0.4, speed: -0.0011, color: 0x00e5ff, opacity: 0.22 }
+        ];
+
+        ORBITS.forEach(orb => {
+            const ringGeo = new THREE.TorusGeometry(orb.r, 0.75, 16, 120);
+            const ringMat = new THREE.MeshBasicMaterial({
+                color: orb.color,
+                transparent: true,
+                opacity: orb.opacity,
+                depthTest: true,
+                depthWrite: false
+            });
+            const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+            ringMesh.rotation.x = orb.tiltX;
+            ringMesh.rotation.z = orb.tiltZ;
+            orbitRingsGroup.add(ringMesh);
+        });
+
+        // 4. Dynamic 3D Orbiting Artwork Cards & Category Typography Labels Group
+        orbitItemsGroup = new THREE.Group();
+        scene.add(orbitItemsGroup);
+
+        // 10 Floating Design Panels Orbiting in 3D Space (REFERENCE 2)
+        const TOTAL_TILES = 10;
         for (let i = 0; i < TOTAL_TILES; i++) {
-            const y = 1 - (i / (TOTAL_TILES - 1)) * 2;
-            const rAtY = Math.sqrt(1 - y * y);
-            const theta = goldenAngle * i;
+            const orbIdx = i % ORBITS.length;
+            const orb = ORBITS[orbIdx];
 
-            const x = Math.cos(theta) * rAtY;
-            const z = Math.sin(theta) * rAtY;
-
-            // Varied 3D radii for layered depth (1.18x to 1.38x sphereRadius)
-            const depthScale = 1.18 + (i % 4) * 0.06;
-            const pos = new THREE.Vector3(x, y, z).multiplyScalar(sphereRadius * depthScale);
             const proj = PROJECTS[i % PROJECTS.length];
             const tex = loadedTextures[i % PROJECTS.length];
 
             const aspect = (i % 3 === 0) ? 0.72 : (i % 3 === 1 ? 1.35 : 1.0);
-            const tileW = (sphereRadius * 0.36) * aspect;
-            const tileH = sphereRadius * 0.36;
+            const tileW = (sphereRadius * 0.38) * aspect;
+            const tileH = sphereRadius * 0.38;
 
             const planeGeo = new THREE.PlaneGeometry(tileW, tileH);
             const planeMat = new THREE.MeshPhongMaterial({
@@ -1486,91 +1515,80 @@ document.addEventListener("DOMContentLoaded", () => {
                 side: THREE.DoubleSide,
                 shininess: 60,
                 specular: 0xffffff,
-                emissive: 0x00283d
+                emissive: 0x00283d,
+                depthTest: true,
+                depthWrite: true
             });
 
             const tileMesh = new THREE.Mesh(planeGeo, planeMat);
-            tileMesh.position.copy(pos);
-            tileMesh.lookAt(pos.clone().multiplyScalar(2));
-            tileMesh.userData = { project: proj };
+            tileMesh.userData = {
+                project: proj,
+                orbIdx: orbIdx,
+                radius: orb.r,
+                tiltX: orb.tiltX,
+                tiltZ: orb.tiltZ,
+                speed: orb.speed,
+                angle: (i / TOTAL_TILES) * Math.PI * 2 + 0.2
+            };
 
-            // Create thin cyan glowing frame around each panel
+            // Cyan glowing border frame
             const borderGeo = new THREE.PlaneGeometry(tileW * 1.05, tileH * 1.05);
             const borderMat = new THREE.MeshBasicMaterial({
                 color: 0x00e5ff,
                 side: THREE.DoubleSide,
                 transparent: true,
-                opacity: 0.55
+                opacity: 0.55,
+                depthTest: true,
+                depthWrite: false
             });
             const borderMesh = new THREE.Mesh(borderGeo, borderMat);
             borderMesh.position.set(0, 0, -0.2);
             tileMesh.add(borderMesh);
 
-            globeGroup.add(tileMesh);
+            orbitItemsGroup.add(tileMesh);
             tileMeshes.push(tileMesh);
         }
 
-        // 4. 4 Thin Luminous 3D Orbit Rings & Orbiting Typography Labels
-        orbitRingsGroup = new THREE.Group();
-        scene.add(orbitRingsGroup);
-
-        const ringRadius1 = sphereRadius * 1.32;
-        const ringRadius2 = sphereRadius * 1.52;
-        const ringRadius3 = sphereRadius * 1.72;
-        const ringRadius4 = sphereRadius * 1.90;
-
-        const createRing = (r, tiltX, tiltZ, color, opacity) => {
-            const ringGeo = new THREE.TorusGeometry(r, 0.7, 16, 120);
-            const ringMat = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: opacity });
-            const ringMesh = new THREE.Mesh(ringGeo, ringMat);
-            ringMesh.rotation.x = tiltX;
-            ringMesh.rotation.z = tiltZ;
-            return ringMesh;
-        };
-
-        const ring1 = createRing(ringRadius1, Math.PI / 3.2, 0.2, 0x00e5ff, 0.45);
-        const ring2 = createRing(ringRadius2, -Math.PI / 3.6, -0.25, 0x00e5ff, 0.38);
-        const ring3 = createRing(ringRadius3, Math.PI / 5.2, 0.35, 0x00e5ff, 0.30);
-        const ring4 = createRing(ringRadius4, -Math.PI / 6.5, -0.4, 0x00e5ff, 0.22);
-        orbitRingsGroup.add(ring1);
-        orbitRingsGroup.add(ring2);
-        orbitRingsGroup.add(ring3);
-        orbitRingsGroup.add(ring4);
-
-        // 6 Minimal Holographic UI Labels along the 3D orbital rings (IMAGE 2 style)
+        // 6 Orbiting Category Typography Badges (REFERENCE 2 style)
         SKILL_LABELS.forEach((label, idx) => {
             const tex = createLabelTexture(label);
-            const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true });
+            const spriteMat = new THREE.SpriteMaterial({
+                map: tex,
+                transparent: true,
+                depthTest: true,
+                depthWrite: false
+            });
             const sprite = new THREE.Sprite(spriteMat);
 
-            const ringIdx = idx % 4;
-            const r = ringIdx === 0 ? ringRadius1 : (ringIdx === 1 ? ringRadius2 : (ringIdx === 2 ? ringRadius3 : ringRadius4));
-            const angle = (idx / SKILL_LABELS.length) * Math.PI * 2 + 0.4;
-            const tiltX = ringIdx === 0 ? Math.PI / 3.2 : (ringIdx === 1 ? -Math.PI / 3.6 : (ringIdx === 2 ? Math.PI / 5.2 : -Math.PI / 6.5));
+            const orbIdx = idx % ORBITS.length;
+            const orb = ORBITS[orbIdx];
 
-            const rx = Math.cos(angle) * r;
-            const ry = Math.sin(angle) * r * Math.sin(tiltX);
-            const rz = Math.sin(angle) * r * Math.cos(tiltX);
+            sprite.userData = {
+                orbIdx: orbIdx,
+                radius: orb.r * 1.05,
+                tiltX: orb.tiltX,
+                tiltZ: orb.tiltZ,
+                speed: orb.speed * 0.9,
+                angle: (idx / SKILL_LABELS.length) * Math.PI * 2 + 0.5
+            };
+            sprite.scale.set(54, 13.5, 1);
 
-            sprite.position.set(rx, ry, rz);
-            sprite.scale.set(52, 13, 1);
-
-            orbitRingsGroup.add(sprite);
+            orbitItemsGroup.add(sprite);
             labelSprites.push(sprite);
         });
 
-        // 5. Ambient 3D Space Particles (Sparse & subtle cyan glow)
+        // 5. Sparse Ambient 3D Space Particles
         particlesGroup = new THREE.Group();
         scene.add(particlesGroup);
 
         const partGeo = new THREE.BufferGeometry();
-        const partCount = 50;
+        const partCount = 55;
         const posArray = new Float32Array(partCount * 3);
 
         for (let i = 0; i < partCount * 3; i += 3) {
-            posArray[i] = (Math.random() - 0.5) * 650;
-            posArray[i + 1] = (Math.random() - 0.5) * 650;
-            posArray[i + 2] = (Math.random() - 0.5) * 650;
+            posArray[i] = (Math.random() - 0.5) * 680;
+            posArray[i + 1] = (Math.random() - 0.5) * 680;
+            posArray[i + 2] = (Math.random() - 0.5) * 680;
         }
         partGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
         const partMat = new THREE.PointsMaterial({
@@ -1596,7 +1614,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.addEventListener("resize", onResize);
 
-    // Pointer Drag & Subtle Parallax Dynamics
+    // Pointer Drag & Inertia Dynamics
     function onPointerDown(x, y) {
         isDragging = true;
         dragMoved = false;
@@ -1684,11 +1702,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Three.js Render Loop
+    // Three.js Dynamic 3D Render Loop
     function animate() {
         if (!isIntersecting) return;
 
-        // Mouse Parallax Smooth Interpolation
+        // Smooth Mouse Parallax
         currentMouseX += (targetMouseX - currentMouseX) * 0.05;
         currentMouseY += (targetMouseY - currentMouseY) * 0.05;
 
@@ -1703,10 +1721,43 @@ document.addEventListener("DOMContentLoaded", () => {
             velX += (targetVx - velX) * 0.03;
         }
 
+        // 1. Orbit Ring Rotation
         if (orbitRingsGroup) {
-            orbitRingsGroup.rotation.y += 0.0020;
-            orbitRingsGroup.rotation.x += 0.0008;
+            orbitRingsGroup.rotation.y += 0.0012;
         }
+
+        // 2. Dynamic 3D Orbital Path Calculations for Artwork Panels
+        tileMeshes.forEach(t => {
+            const d = t.userData;
+            d.angle += d.speed;
+
+            const ox = Math.cos(d.angle) * d.radius;
+            const oz = Math.sin(d.angle) * d.radius;
+            const oy = Math.sin(d.angle * 2) * 12;
+
+            const pos = new THREE.Vector3(ox, oy, oz);
+            pos.applyAxisAngle(new THREE.Vector3(1, 0, 0), d.tiltX);
+            pos.applyAxisAngle(new THREE.Vector3(0, 0, 1), d.tiltZ);
+
+            t.position.copy(pos);
+            t.lookAt(camera.position); // Always face viewer smoothly for crisp artwork display
+        });
+
+        // 3. Dynamic 3D Orbital Path Calculations for Category Typography Badges
+        labelSprites.forEach(s => {
+            const d = s.userData;
+            d.angle += d.speed;
+
+            const ox = Math.cos(d.angle) * d.radius;
+            const oz = Math.sin(d.angle) * d.radius;
+            const oy = Math.sin(d.angle * 2) * 10;
+
+            const pos = new THREE.Vector3(ox, oy, oz);
+            pos.applyAxisAngle(new THREE.Vector3(1, 0, 0), d.tiltX);
+            pos.applyAxisAngle(new THREE.Vector3(0, 0, 1), d.tiltZ);
+
+            s.position.copy(pos);
+        });
 
         if (particlesGroup) {
             particlesGroup.rotation.y -= 0.0004;
@@ -1716,7 +1767,7 @@ document.addEventListener("DOMContentLoaded", () => {
         animFrameId = requestAnimationFrame(animate);
     }
 
-    // Lazy load observer
+    // IntersectionObserver Lazy Load
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
