@@ -450,20 +450,21 @@
 </div>
 </div>
 
-<!-- Standalone Portfolio Introduction Video Section -->
-<section id="portfolio-introduction" class="w-full relative overflow-hidden py-16 px-margin-edge flex flex-col items-center justify-center border-y border-white/5 bg-surface-container-low/20">
-  <div class="w-[95%] md:w-[90%] lg:max-w-[1200px] mx-auto flex flex-col items-center justify-center">
+<!-- Standalone Animation Showcase Video Section -->
+<section id="animation-showcase" class="w-full relative overflow-hidden py-16 px-margin-edge flex flex-col items-center justify-center border-y border-white/5 bg-surface-container-low/20">
+  <div class="w-[95%] md:w-[90%] lg:max-w-[1300px] mx-auto flex flex-col items-center justify-center">
     
-    <!-- Section Title Header -->
+    <!-- Section Header Title & Subtitle -->
     <div class="text-center mb-8 fade-in-up">
-      <span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary font-label-sm text-xs uppercase tracking-widest mb-3 border border-primary/20">Motion Showcase</span>
-      <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Portfolio Introduction</h2>
+      <span class="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary font-label-sm text-xs uppercase tracking-widest mb-3 border border-primary/20">Motion Experience</span>
+      <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface">Animation Showcase</h2>
+      <p class="font-body-md text-on-surface-variant mt-2 max-w-xl mx-auto text-sm sm:text-base">Motion Graphics • Video Design • Creative Animation</p>
     </div>
 
     <!-- Video Stage Container -->
     <div class="relative w-full rounded-2xl sm:rounded-3xl overflow-hidden glass-panel icy-glow shadow-2xl border border-[#00D4FF]/20 flex items-center justify-center bg-[#030b12]">
       <video
-        id="intro-video-element"
+        id="showcase-video-element"
         autoplay
         muted
         loop
@@ -471,8 +472,9 @@
         preload="auto"
         class="w-full h-auto max-h-[85vh] object-contain rounded-2xl sm:rounded-3xl block mx-auto"
       >
+        <source src="assets/video/animo-carousel-flow-720p.mp4" type="video/mp4" />
+        <source src="assets/frames/animo-carousel-flow-720p.mp4" type="video/mp4" />
         <source src="assets/video/portfolio-intro-final.mp4" type="video/mp4" />
-        <source src="assets/video/portfolio intro final.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
     </div>
@@ -483,7 +485,7 @@
 <!-- Video Autoplay Controller Script -->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const video = document.getElementById("intro-video-element");
+        const video = document.getElementById("showcase-video-element");
         if (video) {
             video.muted = true;
             video.defaultMuted = true;
@@ -493,7 +495,6 @@
                 const playPromise = video.play();
                 if (playPromise !== undefined) {
                     playPromise.catch(() => {
-                        // User interaction fallback listener
                         const enablePlayOnTouch = () => {
                             video.play();
                             window.removeEventListener("touchstart", enablePlayOnTouch);
