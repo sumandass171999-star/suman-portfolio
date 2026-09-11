@@ -1135,8 +1135,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const SKILL_LABELS = [
         "POSTER DESIGN",
         "THUMBNAIL DESIGN",
-        "BRANDING",
-        "MOTION GRAPHICS"
+        "MOTION GRAPHICS",
+        "LOGO DESIGN",
+        "VISUAL STORYTELLING",
+        "BRANDING"
     ];
 
     let scene, camera, renderer, globeGroup, orbitRingsGroup, particlesGroup;
@@ -1366,22 +1368,24 @@ document.addEventListener("DOMContentLoaded", () => {
         orbitRingsGroup.add(ring2);
         orbitRingsGroup.add(ring3);
 
-        // 4 Minimal Holographic UI Labels along the orbital rings
+        // 6 Minimal Holographic UI Labels along 3 orbital rings
         SKILL_LABELS.forEach((label, idx) => {
             const tex = createLabelTexture(label);
             const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true });
             const sprite = new THREE.Sprite(spriteMat);
 
-            const r = (idx % 2 === 0) ? ringRadius1 : ringRadius2;
-            const angle = (idx / SKILL_LABELS.length) * Math.PI * 2 + 0.5;
-            const tiltX = (idx % 2 === 0) ? Math.PI / 3.5 : -Math.PI / 4;
+            const isRing1 = idx % 3 === 0;
+            const isRing2 = idx % 3 === 1;
+            const r = isRing1 ? ringRadius1 : (isRing2 ? ringRadius2 : ringRadius3);
+            const angle = (idx / SKILL_LABELS.length) * Math.PI * 2 + 0.3;
+            const tiltX = isRing1 ? Math.PI / 3.5 : (isRing2 ? -Math.PI / 4 : Math.PI / 6);
 
             const rx = Math.cos(angle) * r;
             const ry = Math.sin(angle) * r * Math.sin(tiltX);
             const rz = Math.sin(angle) * r * Math.cos(tiltX);
 
             sprite.position.set(rx, ry, rz);
-            sprite.scale.set(52, 13, 1);
+            sprite.scale.set(48, 12, 1);
 
             orbitRingsGroup.add(sprite);
             labelSprites.push(sprite);
