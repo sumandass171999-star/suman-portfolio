@@ -232,12 +232,17 @@
 /* ==========================================================================
    New 3D Interactive Wireframe Globe Component (Three.js / WebGL)
    ========================================================================== */
-document.addEventListener("DOMContentLoaded", () => {
+function startNewGlobeComponent() {
   const heroSection = document.getElementById("hero-section");
   const container = document.getElementById("new-globe-container") || document.getElementById("hero-card-container");
   const canvas = document.getElementById("new-globe-canvas") || document.getElementById("hero-globe-canvas");
 
-  if (!heroSection || !container || !canvas || typeof THREE === "undefined") return;
+  if (!heroSection || !container || !canvas) return;
+
+  if (typeof THREE === "undefined") {
+    setTimeout(startNewGlobeComponent, 50);
+    return;
+  }
 
   const PROJECTS = [
     { src: 'images/krishna.jpg', title: 'Lord Krishna Divine Artwork', subtitle: 'Visual Storytelling • Digital Painting' },
@@ -523,24 +528,36 @@ document.addEventListener("DOMContentLoaded", () => {
     animFrameId = requestAnimationFrame(animate);
   }
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        if (!isIntersecting) {
-          isIntersecting = true;
-          if (!scene) initNewGlobe();
-          onResize();
-          animFrameId = requestAnimationFrame(animate);
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (!isIntersecting) {
+            isIntersecting = true;
+            if (!scene) initNewGlobe();
+            onResize();
+            if (!animFrameId) animFrameId = requestAnimationFrame(animate);
+          }
+        } else {
+          isIntersecting = false;
+          if (animFrameId) {
+            cancelAnimationFrame(animFrameId);
+            animFrameId = null;
+          }
         }
-      } else {
-        isIntersecting = false;
-        if (animFrameId) {
-          cancelAnimationFrame(animFrameId);
-          animFrameId = null;
-        }
-      }
-    });
-  }, { threshold: 0.05 });
+      });
+    }, { threshold: 0.01 });
 
-  observer.observe(heroSection);
-});
+    observer.observe(heroSection);
+  } else {
+    initNewGlobe();
+    onResize();
+    requestAnimationFrame(animate);
+  }
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", startNewGlobeComponent);
+} else {
+  startNewGlobeComponent();
+}
