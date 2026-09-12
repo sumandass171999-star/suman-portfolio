@@ -342,12 +342,12 @@ function startNewGlobeComponent() {
       const x = Math.cos(theta) * radiusAtY;
       const z = Math.sin(theta) * radiusAtY;
 
-      const pos = new THREE.Vector3(x, y, z).multiplyScalar(sphereRadius * 1.06);
+      const pos = new THREE.Vector3(x, y, z).multiplyScalar(sphereRadius * 1.07);
 
       // Preserve natural aspect ratio (portrait vs landscape)
       const isLandscape = project.src.includes('ocean') || project.src.includes('vr');
       const aspect = isLandscape ? 1.5 : 0.72;
-      const tileH = 17;
+      const tileH = 20.0;
       const tileW = tileH * aspect;
 
       const planeGeo = new THREE.PlaneGeometry(tileW, tileH);
@@ -416,27 +416,35 @@ function startNewGlobeComponent() {
     particlesGroup.add(particlesMesh);
     scene.add(particlesGroup);
 
-    // Event Listeners
+    // Unified Pointer Event Listeners (Mouse & Touch)
     container.addEventListener('pointerdown', onPointerDown);
     container.addEventListener('pointermove', onPointerMove);
     window.addEventListener('pointerup', onPointerUp);
-    container.addEventListener('click', onTileClick);
     window.addEventListener('resize', onResize);
   }
 
+  function updateMouseVector(clientX, clientY) {
+    const targetEl = container || canvas;
+    if (!targetEl) return;
+    const rect = targetEl.getBoundingClientRect();
+    const mouseX = clientX - rect.left;
+    const mouseY = clientY - rect.top;
+
+    mouseVector.x = (mouseX / rect.width) * 2 - 1;
+    mouseVector.y = -(mouseY / rect.height) * 2 + 1;
+  }
+
+  let pointerDownPos = { x: 0, y: 0 };
+
   function onPointerDown(e) {
     isDragging = true;
-    dragDistance = 0;
+    pointerDownPos = { x: e.clientX, y: e.clientY };
     previousMousePosition = { x: e.clientX, y: e.clientY };
+    updateMouseVector(e.clientX, e.clientY);
   }
 
   function onPointerMove(e) {
-    const rect = container.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const mouseY = e.clientY - rect.top;
-
-    mouseVector.x = (mouseX / container.clientWidth) * 2 - 1;
-    mouseVector.y = -(mouseY / container.clientHeight) * 2 + 1;
+    updateMouseVector(e.clientX, e.clientY);
 
     pointerTargetX = mouseVector.x * 0.12;
     pointerTargetY = mouseVector.y * 0.12;
@@ -445,8 +453,6 @@ function startNewGlobeComponent() {
       const deltaX = e.clientX - previousMousePosition.x;
       const deltaY = e.clientY - previousMousePosition.y;
 
-      dragDistance += Math.abs(deltaX) + Math.abs(deltaY);
-
       velY = deltaX * 0.0025;
       velX = deltaY * 0.0025;
 
@@ -454,21 +460,52 @@ function startNewGlobeComponent() {
     }
   }
 
-  function onPointerUp() {
-    isDragging = false;
+  let lastLightboxOpenTime = 0;
+
+  function triggerLightbox(proj) {
+    const fn = window.openLightbox || (typeof openLightbox === 'function' ? openLightbox : null);
+    if (typeof fn === 'function') {
+      fn(proj.src, proj.title, proj.subtitle);
+      return true;
+    }
+    return false;
   }
 
-  function onTileClick(e) {
-    if (dragDistance > 6) return;
+  function handleTileSelection(clientX, clientY) {
+    const now = Date.now();
+    if (now - lastLightboxOpenTime < 300) return true;
+    if (!canvas || !camera || !tileMeshes.length) return false;
 
+    if (clientX !== undefined && clientY !== undefined) {
+      updateMouseVector(clientX, clientY);
+    }
+    scene.updateMatrixWorld(true);
     raycaster.setFromCamera(mouseVector, camera);
-    const intersects = raycaster.intersectObjects(tileMeshes);
+
+    const intersects = raycaster.intersectObjects(tileMeshes, true);
 
     if (intersects.length > 0) {
-      const clickedMesh = intersects[0].object;
-      const proj = clickedMesh.userData.project;
-      if (proj && typeof openLightbox === "function") {
-        openLightbox(proj.src, proj.title, proj.subtitle);
+      for (let i = 0; i < intersects.length; i++) {
+        let obj = intersects[i].object;
+        while (obj && (!obj.userData || !obj.userData.project) && obj !== scene) {
+          obj = obj.parent;
+        }
+        if (obj && obj.userData && obj.userData.project) {
+          const proj = obj.userData.project;
+          lastLightboxOpenTime = now;
+          return triggerLightbox(proj);
+        }
+      }
+    }
+    return false;
+  }
+
+  function onPointerUp(e) {
+    isDragging = false;
+    if (e && e.clientX !== undefined) {
+      const moveDist = Math.hypot(e.clientX - pointerDownPos.x, e.clientY - pointerDownPos.y);
+      if (moveDist <= 12) {
+        handleTileSelection(e.clientX, e.clientY);
       }
     }
   }
@@ -519,14 +556,27 @@ function startNewGlobeComponent() {
     }
 
     raycaster.setFromCamera(mouseVector, camera);
-    const intersects = raycaster.intersectObjects(tileMeshes);
+    const intersects = raycaster.intersectObjects(tileMeshes, true);
 
+    let foundPoster = null;
     if (intersects.length > 0) {
-      const hit = intersects[0].object;
-      if (hoveredMesh !== hit) {
-        if (hoveredMesh) hoveredMesh.scale.set(1, 1, 1);
-        hoveredMesh = hit;
+      for (let i = 0; i < intersects.length; i++) {
+        let hit = intersects[i].object;
+        while (hit && (!hit.userData || !hit.userData.project) && hit !== scene) {
+          hit = hit.parent;
+        }
+        if (hit && hit.userData && hit.userData.project) {
+          foundPoster = hit;
+          break;
+        }
       }
+    }
+
+    if (foundPoster) {
+      if (hoveredMesh && hoveredMesh !== foundPoster) {
+        hoveredMesh.scale.set(1, 1, 1);
+      }
+      hoveredMesh = foundPoster;
       hoveredMesh.scale.lerp(new THREE.Vector3(1.24, 1.24, 1.24), 0.15);
       container.style.cursor = 'pointer';
     } else {
