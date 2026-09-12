@@ -292,7 +292,7 @@ function startNewGlobeComponent() {
     scene = new THREE.Scene();
 
     camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
-    camera.position.z = 245;
+    updateCameraDistance();
 
     renderer = new THREE.WebGLRenderer({
       canvas: canvas,
@@ -473,10 +473,23 @@ function startNewGlobeComponent() {
     }
   }
 
+  function updateCameraDistance() {
+    if (!camera) return;
+    const w = window.innerWidth;
+    if (w <= 480) {
+      camera.position.z = 310;
+    } else if (w <= 768) {
+      camera.position.z = 275;
+    } else {
+      camera.position.z = 245;
+    }
+  }
+
   function onResize() {
     if (!container || !renderer || !camera) return;
     const w = container.clientWidth || 600;
     const h = container.clientHeight || 600;
+    updateCameraDistance();
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     renderer.setSize(w, h);
