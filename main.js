@@ -528,16 +528,19 @@ function startNewGlobeComponent() {
     animFrameId = requestAnimationFrame(animate);
   }
 
+  // Initialize 3D Globe immediately on load
+  if (!scene) {
+    initNewGlobe();
+    onResize();
+  }
+
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          if (!isIntersecting) {
-            isIntersecting = true;
-            if (!scene) initNewGlobe();
-            onResize();
-            if (!animFrameId) animFrameId = requestAnimationFrame(animate);
-          }
+          isIntersecting = true;
+          onResize();
+          if (!animFrameId) animFrameId = requestAnimationFrame(animate);
         } else {
           isIntersecting = false;
           if (animFrameId) {
@@ -546,13 +549,13 @@ function startNewGlobeComponent() {
           }
         }
       });
-    }, { threshold: 0.01 });
+    }, { threshold: 0 });
 
     observer.observe(heroSection);
   } else {
-    initNewGlobe();
+    isIntersecting = true;
     onResize();
-    requestAnimationFrame(animate);
+    if (!animFrameId) animFrameId = requestAnimationFrame(animate);
   }
 }
 
