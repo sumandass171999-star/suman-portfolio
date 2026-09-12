@@ -228,3 +228,319 @@
   // Start preloading
   preloadImages();
 })();
+
+/* ==========================================================================
+   New 3D Interactive Wireframe Globe Component (Three.js / WebGL)
+   ========================================================================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const heroSection = document.getElementById("hero-section");
+  const container = document.getElementById("new-globe-container") || document.getElementById("hero-card-container");
+  const canvas = document.getElementById("new-globe-canvas") || document.getElementById("hero-globe-canvas");
+
+  if (!heroSection || !container || !canvas || typeof THREE === "undefined") return;
+
+  const PROJECTS = [
+    { src: 'images/krishna.jpg', title: 'Lord Krishna Divine Artwork', subtitle: 'Visual Storytelling • Digital Painting' },
+    { src: 'images/lagan poster.jpg', title: 'Lagaan Movie Poster Key Art', subtitle: 'Movie Poster • Key Art Design' },
+    { src: 'images/movie poster.jpg', title: 'Action Movie Poster', subtitle: 'Key Art • Visual Arts' },
+    { src: 'images/poster of father.jpg', title: 'Tribute Portrait Artwork', subtitle: 'Digital Painting • Visual Design' },
+    { src: 'images/vr advertising.jpg', title: 'VR Brand Experience', subtitle: 'Creative Direction • VR Experience' },
+    { src: 'images/ocean miracle.jpg', title: 'Ocean Miracle Art', subtitle: 'Concept Art • Environment Design' },
+    { src: 'images/ra yatttra.jpg', title: 'Rath Yatra Cultural Art', subtitle: 'Key Art • Visual Storytelling' }
+  ];
+
+  let scene, camera, renderer, globeGroup, orbitRingsGroup, particlesGroup;
+  let tileMeshes = [];
+  let isIntersecting = false;
+  let animFrameId = null;
+
+  let isDragging = false;
+  let previousMousePosition = { x: 0, y: 0 };
+  let velX = 0.0016;
+  let velY = 0;
+
+  let pointerTargetX = 0;
+  let pointerTargetY = 0;
+  let pointerCurrentX = 0;
+  let pointerCurrentY = 0;
+
+  const raycaster = new THREE.Raycaster();
+  const mouseVector = new THREE.Vector2();
+  let hoveredMesh = null;
+  let dragDistance = 0;
+
+  const textureLoader = new THREE.TextureLoader();
+
+  // Eagerly preload artwork textures so quads render images instantly without white card artifacts
+  const loadedTextures = PROJECTS.map(p => {
+    const tex = textureLoader.load(p.src);
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.magFilter = THREE.LinearFilter;
+    tex.generateMipmaps = true;
+    return tex;
+  });
+
+  function initNewGlobe() {
+    const width = container.clientWidth || 600;
+    const height = container.clientHeight || 600;
+
+    scene = new THREE.Scene();
+
+    camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 1000);
+    camera.position.z = 245;
+
+    renderer = new THREE.WebGLRenderer({
+      canvas: canvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: "high-performance"
+    });
+    renderer.setSize(width, height);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Core Group
+    globeGroup = new THREE.Group();
+    globeGroup.rotation.x = 0.2;
+    scene.add(globeGroup);
+
+    // 1. Dark Core & Crisp Thin Cyan Wireframe Earth (~40% Larger: Radius 94)
+    // MeshBasicMaterial has ZERO specular reflection glare, eliminating center bright white/cyan spots
+    const sphereRadius = 94;
+    const coreGeo = new THREE.SphereGeometry(sphereRadius * 0.88, 52, 52);
+    const coreMat = new THREE.MeshBasicMaterial({
+      color: 0x00d4ff,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.38
+    });
+    const coreMesh = new THREE.Mesh(coreGeo, coreMat);
+    globeGroup.add(coreMesh);
+
+    // Solid inner dark core (hides back wireframe lines for clean 3D depth)
+    const innerGeo = new THREE.SphereGeometry(sphereRadius * 0.87, 40, 40);
+    const innerMat = new THREE.MeshBasicMaterial({ color: 0x030914, transparent: true, opacity: 0.88 });
+    const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+    globeGroup.add(innerMesh);
+
+    // 2. Orbiting Floating Project Artwork Panels with Natural Aspect Ratios & Direct Texture Mapping
+    const totalTiles = 21;
+    const phiStep = Math.PI * (3 - Math.sqrt(5));
+
+    for (let i = 0; i < totalTiles; i++) {
+      const project = PROJECTS[i % PROJECTS.length];
+      const tex = loadedTextures[i % PROJECTS.length];
+
+      const y = 1 - (i / (totalTiles - 1)) * 2;
+      const radiusAtY = Math.sqrt(1 - y * y);
+      const theta = phiStep * i;
+
+      const x = Math.cos(theta) * radiusAtY;
+      const z = Math.sin(theta) * radiusAtY;
+
+      const pos = new THREE.Vector3(x, y, z).multiplyScalar(sphereRadius * 1.06);
+
+      // Preserve natural aspect ratio (portrait vs landscape)
+      const isLandscape = project.src.includes('ocean') || project.src.includes('vr');
+      const aspect = isLandscape ? 1.5 : 0.72;
+      const tileH = 17;
+      const tileW = tileH * aspect;
+
+      const planeGeo = new THREE.PlaneGeometry(tileW, tileH);
+      const planeMat = new THREE.MeshBasicMaterial({
+        map: tex,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.95,
+        depthTest: true,
+        depthWrite: true
+      });
+
+      const tileMesh = new THREE.Mesh(planeGeo, planeMat);
+      tileMesh.position.copy(pos);
+      tileMesh.lookAt(pos.clone().multiplyScalar(2));
+
+      tileMesh.userData = {
+        project: project,
+        originalScale: new THREE.Vector3(1, 1, 1),
+        targetScale: new THREE.Vector3(1, 1, 1)
+      };
+
+      globeGroup.add(tileMesh);
+      tileMeshes.push(tileMesh);
+    }
+
+    // 3. Subtle & Thinner Orbital Rings (Reduced size & opacity dominance)
+    orbitRingsGroup = new THREE.Group();
+    const ringConfigs = [
+      { r: sphereRadius * 1.15, rotX: Math.PI / 3, rotY: 0, color: 0x00d4ff, opacity: 0.16 },
+      { r: sphereRadius * 1.28, rotX: -Math.PI / 4, rotY: Math.PI / 6, color: 0x38bdf8, opacity: 0.12 },
+      { r: sphereRadius * 1.42, rotX: Math.PI / 6, rotY: -Math.PI / 3, color: 0x0284c7, opacity: 0.08 }
+    ];
+
+    ringConfigs.forEach(cfg => {
+      const ringGeo = new THREE.TorusGeometry(cfg.r, 0.3, 12, 90);
+      const ringMat = new THREE.MeshBasicMaterial({ color: cfg.color, transparent: true, opacity: cfg.opacity, depthWrite: true, depthTest: true });
+      const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+      ringMesh.rotation.x = cfg.rotX;
+      ringMesh.rotation.y = cfg.rotY;
+      orbitRingsGroup.add(ringMesh);
+    });
+
+    globeGroup.add(orbitRingsGroup);
+
+    // 4. Floating Dust Field Particles
+    particlesGroup = new THREE.Group();
+    const particleCount = 140;
+    const posArray = new Float32Array(particleCount * 3);
+
+    for (let i = 0; i < particleCount * 3; i += 3) {
+      posArray[i] = (Math.random() - 0.5) * 400;
+      posArray[i + 1] = (Math.random() - 0.5) * 400;
+      posArray[i + 2] = (Math.random() - 0.5) * 400;
+    }
+
+    const partGeo = new THREE.BufferGeometry();
+    partGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    const partMat = new THREE.PointsMaterial({
+      size: 1.6,
+      color: 0x00d4ff,
+      transparent: true,
+      opacity: 0.45
+    });
+    const particlesMesh = new THREE.Points(partGeo, partMat);
+    particlesGroup.add(particlesMesh);
+    scene.add(particlesGroup);
+
+    // Event Listeners
+    container.addEventListener('pointerdown', onPointerDown);
+    container.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    container.addEventListener('click', onTileClick);
+    window.addEventListener('resize', onResize);
+  }
+
+  function onPointerDown(e) {
+    isDragging = true;
+    dragDistance = 0;
+    previousMousePosition = { x: e.clientX, y: e.clientY };
+  }
+
+  function onPointerMove(e) {
+    const rect = container.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    mouseVector.x = (mouseX / container.clientWidth) * 2 - 1;
+    mouseVector.y = -(mouseY / container.clientHeight) * 2 + 1;
+
+    pointerTargetX = mouseVector.x * 0.12;
+    pointerTargetY = mouseVector.y * 0.12;
+
+    if (isDragging) {
+      const deltaX = e.clientX - previousMousePosition.x;
+      const deltaY = e.clientY - previousMousePosition.y;
+
+      dragDistance += Math.abs(deltaX) + Math.abs(deltaY);
+
+      velY = deltaX * 0.0025;
+      velX = deltaY * 0.0025;
+
+      previousMousePosition = { x: e.clientX, y: e.clientY };
+    }
+  }
+
+  function onPointerUp() {
+    isDragging = false;
+  }
+
+  function onTileClick(e) {
+    if (dragDistance > 6) return;
+
+    raycaster.setFromCamera(mouseVector, camera);
+    const intersects = raycaster.intersectObjects(tileMeshes);
+
+    if (intersects.length > 0) {
+      const clickedMesh = intersects[0].object;
+      const proj = clickedMesh.userData.project;
+      if (proj && typeof openLightbox === "function") {
+        openLightbox(proj.src, proj.title, proj.subtitle);
+      }
+    }
+  }
+
+  function onResize() {
+    if (!container || !renderer || !camera) return;
+    const w = container.clientWidth || 600;
+    const h = container.clientHeight || 600;
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+    renderer.setSize(w, h);
+  }
+
+  function animate() {
+    if (!isIntersecting) return;
+
+    if (!isDragging) {
+      velY *= 0.96;
+      velX *= 0.96;
+      if (Math.abs(velY) < 0.001) velY = 0.0014;
+    }
+
+    globeGroup.rotation.y += velY;
+    globeGroup.rotation.x += velX;
+
+    pointerCurrentX += (pointerTargetX - pointerCurrentX) * 0.05;
+    pointerCurrentY += (pointerTargetY - pointerCurrentY) * 0.05;
+    scene.rotation.y = pointerCurrentX;
+    scene.rotation.x = pointerCurrentY;
+
+    if (orbitRingsGroup) {
+      orbitRingsGroup.children.forEach((ring, idx) => {
+        ring.rotation.z += (idx + 1) * 0.001 * (idx % 2 === 0 ? 1 : -1);
+      });
+    }
+
+    raycaster.setFromCamera(mouseVector, camera);
+    const intersects = raycaster.intersectObjects(tileMeshes);
+
+    if (intersects.length > 0) {
+      const hit = intersects[0].object;
+      if (hoveredMesh !== hit) {
+        if (hoveredMesh) hoveredMesh.scale.set(1, 1, 1);
+        hoveredMesh = hit;
+      }
+      hoveredMesh.scale.lerp(new THREE.Vector3(1.24, 1.24, 1.24), 0.15);
+      container.style.cursor = 'pointer';
+    } else {
+      if (hoveredMesh) {
+        hoveredMesh.scale.lerp(new THREE.Vector3(1, 1, 1), 0.15);
+        if (hoveredMesh.scale.x < 1.01) hoveredMesh = null;
+      }
+      container.style.cursor = isDragging ? 'grabbing' : 'grab';
+    }
+
+    renderer.render(scene, camera);
+    animFrameId = requestAnimationFrame(animate);
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        if (!isIntersecting) {
+          isIntersecting = true;
+          if (!scene) initNewGlobe();
+          onResize();
+          animFrameId = requestAnimationFrame(animate);
+        }
+      } else {
+        isIntersecting = false;
+        if (animFrameId) {
+          cancelAnimationFrame(animFrameId);
+          animFrameId = null;
+        }
+      }
+    });
+  }, { threshold: 0.05 });
+
+  observer.observe(heroSection);
+});
